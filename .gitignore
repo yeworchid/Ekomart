@@ -1,0 +1,71 @@
+# Build output
+bin/
+obj/
+out/
+artifacts/
+
+# .NET generated files
+*.dll
+*.exe
+*.pdb
+*.deps.json
+*.runtimeconfig.json
+*.staticwebassets.runtime.json
+*.staticwebassets.endpoints.json
+project.assets.json
+project.nuget.cache
+*.nuget.g.props
+*.nuget.g.targets
+*.nuget.dgspec.json
+
+# User-specific IDE files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.rsuser
+*.DotSettings.user
+*.sln.docstates
+
+# Rider / ReSharper caches
+_ReSharper*/
+*.sln.DotSettings.user
+
+# ASP.NET local configuration and secrets
+appsettings.Local.json
+appsettings.*.Local.json
+appsettings.Production.json
+secrets.json
+.env
+.env.*
+!.env.example
+
+# Logs and runtime files
+logs/
+*.log
+*.sqlite
+*.db
+
+# Test and coverage output
+TestResults/
+coverage/
+coverage.*
+*.coverage
+*.coveragexml
+
+# Frontend dependencies and build output
+node_modules/
+wwwroot/dist/
+wwwroot/build/
+wwwroot/.vite/
+
+# Docker/local volumes
+.docker/
+docker-data/
+postgres_data/
+mongo_data/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Ekomart.Application/Ekomart.Application.csproj" />
+  <Project Path="Ekomart.Domain/Ekomart.Domain.csproj" />
+  <Project Path="Ekomart.Infrastructure/Ekomart.Infrastructure.csproj" />
+  <Project Path="Ekomart.Seeder/Ekomart.Seeder.csproj" />
+  <Project Path="Ekomart.Web/Ekomart.Web.csproj" />
+</Solution>
