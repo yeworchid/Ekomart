@@ -1,3 +1,4 @@
+@model Ekomart.Web.Models.Profile.ProfileViewModel
 @{ Layout = null; }
 <!DOCTYPE html>
 <html lang="en">
@@ -930,17 +931,27 @@
                         <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false"><i class="fa-sharp fa-regular fa-tractor"></i> Track Your Order</button>
                         <button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="false"><i class="fa-sharp fa-regular fa-location-dot"></i>My Address</button>
                         <button class="nav-link" id="v-pills-settingsa-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settingsa" type="button" role="tab" aria-controls="v-pills-settingsa" aria-selected="false"><i class="fa-light fa-user"></i>Account Details</button>
-                        <button class="nav-link" id="v-pills-settingsb-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settingsb" type="button" role="tab" aria-controls="v-pills-settingsb" aria-selected="false"><a href="/Account/Login"><i class="fa-light fa-right-from-bracket"></i>log Out</a></button>
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            @Html.AntiForgeryToken()
+                            <button class="nav-link" id="v-pills-settingsb-tab" type="submit"><i class="fa-light fa-right-from-bracket"></i>Log Out</button>
+                        </form>
                     </div>
                 </div>
                 <div class="col-lg-9 pl--50 pl_md--10 pl_sm--10 pt_md--30 pt_sm--30">
                     <div class="tab-content" id="v-pills-tabContent">
                         <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0">
                             <div class="dashboard-account-area">
-                                <h2 class="title">Hello Raisa! (Not Raisa?) <a href="/Account/Login">Log Out.</a></h2>
+                                <h2 class="title">Hello @Model.FullName! <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn-small d-inline-block">Log Out.</button>
+                                </form></h2>
                                 <p class="disc">
                                     From your account dashboard you can view your recent orders, manage your shipping and billing addresses, and edit your password and account details.
                                 </p>
+                                @if (Model.Roles.Count > 0)
+                                {
+                                    <p class="disc">Roles: @string.Join(", ", Model.Roles)</p>
+                                }
                             </div>
                         </div>
                         <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="0">
@@ -1030,23 +1041,17 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="v-pills-settingsa" role="tabpanel" aria-labelledby="v-pills-settingsa-tab" tabindex="0">
-                            <form action="#" class="account-details-area">
+                            <form asp-controller="Profile" asp-action="Index" method="post" class="account-details-area">
+                                @Html.AntiForgeryToken()
                                 <h2 class="title">Account Details</h2>
-                                <div class="input-half-area">
-                                    <div class="single-input">
-                                        <input type="text" placeholder="First Name">
-                                    </div>
-                                    <div class="single-input">
-                                        <input type="text" placeholder="Last Name">
-                                    </div>
-                                </div>
-
-                                <input type="text" placeholder="Display Name" required>
-                                <input type="email" placeholder="Email Address *" required>
-                                <input type="email" placeholder="Email Address *">
-                                <input type="password" placeholder="Current Password *" required>
-                                <input type="password" placeholder="New Password *">
-                                <input type="password" placeholder="Confirm Password *">
+                                @if (TempData["ProfileSaved"] is string profileSavedMessage)
+                                {
+                                    <p class="disc text-success">@profileSavedMessage</p>
+                                }
+                                <div asp-validation-summary="ModelOnly" class="text-danger mb--20"></div>
+                                <input asp-for="FullName" type="text" placeholder="Display Name" required>
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                                <input asp-for="Email" type="email" placeholder="Email Address *" readonly>
                                 <button class="rts-btn btn-primary">Save Change</button>
                             </form>
                         </div>

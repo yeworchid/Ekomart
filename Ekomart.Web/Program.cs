@@ -1,6 +1,5 @@
 using Ekomart.Infrastructure;
-using Ekomart.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+using Ekomart.Web.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +8,24 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddInfrastructure(
     builder.Configuration);
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(
+        AppPolicies.AdminOnly,
+        policy => policy.RequireRole(AppRoles.Admin));
+
+    options.AddPolicy(
+        AppPolicies.ManagerOrAdmin,
+        policy => policy.RequireRole(AppRoles.Manager, AppRoles.Admin));
+});
 
 var app = builder.Build();
 
