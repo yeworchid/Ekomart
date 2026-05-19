@@ -1,4 +1,11 @@
-@{ Layout = null; }
+@model Ekomart.Web.Models.Store.ProductDetailsViewModel
+@using Ekomart.Web.Models.Store
+@{
+    Layout = null;
+    var product = Model.Product;
+    var productImage = StoreViewHelpers.ProductImage(product.ImageUrl, product.Id);
+    var returnUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}";
+}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,8 +17,8 @@
     <title>Shared on THEMELOCK.COM - Ekomart-Grocery-Store(e-Commerce) HTML Template</title>
     <link rel="shortcut icon" type="image/x-icon" href="/assets/ekomart/images/fav.png">
     <!-- plugins css -->
-    <link rel="stylesheet preload" href="/assets/ekomart/css/plugins.css" as="style">
-    <link rel="stylesheet preload" href="/assets/ekomart/css/style.css" as="style">
+    <link rel="stylesheet" href="/assets/ekomart/css/plugins.css">
+    <link rel="stylesheet" href="/assets/ekomart/css/style.css">
 
 </head>
 
@@ -941,59 +948,40 @@
                                         <div class="product-thumb-area">
                                             <div class="cursor"></div>
                                             <div class="thumb-wrapper one filterd-items figure">
-                                                <div class="product-thumb zoom" onmousemove="zoom(event)" style="background-image: url(/assets/ekomart/images/shop/01.jpg)"><img src="/assets/ekomart/images/shop/01.jpg" alt="product-thumb">
-                                                </div>
-                                            </div>
-                                            <div class="thumb-wrapper two filterd-items hide">
-                                                <div class="product-thumb zoom" onmousemove="zoom(event)" style="background-image: url(/assets/ekomart/images/shop/02.jpg)"><img src="/assets/ekomart/images/shop/02.jpg" alt="product-thumb">
-                                                </div>
-                                            </div>
-                                            <div class="thumb-wrapper three filterd-items hide">
-                                                <div class="product-thumb zoom" onmousemove="zoom(event)" style="background-image: url(/assets/ekomart/images/shop/03.jpg)"><img src="/assets/ekomart/images/shop/03.jpg" alt="product-thumb">
-                                                </div>
-                                            </div>
-                                            <div class="thumb-wrapper four filterd-items hide">
-                                                <div class="product-thumb zoom" onmousemove="zoom(event)" style="background-image: url(/assets/ekomart/images/shop/04.jpg)"><img src="/assets/ekomart/images/shop/04.jpg" alt="product-thumb">
-                                                </div>
-                                            </div>
-                                            <div class="thumb-wrapper five filterd-items hide">
-                                                <div class="product-thumb zoom" onmousemove="zoom(event)" style="background-image: url(/assets/ekomart/images/shop/05.jpg)"><img src="/assets/ekomart/images/shop/05.jpg" alt="product-thumb">
+                                                <div class="product-thumb zoom" onmousemove="zoom(event)" style="background-image: url(@productImage)"><img src="@productImage" alt="@product.Name">
                                                 </div>
                                             </div>
                                             <div class="product-thumb-filter-group">
-                                                <div class="thumb-filter filter-btn active" data-show=".one"><img src="/assets/ekomart/images/shop/01.jpg" alt="product-thumb-filter"></div>
-                                                <div class="thumb-filter filter-btn" data-show=".two"><img src="/assets/ekomart/images/shop/02.jpg" alt="product-thumb-filter"></div>
-                                                <div class="thumb-filter filter-btn" data-show=".three"><img src="/assets/ekomart/images/shop/03.jpg" alt="product-thumb-filter"></div>
-                                                <div class="thumb-filter filter-btn" data-show=".four"><img src="/assets/ekomart/images/shop/04.jpg" alt="product-thumb-filter"></div>
-                                                <div class="thumb-filter filter-btn" data-show=".five"><img src="/assets/ekomart/images/shop/05.jpg" alt="product-thumb-filter"></div>
+                                                <div class="thumb-filter filter-btn active" data-show=".one"><img src="@productImage" alt="@product.Name"></div>
                                             </div>
                                         </div>
                                         <div class="contents">
                                             <div class="product-status">
-                                                <span class="product-catagory">Dress</span>
+                                                <span class="product-catagory">@product.CategoryName</span>
                                                 <div class="rating-stars-group">
                                                     <div class="rating-star"><i class="fas fa-star"></i></div>
                                                     <div class="rating-star"><i class="fas fa-star"></i></div>
                                                     <div class="rating-star"><i class="fas fa-star-half-alt"></i></div>
-                                                    <span>10 Reviews</span>
+                                                    <span>@(product.StockQuantity > 0 ? $"{product.StockQuantity} in stock" : "Out of stock")</span>
                                                 </div>
                                             </div>
-                                            <h2 class="product-title">Kitchen Fade Defy PLUG Air Freshener</h2>
+                                            <h2 class="product-title">@product.Name</h2>
                                             <p class="mt--20 mb--20">
-                                                Priyoshop has brought to you the Hijab 3 Pieces Combo Pack PS23. It is a
-                                                completely modern design and you feel comfortable to put on this hijab.
-                                                Buy it at the best price.
+                                                @(string.IsNullOrWhiteSpace(product.Description) ? "Fresh grocery product from the Ekomart catalog." : product.Description)
                                             </p>
-                                            <span class="product-price mb--15 d-block" style="color: #DC2626; font-weight: 600;"> $36.25<span class="old-price ml--15">$69.35</span></span>
-                                            <div class="product-bottom-action">
+                                            <span class="product-price mb--15 d-block" style="color: #DC2626; font-weight: 600;">@StoreViewHelpers.Money(product.Price)</span>
+                                            <form asp-controller="Cart" asp-action="Add" method="post" class="product-bottom-action">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="productId" value="@product.Id">
+                                                <input type="hidden" name="returnUrl" value="@returnUrl">
                                                 <div class="cart-edits">
                                                     <div class="quantity-edit action-item">
-                                                        <button class="button"><i class="fal fa-minus minus"></i></button>
-                                                        <input type="text" class="input" value="01" />
-                                                        <button class="button plus">+<i class="fal fa-plus plus"></i></button>
+                                                        <button type="button" class="button"><i class="fal fa-minus minus"></i></button>
+                                                        <input type="number" name="quantity" class="input" value="1" min="1" max="@Math.Max(product.StockQuantity, 1)" />
+                                                        <button type="button" class="button plus">+<i class="fal fa-plus plus"></i></button>
                                                     </div>
                                                 </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
+                                                <button type="submit" class="rts-btn btn-primary radious-sm with-icon" @(product.StockQuantity <= 0 ? "disabled" : null)>
                                                     <div class="btn-text">
                                                         Add To Cart
                                                     </div>
@@ -1003,16 +991,13 @@
                                                     <div class="arrow-icon">
                                                         <i class="fa-regular fa-cart-shopping"></i>
                                                     </div>
-                                                </a>
+                                                </button>
                                                 <a href="javascript:void(0);" class="rts-btn btn-primary ml--20"><i class="fa-light fa-heart"></i></a>
-                                            </div>
+                                            </form>
                                             <div class="product-uniques">
-                                                <span class="sku product-unipue mb--10"><span style="font-weight: 400; margin-right: 10px;">SKU: </span> BO1D0MX8SJ</span>
-                                                <span class="catagorys product-unipue mb--10"><span style="font-weight: 400; margin-right: 10px;">Categories: </span> T-Shirts, Tops, Mens</span>
-                                                <span class="tags product-unipue mb--10"><span style="font-weight: 400; margin-right: 10px;">Tags: </span> fashion, t-shirts, Men</span>
-                                                <span class="tags product-unipue mb--10"><span style="font-weight: 400; margin-right: 10px;">LIFE:: </span> 6 Months</span>
-                                                <span class="tags product-unipue mb--10"><span style="font-weight: 400; margin-right: 10px;">Type: </span> original</span>
-                                                <span class="tags product-unipue mb--10"><span style="font-weight: 400; margin-right: 10px;">Category: </span> Beverages, Dairy & Bakery</span>
+                                                <span class="sku product-unipue mb--10"><span style="font-weight: 400; margin-right: 10px;">SKU: </span> EK-@product.Id.ToString("0000")</span>
+                                                <span class="catagorys product-unipue mb--10"><span style="font-weight: 400; margin-right: 10px;">Category: </span> @product.CategoryName</span>
+                                                <span class="tags product-unipue mb--10"><span style="font-weight: 400; margin-right: 10px;">Stock: </span> @product.StockQuantity</span>
                                             </div>
                                             <div class="share-option-shop-details">
                                                 <div class="single-share-option">
@@ -1055,14 +1040,14 @@
                                 <div class="tab-pane fade   show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
                                     <div class="single-tab-content-shop-details">
                                         <p class="disc">
-                                            Uninhibited carnally hired played in whimpered dear gorilla koala depending and much yikes off far quetzal goodness and from for grimaced goodness unaccountably and meadowlark near unblushingly crucial scallop tightly neurotic hungrily some and dear furiously this apart.
+                                            @(string.IsNullOrWhiteSpace(product.Description) ? "The product description is not filled in yet." : product.Description)
                                         </p>
                                         <div class="details-row-2">
                                             <div class="left-area">
-                                                <img src="/assets/ekomart/images/shop/06.jpg" alt="shop">
+                                                <img src="@productImage" alt="@product.Name">
                                             </div>
                                             <div class="right">
-                                                <h4 class="title">All Natural Italian-Style Chicken Meatballs</h4>
+                                                <h4 class="title">@product.Name</h4>
                                                 <p class="mb--25">
                                                     Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. ibero sit amet quam egestas semperAenean ultricies mi vitae est Mauris placerat eleifend.
                                                 </p>

@@ -1,4 +1,8 @@
-@{ Layout = null; }
+@model Ekomart.Web.Models.Store.HomeIndexViewModel
+@using Ekomart.Web.Models.Store
+@{
+    Layout = null;
+}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,8 +14,8 @@
     <title>Shared on THEMELOCK.COM - Ekomart-Grocery-Store(e-Commerce) HTML Template</title>
     <link rel="shortcut icon" type="image/x-icon" href="/assets/ekomart/images/fav.png">
     <!-- plugins css -->
-    <link rel="stylesheet preload" href="/assets/ekomart/css/plugins.css" as="style">
-    <link rel="stylesheet preload" href="/assets/ekomart/css/style.css" as="style">
+    <link rel="stylesheet" href="/assets/ekomart/css/plugins.css">
+    <link rel="stylesheet" href="/assets/ekomart/css/style.css">
 
 </head>
 
@@ -1041,86 +1045,15 @@
                                 }
                             }'>
                                 <div class="swiper-wrapper">
-                                    <!-- single swiper start -->
-                                    <div class="swiper-slide">
-                                        <a href="/Catalog" class="single-category-one">
-                                            <img src="/assets/ekomart/images/category/01.png" alt="category">
-                                            <p>Organic Vegetable</p>
-                                        </a>
-                                    </div>
-                                    <!-- single swiper start -->
-                                    <!-- single swiper start -->
-                                    <div class="swiper-slide">
-                                        <a href="/Catalog" class="single-category-one">
-                                            <img src="/assets/ekomart/images/category/02.png" alt="category">
-                                            <p>Organic Vegetable</p>
-                                        </a>
-                                    </div>
-                                    <!-- single swiper start -->
-                                    <!-- single swiper start -->
-                                    <div class="swiper-slide">
-                                        <a href="/Catalog" class="single-category-one">
-                                            <img src="/assets/ekomart/images/category/03.png" alt="category">
-                                            <p>Organic Vegetable</p>
-                                        </a>
-                                    </div>
-                                    <!-- single swiper start -->
-                                    <!-- single swiper start -->
-                                    <div class="swiper-slide">
-                                        <a href="/Catalog" class="single-category-one">
-                                            <img src="/assets/ekomart/images/category/04.png" alt="category">
-                                            <p>Organic Vegetable</p>
-                                        </a>
-                                    </div>
-                                    <!-- single swiper start -->
-                                    <!-- single swiper start -->
-                                    <div class="swiper-slide">
-                                        <a href="/Catalog" class="single-category-one">
-                                            <img src="/assets/ekomart/images/category/05.png" alt="category">
-                                            <p>Organic Vegetable</p>
-                                        </a>
-                                    </div>
-                                    <!-- single swiper start -->
-                                    <!-- single swiper start -->
-                                    <div class="swiper-slide">
-                                        <a href="/Catalog" class="single-category-one">
-                                            <img src="/assets/ekomart/images/category/06.png" alt="category">
-                                            <p>Organic Vegetable</p>
-                                        </a>
-                                    </div>
-                                    <!-- single swiper start -->
-                                    <!-- single swiper start -->
-                                    <div class="swiper-slide">
-                                        <a href="/Catalog" class="single-category-one">
-                                            <img src="/assets/ekomart/images/category/07.png" alt="category">
-                                            <p>Organic Vegetable</p>
-                                        </a>
-                                    </div>
-                                    <!-- single swiper start -->
-                                    <!-- single swiper start -->
-                                    <div class="swiper-slide">
-                                        <a href="/Catalog" class="single-category-one">
-                                            <img src="/assets/ekomart/images/category/08.png" alt="category">
-                                            <p>Organic Vegetable</p>
-                                        </a>
-                                    </div>
-                                    <!-- single swiper start -->
-                                    <!-- single swiper start -->
-                                    <div class="swiper-slide">
-                                        <a href="/Catalog" class="single-category-one">
-                                            <img src="/assets/ekomart/images/category/09.png" alt="category">
-                                            <p>Organic Vegetable</p>
-                                        </a>
-                                    </div>
-                                    <!-- single swiper start -->
-                                    <!-- single swiper start -->
-                                    <div class="swiper-slide">
-                                        <a href="/Catalog" class="single-category-one">
-                                            <img src="/assets/ekomart/images/category/10.png" alt="category">
-                                            <p>Organic Vegetable</p>
-                                        </a>
-                                    </div>
-                                    <!-- single swiper start -->
+                                    @foreach (var category in Model.Categories)
+                                    {
+                                        <div class="swiper-slide">
+                                            <a asp-controller="Catalog" asp-action="Index" asp-route-categorySlug="@category.Slug" class="single-category-one">
+                                                <img src="@StoreViewHelpers.CategoryImage(category.Id)" alt="@category.Name">
+                                                <p>@category.Name</p>
+                                            </a>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -1284,6 +1217,69 @@
                             }
                         }'>
                             <div class="swiper-wrapper">
+                                @if (Model.FeaturedProducts.Count > 0)
+                                {
+                                    foreach (var featuredProduct in Model.FeaturedProducts)
+                                    {
+                                        var featuredImage = StoreViewHelpers.ProductImage(featuredProduct.ImageUrl, featuredProduct.Id);
+                                        <div class="swiper-slide">
+                                            <div class="single-shopping-card-one">
+                                                <div class="image-and-action-area-wrapper">
+                                                    <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@featuredProduct.Slug" class="thumbnail-preview">
+                                                        <div class="badge">
+                                                            <span>New<br>Item</span>
+                                                            <i class="fa-solid fa-bookmark"></i>
+                                                        </div>
+                                                        <img src="@featuredImage" alt="@featuredProduct.Name">
+                                                    </a>
+                                                    <div class="action-share-option">
+                                                        <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
+                                                            <i class="fa-light fa-heart"></i>
+                                                        </div>
+                                                        <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                            <i class="fa-solid fa-arrows-retweet"></i>
+                                                        </div>
+                                                        <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@featuredProduct.Slug" class="single-action openuptip" data-flow="up" title="View Details">
+                                                            <i class="fa-regular fa-eye"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="body-content">
+                                                    <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@featuredProduct.Slug">
+                                                        <h4 class="title">@featuredProduct.Name</h4>
+                                                    </a>
+                                                    <span class="availability">@featuredProduct.CategoryName</span>
+                                                    <div class="price-area">
+                                                        <span class="current">@StoreViewHelpers.Money(featuredProduct.Price)</span>
+                                                    </div>
+                                                    <form asp-controller="Cart" asp-action="Add" method="post" class="cart-counter-action">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="productId" value="@featuredProduct.Id">
+                                                        <input type="hidden" name="returnUrl" value="@ViewContext.HttpContext.Request.Path">
+                                                        <div class="quantity-edit">
+                                                            <input type="number" name="quantity" class="input" value="1" min="1" max="@Math.Max(featuredProduct.StockQuantity, 1)">
+                                                            <div class="button-wrapper-action">
+                                                                <button type="button" class="button"><i class="fa-regular fa-chevron-down"></i></button>
+                                                                <button type="button" class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
+                                                            </div>
+                                                        </div>
+                                                        <button type="submit" class="rts-btn btn-primary radious-sm with-icon">
+                                                            <div class="btn-text">Add</div>
+                                                            <div class="arrow-icon">
+                                                                <i class="fa-regular fa-cart-shopping"></i>
+                                                            </div>
+                                                            <div class="arrow-icon">
+                                                                <i class="fa-regular fa-cart-shopping"></i>
+                                                            </div>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
                                 <!-- single swiper start -->
                                 <div class="swiper-slide">
                                     <div class="single-shopping-card-one">
@@ -1714,6 +1710,7 @@
                                     </div>
                                 </div>
                                 <!-- single swiper start -->
+                                }
                             </div>
                         </div>
                     </div>

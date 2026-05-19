@@ -1,14 +1,38 @@
 using System.Diagnostics;
+using Ekomart.Application.DTOs.Catalog;
+using Ekomart.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Ekomart.Web.Models;
+using Ekomart.Web.Models.Store;
 
 namespace Ekomart.Web.Controllers;
 
 public class HomeController : Controller
 {
-    public IActionResult Index()
+    private readonly ICatalogService _catalogService;
+
+    public HomeController(ICatalogService catalogService)
     {
-        return View();
+        _catalogService = catalogService;
+    }
+
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    {
+        var categories = await _catalogService.GetActiveCategoriesAsync(cancellationToken);
+        var products = await _catalogService.GetProductsAsync(
+            new CatalogFilterDto
+            {
+                PageNumber = 1,
+                PageSize = 8,
+                Sort = "newest"
+            },
+            cancellationToken);
+
+        return View(new HomeIndexViewModel
+        {
+            Categories = categories,
+            FeaturedProducts = products.Items
+        });
     }
 
     public IActionResult Privacy()

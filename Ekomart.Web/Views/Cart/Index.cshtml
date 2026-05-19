@@ -1,4 +1,13 @@
-@{ Layout = null; }
+@model Ekomart.Web.Models.Store.CartPageViewModel
+@using Ekomart.Web.Models.Store
+@{
+    Layout = null;
+    var freeShippingThreshold = 60m;
+    var freeShippingRemaining = Math.Max(0m, freeShippingThreshold - Model.Cart.ItemsTotal);
+    var freeShippingProgress = freeShippingThreshold <= 0m
+        ? 100m
+        : Math.Min(100m, Math.Round(Model.Cart.ItemsTotal / freeShippingThreshold * 100m));
+}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,8 +19,8 @@
     <title>Shared on THEMELOCK.COM - Ekomart-Grocery-Store(e-Commerce) HTML Template</title>
     <link rel="shortcut icon" type="image/x-icon" href="/assets/ekomart/images/fav.png">
     <!-- plugins css -->
-    <link rel="stylesheet preload" href="/assets/ekomart/css/plugins.css" as="style">
-    <link rel="stylesheet preload" href="/assets/ekomart/css/style.css" as="style">
+    <link rel="stylesheet" href="/assets/ekomart/css/plugins.css">
+    <link rel="stylesheet" href="/assets/ekomart/css/style.css">
 
 </head>
 
@@ -934,16 +943,33 @@
                 <div class="col-xl-9 col-lg-12 col-md-12 col-12 order-2 order-xl-1 order-lg-2 order-md-2 order-sm-2">
                     <div class="cart-area-main-wrapper">
                         <div class="cart-top-area-note">
-                            <p>Add <span>$59.69</span> to cart and get free shipping</p>
+                            <p>
+                                @if (freeShippingRemaining > 0)
+                                {
+                                    <text>Add <span>@StoreViewHelpers.Money(freeShippingRemaining)</span> to cart and get free shipping</text>
+                                }
+                                else
+                                {
+                                    <text>Your order qualifies for free shipping</text>
+                                }
+                            </p>
                             <div class="bottom-content-deals mt--10">
                                 <div class="single-progress-area-incard">
                                     <div class="progress">
-                                        <div class="progress-bar wow fadeInLeft" role="progressbar" style="width: 80%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                        <div class="progress-bar wow fadeInLeft" role="progressbar" style="width: @freeShippingProgress%" aria-valuenow="@freeShippingProgress" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    @if (TempData["CartMessage"] is string cartMessage)
+                    {
+                        <div class="alert alert-success mt--20">@cartMessage</div>
+                    }
+                    @if (TempData["CartError"] is string cartError)
+                    {
+                        <div class="alert alert-danger mt--20">@cartError</div>
+                    }
                     <div class="rts-cart-list-area">
                         <div class="single-cart-area-list head">
                             <div class="product-main">
@@ -959,99 +985,64 @@
                                 <p>SubTotal</p>
                             </div>
                         </div>
-                        <div class="single-cart-area-list main  item-parent">
-                            <div class="product-main-cart">
-                                <div class="close section-activation">
-                                    <i class="fa-regular fa-x"></i>
-                                </div>
-                                <div class="thumbnail">
-                                    <img src="/assets/ekomart/images/shop/02.png" alt="shop">
-                                </div>
-                                <div class="information">
-                                    <h6 class="title">SunChips Minis, Garden Salsa Flavored Canister, Multigrain Chips</h6>
-                                    <span>SKU:BG-1001</span>
-                                </div>
-                            </div>
-                            <div class="price">
-                                <p>$550.00</p>
-                            </div>
-                            <div class="quantity">
-                                <div class="quantity-edit">
-                                    <input type="text" class="input" value="1">
-                                    <div class="button-wrapper-action">
-                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
+                        @if (Model.Cart.Items.Count == 0)
+                        {
+                            <div class="single-cart-area-list main item-parent">
+                                <div class="product-main-cart">
+                                    <div class="information">
+                                        <h6 class="title">Your cart is empty</h6>
+                                        <span>Add products from the catalog to continue.</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="subtotal">
-                                <p>$550.00</p>
-                            </div>
-                        </div>
-                        <div class="single-cart-area-list main  item-parent">
-                            <div class="product-main-cart">
-                                <div class="close section-activation">
-                                    <i class="fa-regular fa-x"></i>
-                                </div>
-                                <div class="thumbnail">
-                                    <img src="/assets/ekomart/images/shop/04.png" alt="shop">
-                                </div>
-                                <div class="information">
-                                    <h6 class="title">SunChips Minis, Garden Salsa Flavored Canister, Multigrain Chips</h6>
-                                    <span>SKU:BG-1001</span>
-                                </div>
-                            </div>
-                            <div class="price">
-                                <p>$550.00</p>
-                            </div>
-                            <div class="quantity">
-                                <div class="quantity-edit">
-                                    <input type="text" class="input" value="1">
-                                    <div class="button-wrapper-action">
-                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
+                        }
+                        else
+                        {
+                            foreach (var item in Model.Cart.Items)
+                            {
+                                var image = StoreViewHelpers.ProductImage(item.ImageUrl, item.ProductId);
+                                <div class="single-cart-area-list main item-parent">
+                                    <div class="product-main-cart">
+                                        <form asp-controller="Cart" asp-action="Remove" method="post" class="close section-activation">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="productId" value="@item.ProductId">
+                                            <button type="submit" class="border-0 bg-transparent p-0"><i class="fa-regular fa-x"></i></button>
+                                        </form>
+                                        <div class="thumbnail">
+                                            <img src="@image" alt="@item.ProductName">
+                                        </div>
+                                        <div class="information">
+                                            <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@item.ProductSlug">
+                                                <h6 class="title">@item.ProductName</h6>
+                                            </a>
+                                            <span>SKU: EK-@item.ProductId.ToString("0000")</span>
+                                        </div>
+                                    </div>
+                                    <div class="price">
+                                        <p>@StoreViewHelpers.Money(item.UnitPrice)</p>
+                                    </div>
+                                    <div class="quantity">
+                                        <form asp-controller="Cart" asp-action="Update" method="post" class="quantity-edit">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="ProductId" value="@item.ProductId">
+                                            <input type="number" name="Quantity" class="input" value="@item.Quantity" min="0">
+                                            <div class="button-wrapper-action">
+                                                <button type="submit" class="button plus"><i class="fa-regular fa-check"></i></button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="subtotal">
+                                        <p>@StoreViewHelpers.Money(item.LineTotal)</p>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="subtotal">
-                                <p>$550.00</p>
-                            </div>
-                        </div>
-                        <div class="single-cart-area-list main  item-parent">
-                            <div class="product-main-cart">
-                                <div class="close section-activation">
-                                    <i class="fa-regular fa-x"></i>
-                                </div>
-                                <div class="thumbnail">
-                                    <img src="/assets/ekomart/images/shop/05.png" alt="shop">
-                                </div>
-                                <div class="information">
-                                    <h6 class="title">SunChips Minis, Garden Salsa Flavored Canister, Multigrain Chips</h6>
-                                    <span>SKU:BG-1001</span>
-                                </div>
-                            </div>
-                            <div class="price">
-                                <p>$550.00</p>
-                            </div>
-                            <div class="quantity">
-                                <div class="quantity-edit">
-                                    <input type="text" class="input" value="1">
-                                    <div class="button-wrapper-action">
-                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="subtotal">
-                                <p>$550.00</p>
-                            </div>
-                        </div>
+                            }
+                        }
                         <div class="bottom-cupon-code-cart-area">
                             <form action="#">
                                 <input type="text" placeholder="Cupon Code">
-                                <button class="rts-btn btn-primary">Apply Coupon</button>
+                                <button class="rts-btn btn-primary" disabled>Apply Coupon</button>
                             </form>
-                            <a href="#" class="rts-btn btn-primary mr--50">Clear All</a>
+                            <a asp-controller="Catalog" asp-action="Index" class="rts-btn btn-primary mr--50">Continue Shopping</a>
                         </div>
                     </div>
                 </div>
@@ -1060,7 +1051,7 @@
                         <h5 class="title">Cart Totals</h5>
                         <div class="subtotal">
                             <span>Subtotal</span>
-                            <h6 class="price">$1100.00</h6>
+                            <h6 class="price">@StoreViewHelpers.Money(Model.Cart.ItemsTotal)</h6>
                         </div>
                         <div class="shipping">
                             <span>Shipping</span>
@@ -1093,17 +1084,24 @@
                                 <li>
                                     <p>Shipping options will be updated
                                         during checkout</p>
-                                    <p class="bold">Calculate Shipping</p>
+                                    <p class="bold">@Model.Cart.TotalQuantity item(s)</p>
                                 </li>
                             </ul>
                         </div>
                         <div class="bottom">
                             <div class="wrapper">
                                 <span>Subtotal</span>
-                                <h6 class="price">$1100.00</h6>
+                                <h6 class="price">@StoreViewHelpers.Money(Model.Cart.ItemsTotal)</h6>
                             </div>
                             <div class="button-area">
-                                <button class="rts-btn btn-primary">Proceed To Checkout</button>
+                                @if (Model.Cart.Items.Count == 0)
+                                {
+                                    <a asp-controller="Catalog" asp-action="Index" class="rts-btn btn-primary">Go Shopping</a>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Orders" asp-action="Checkout" class="rts-btn btn-primary">Proceed To Checkout</a>
+                                }
                             </div>
                         </div>
                     </div>

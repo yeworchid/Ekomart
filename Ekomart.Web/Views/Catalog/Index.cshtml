@@ -1,4 +1,13 @@
-@{ Layout = null; }
+@model Ekomart.Web.Models.Store.CatalogIndexViewModel
+@using Ekomart.Web.Models.Store
+@{
+    Layout = null;
+    var firstProductNumber = Model.Products.TotalCount == 0
+        ? 0
+        : ((Model.Products.PageNumber - 1) * Model.Products.PageSize) + 1;
+    var lastProductNumber = Math.Min(Model.Products.PageNumber * Model.Products.PageSize, Model.Products.TotalCount);
+    var returnUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}";
+}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,8 +19,8 @@
     <title>Shared on THEMELOCK.COM - Ekomart-Grocery-Store(e-Commerce) HTML Template</title>
     <link rel="shortcut icon" type="image/x-icon" href="/assets/ekomart/images/fav.png">
     <!-- plugins css -->
-    <link rel="stylesheet preload" href="/assets/ekomart/css/plugins.css" as="style">
-    <link rel="stylesheet preload" href="/assets/ekomart/css/style.css" as="style">
+    <link rel="stylesheet" href="/assets/ekomart/css/plugins.css">
+    <link rel="stylesheet" href="/assets/ekomart/css/style.css">
 
 </head>
 
@@ -937,20 +946,24 @@
                         <div class="single-filter-box">
                             <h5 class="title">Widget Price Filter</h5>
                             <div class="filterbox-body">
-                                <form action="#" class="price-input-area">
+                                <form asp-controller="Catalog" asp-action="Index" method="get" class="price-input-area">
+                                    <input type="hidden" name="Search" value="@Model.Filter.Search">
+                                    <input type="hidden" name="CategorySlug" value="@Model.Filter.CategorySlug">
+                                    <input type="hidden" name="Sort" value="@Model.Filter.Sort">
+                                    <input type="hidden" name="PageSize" value="@Model.Filter.PageSize">
                                     <div class="half-input-wrapper">
                                         <div class="single">
                                             <label for="min">Min price</label>
-                                            <input id="min" type="text" value="0">
+                                            <input id="min" name="MinPrice" type="number" min="0" step="0.01" value="@Model.Filter.MinPrice">
                                         </div>
                                         <div class="single">
                                             <label for="max">Max price</label>
-                                            <input id="max" type="text" value="150">
+                                            <input id="max" name="MaxPrice" type="number" min="0" step="0.01" value="@Model.Filter.MaxPrice">
                                         </div>
                                     </div>
                                     <input type="range" class="range">
                                     <div class="filter-value-min-max">
-                                        <span>Price: $10 — $90</span>
+                                        <span>Price: @(Model.Filter.MinPrice?.ToString("0.##") ?? "0") — @(Model.Filter.MaxPrice?.ToString("0.##") ?? "Any")</span>
                                         <button class="rts-btn btn-primary">Filter</button>
                                     </div>
                                 </form>
@@ -960,70 +973,23 @@
                             <h5 class="title">Product Categories</h5>
                             <div class="filterbox-body">
                                 <div class="category-wrapper ">
-                                    <!-- single category -->
                                     <div class="single-category">
-                                        <input id="cat1" type="checkbox">
-                                        <label for="cat1">Beverages
-                                        </label>
+                                        <a asp-controller="Catalog" asp-action="Index">All Categories</a>
                                     </div>
-                                    <!-- single category end -->
-                                    <!-- single category -->
-                                    <div class="single-category">
-                                        <input id="cat2" type="checkbox">
-                                        <label for="cat2">Biscuits & Snacks
-
-                                        </label>
-                                    </div>
-                                    <!-- single category end -->
-                                    <!-- single category -->
-                                    <div class="single-category">
-                                        <input id="cat3" type="checkbox">
-                                        <label for="cat3">Breads & Bakery
-                                        </label>
-                                    </div>
-                                    <!-- single category end -->
-                                    <!-- single category -->
-                                    <div class="single-category">
-                                        <input id="cat4" type="checkbox">
-                                        <label for="cat4">Breakfast & Dairy
-                                        </label>
-                                    </div>
-                                    <!-- single category end -->
-                                    <!-- single category -->
-                                    <div class="single-category">
-                                        <input id="cat7" type="checkbox">
-                                        <label for="cat7">Grocery & Staples
-                                        </label>
-                                    </div>
-                                    <!-- single category end -->
-                                    <!-- single category -->
-                                    <div class="single-category">
-                                        <input id="cat6" type="checkbox">
-                                        <label for="cat6">Fruits & Vegetables
-                                        </label>
-                                    </div>
-                                    <!-- single category end -->
-                                    <!-- single category -->
-                                    <div class="single-category">
-                                        <input id="cat8" type="checkbox">
-                                        <label for="cat8">Household Needs
-                                        </label>
-                                    </div>
-                                    <!-- single category end -->
-                                    <!-- single category -->
-                                    <div class="single-category">
-                                        <input id="cat10" type="checkbox">
-                                        <label for="cat10">Meats & Seafood
-                                        </label>
-                                    </div>
-                                    <!-- single category end -->
-                                    <!-- single category -->
-                                    <div class="single-category">
-                                        <input id="cat80" type="checkbox">
-                                        <label for="cat80">Grocery & Staples
-                                        </label>
-                                    </div>
-                                    <!-- single category end -->
+                                    @foreach (var category in Model.Categories)
+                                    {
+                                        <div class="single-category">
+                                            <a asp-controller="Catalog"
+                                               asp-action="Index"
+                                               asp-route-categorySlug="@category.Slug"
+                                               asp-route-search="@Model.Filter.Search"
+                                               asp-route-minPrice="@Model.Filter.MinPrice"
+                                               asp-route-maxPrice="@Model.Filter.MaxPrice"
+                                               asp-route-sort="@Model.Filter.Sort">
+                                                @category.Name
+                                            </a>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -1097,1701 +1063,145 @@
                 <div class="col-xl-9 col-lg-12">
                     <div class="filter-select-area">
                         <div class="top-filter">
-                            <span>Showing 1–20 of 57 results</span>
+                            <span>Showing @firstProductNumber-@lastProductNumber of @Model.Products.TotalCount results</span>
                             <div class="right-end">
-                                <span>Sort: Short By Latest</span>
-                                <div class="button-tab-area">
-                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link single-button active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
-                                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <rect x="0.5" y="0.5" width="6" height="6" rx="1.5" stroke="#2C3B28" />
-                                                    <rect x="0.5" y="9.5" width="6" height="6" rx="1.5" stroke="#2C3B28" />
-                                                    <rect x="9.5" y="0.5" width="6" height="6" rx="1.5" stroke="#2C3B28" />
-                                                    <rect x="9.5" y="9.5" width="6" height="6" rx="1.5" stroke="#2C3B28" />
-                                                </svg>
-                                            </button>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link single-button" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
-                                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <rect x="0.5" y="0.5" width="6" height="6" rx="1.5" stroke="#2C3C28" />
-                                                    <rect x="0.5" y="9.5" width="6" height="6" rx="1.5" stroke="#2C3C28" />
-                                                    <rect x="9" y="3" width="7" height="1" fill="#2C3C28" />
-                                                    <rect x="9" y="12" width="7" height="1" fill="#2C3C28" />
-                                                </svg>
-                                            </button>
-                                        </li>
-                                    </ul>
-
-                                </div>
+                                <span>Sort: @(string.IsNullOrWhiteSpace(Model.Filter.Sort) ? "Latest" : Model.Filter.Sort)</span>
                             </div>
                         </div>
-                        <div class="nice-select-area-wrapper-and-button">
+                        <form asp-controller="Catalog" asp-action="Index" method="get" class="nice-select-area-wrapper-and-button">
                             <div class="nice-select-wrapper-1">
                                 <div class="single-select">
-                                    <select>
-                                        <option data-display="All Categories">All Categories</option>
-                                        <option value="1">Some option</option>
-                                        <option value="2">Another option</option>
-                                        <option value="3" disabled>A disabled option</option>
-                                        <option value="4">Potato</option>
+                                    <input type="text" name="Search" value="@Model.Filter.Search" placeholder="Search products">
+                                </div>
+                                <div class="single-select">
+                                    <select name="CategorySlug">
+                                        <option value="">All Categories</option>
+                                        @foreach (var category in Model.Categories)
+                                        {
+                                            <option value="@category.Slug" selected="@(category.Slug == Model.Filter.CategorySlug ? "selected" : null)">@category.Name</option>
+                                        }
                                     </select>
                                 </div>
                                 <div class="single-select">
-                                    <select>
-                                        <option data-display="All Brands">All Brands</option>
-                                        <option value="1">Some option</option>
-                                        <option value="2">Another option</option>
-                                        <option value="3" disabled>A disabled option</option>
-                                        <option value="4">Potato</option>
+                                    <select name="Sort">
+                                        <option value="">Latest</option>
+                                        <option value="price_asc" selected="@(Model.Filter.Sort == "price_asc" ? "selected" : null)">Price: Low to High</option>
+                                        <option value="price_desc" selected="@(Model.Filter.Sort == "price_desc" ? "selected" : null)">Price: High to Low</option>
+                                        <option value="name" selected="@(Model.Filter.Sort == "name" ? "selected" : null)">Name</option>
                                     </select>
                                 </div>
                                 <div class="single-select">
-                                    <select>
-                                        <option data-display="All Size">All Size </option>
-                                        <option value="1">Some option</option>
-                                        <option value="2">Another option</option>
-                                        <option value="3" disabled>A disabled option</option>
-                                        <option value="4">Potato</option>
-                                    </select>
-                                </div>
-                                <div class="single-select">
-                                    <select>
-                                        <option data-display="All Weight">All Weight</option>
-                                        <option value="1">Some option</option>
-                                        <option value="2">Another option</option>
-                                        <option value="3" disabled>A disabled option</option>
-                                        <option value="4">Potato</option>
-                                    </select>
+                                    <input type="hidden" name="MinPrice" value="@Model.Filter.MinPrice">
+                                    <input type="hidden" name="MaxPrice" value="@Model.Filter.MaxPrice">
+                                    <input type="hidden" name="PageSize" value="@Model.Filter.PageSize">
                                 </div>
                             </div>
                             <div class="button-area">
-                                <button class="rts-btn">Filter</button>
-                                <button class="rts-btn">Reset Filter</button>
+                                <button class="rts-btn" type="submit">Filter</button>
+                                <a asp-controller="Catalog" asp-action="Index" class="rts-btn">Reset Filter</a>
                             </div>
+                        </form>
+                    </div>
+
+                    @if (TempData["CartMessage"] is string cartMessage)
+                    {
+                        <div class="alert alert-success mt--20">@cartMessage</div>
+                    }
+                    @if (TempData["CartError"] is string cartError)
+                    {
+                        <div class="alert alert-danger mt--20">@cartError</div>
+                    }
+
+                    <div class="product-area-wrapper-shopgrid-list mt--20">
+                        <div class="row g-4">
+                            @if (Model.Products.Items.Count == 0)
+                            {
+                                <div class="col-12">
+                                    <div class="single-shopping-card-one p--30">
+                                        <h4 class="title">No products found</h4>
+                                        <p class="availability">Try changing the filters.</p>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                foreach (var item in Model.Products.Items)
+                                {
+                                    var image = StoreViewHelpers.ProductImage(item.ImageUrl, item.Id);
+                                    <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
+                                        <div class="single-shopping-card-one">
+                                            <div class="image-and-action-area-wrapper">
+                                                <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@item.Slug" class="thumbnail-preview">
+                                                    <div class="badge">
+                                                        <span>@(item.StockQuantity > 0 ? "In" : "Out")<br>Stock</span>
+                                                        <i class="fa-solid fa-bookmark"></i>
+                                                    </div>
+                                                    <img src="@image" alt="@item.Name">
+                                                </a>
+                                                <div class="action-share-option">
+                                                    <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
+                                                        <i class="fa-light fa-heart"></i>
+                                                    </div>
+                                                    <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                        <i class="fa-solid fa-arrows-retweet"></i>
+                                                    </div>
+                                                    <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@item.Slug" class="single-action openuptip" data-flow="up" title="View Details">
+                                                        <i class="fa-regular fa-eye"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="body-content">
+                                                <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@item.Slug">
+                                                    <h4 class="title">@item.Name</h4>
+                                                </a>
+                                                <span class="availability">@item.CategoryName</span>
+                                                <div class="price-area">
+                                                    <span class="current">@StoreViewHelpers.Money(item.Price)</span>
+                                                </div>
+                                                <form asp-controller="Cart" asp-action="Add" method="post" class="cart-counter-action">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="productId" value="@item.Id">
+                                                    <input type="hidden" name="returnUrl" value="@returnUrl">
+                                                    <div class="quantity-edit">
+                                                        <input type="number" name="quantity" class="input" value="1" min="1" max="@Math.Max(item.StockQuantity, 1)">
+                                                        <div class="button-wrapper-action">
+                                                            <button type="button" class="button"><i class="fa-regular fa-chevron-down"></i></button>
+                                                            <button type="button" class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" class="rts-btn btn-primary radious-sm with-icon" @(item.StockQuantity <= 0 ? "disabled" : null)>
+                                                        <div class="btn-text">Add To Cart</div>
+                                                        <div class="arrow-icon">
+                                                            <i class="fa-regular fa-cart-shopping"></i>
+                                                        </div>
+                                                        <div class="arrow-icon">
+                                                            <i class="fa-regular fa-cart-shopping"></i>
+                                                        </div>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
                         </div>
                     </div>
 
-                    <div class="tab-content" id="myTabContent">
-                        <div class="product-area-wrapper-shopgrid-list mt--20 tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
-                            <div class="row g-4">
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/01.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">Best Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/02.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">None Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/03.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">More Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/04.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">Tech Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/05.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">Food Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/06.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">Vagetable Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/03.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">Juice Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/05.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">Coco Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/02.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">Morp Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/06.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">Visan Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/01.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">Porsta Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/02.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">Chicken Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/03.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">Manus Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/04.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">Sajid Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-20 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <div class="single-shopping-card-one">
-                                        <!-- iamge and sction area start -->
-                                        <div class="image-and-action-area-wrapper">
-                                            <a href="/Catalog/Details" class="thumbnail-preview">
-                                                <div class="badge">
-                                                    <span>25% <br> 
-                                                        Off
-                                                    </span>
-                                                    <i class="fa-solid fa-bookmark"></i>
-                                                </div>
-                                                <img src="/assets/ekomart/images/grocery/05.jpg" alt="grocery">
-                                            </a>
-                                            <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
-                                                <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
-                                                    <i class="fa-regular fa-eye"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- iamge and sction area start -->
-
-                                        <div class="body-content">
-
-                                            <a href="/Catalog/Details">
-                                                <h4 class="title">Kolid Cerelac Mixed Fruits &amp;
-                                                    Wheat with Milk</h4>
-                                            </a>
-                                            <span class="availability">500g Pack</span>
-                                            <div class="price-area">
-                                                <span class="current">$36.00</span>
-                                                <div class="previous">$36.00</div>
-                                            </div>
-                                            <div class="cart-counter-action">
-                                                <div class="quantity-edit">
-                                                    <input type="text" class="input" value="1">
-                                                    <div class="button-wrapper-action">
-                                                        <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                        <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    @if (Model.Products.TotalPages > 1)
+                    {
+                        <div class="pagination-area-main-wrappper mt--40">
+                            <ul>
+                                @for (var pageNumber = 1; pageNumber <= Model.Products.TotalPages; pageNumber++)
+                                {
+                                    <li>
+                                        <a class="@(pageNumber == Model.Products.PageNumber ? "active" : null)"
+                                           href="@Url.Action("Index", "Catalog", new { pageNumber, pageSize = Model.Filter.PageSize, search = Model.Filter.Search, categorySlug = Model.Filter.CategorySlug, minPrice = Model.Filter.MinPrice, maxPrice = Model.Filter.MaxPrice, sort = Model.Filter.Sort })">@pageNumber</a>
+                                    </li>
+                                }
+                            </ul>
                         </div>
-                        <div class="product-area-wrapper-shopgrid-list with-list mt--20 tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="single-shopping-card-one discount-offer">
-                                        <a href="/Catalog/Details" class="thumbnail-preview">
-                                            <div class="badge">
-                                                <span>25% <br> 
-                                                    Off
-                                                </span>
-                                                <i class="fa-solid fa-bookmark"></i>
-                                            </div>
-                                            <img src="/assets/ekomart/images/grocery/03.jpg" alt="grocery">
-                                        </a>
-                                        <div class="body-content">
-                                            <div class="title-area-left">
-                                                <a href="/Catalog/Details">
-                                                    <h4 class="title">Nestle Cerelac Mixed Fruits &amp;
-                                                        Wheat with Milk</h4>
-                                                </a>
-                                                <span class="availability">500g Pack</span>
-                                                <div class="price-area">
-                                                    <span class="current">$36.00</span>
-                                                    <div class="previous">$36.00</div>
-                                                </div>
-                                                <div class="cart-counter-action">
-                                                    <div class="quantity-edit">
-                                                        <input type="text" class="input" value="1">
-                                                        <div class="button-wrapper-action">
-                                                            <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                            <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                        </div>
-                                                    </div>
-                                                    <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                        <div class="btn-text">
-                                                            Add To Cart
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="natural-value">
-                                                <h6 class="title">
-                                                    Nutritional Values
-                                                </h6>
-                                                <div class="single">
-                                                    <span>Energy(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Protein(g):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>magnetiam(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Calory(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Vitamine(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="single-shopping-card-one discount-offer">
-                                        <a href="/Catalog/Details" class="thumbnail-preview">
-                                            <div class="badge">
-                                                <span>25% <br> 
-                                                    Off
-                                                </span>
-                                                <i class="fa-solid fa-bookmark"></i>
-                                            </div>
-                                            <img src="/assets/ekomart/images/grocery/04.jpg" alt="grocery">
-                                        </a>
-                                        <div class="body-content">
-                                            <div class="title-area-left">
-                                                <a href="/Catalog/Details">
-                                                    <h4 class="title">Varts Cerelac Mixed Fruits &amp;
-                                                        Wheat with Milk</h4>
-                                                </a>
-                                                <span class="availability">500g Pack</span>
-                                                <div class="price-area">
-                                                    <span class="current">$36.00</span>
-                                                    <div class="previous">$36.00</div>
-                                                </div>
-                                                <div class="cart-counter-action">
-                                                    <div class="quantity-edit">
-                                                        <input type="text" class="input" value="1">
-                                                        <div class="button-wrapper-action">
-                                                            <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                            <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                        </div>
-                                                    </div>
-                                                    <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                        <div class="btn-text">
-                                                            Add To Cart
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="natural-value">
-                                                <h6 class="title">
-                                                    Nutritional Values
-                                                </h6>
-                                                <div class="single">
-                                                    <span>Energy(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Protein(g):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>magnetiam(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Calory(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Vitamine(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="single-shopping-card-one discount-offer">
-                                        <a href="/Catalog/Details" class="thumbnail-preview">
-                                            <div class="badge">
-                                                <span>25% <br> 
-                                                    Off
-                                                </span>
-                                                <i class="fa-solid fa-bookmark"></i>
-                                            </div>
-                                            <img src="/assets/ekomart/images/grocery/05.jpg" alt="grocery">
-                                        </a>
-                                        <div class="body-content">
-                                            <div class="title-area-left">
-                                                <a href="/Catalog/Details">
-                                                    <h4 class="title">Nestle Cerelac Mixed Fruits &amp;
-                                                        Wheat with Milk</h4>
-                                                </a>
-                                                <span class="availability">500g Pack</span>
-                                                <div class="price-area">
-                                                    <span class="current">$36.00</span>
-                                                    <div class="previous">$36.00</div>
-                                                </div>
-                                                <div class="cart-counter-action">
-                                                    <div class="quantity-edit">
-                                                        <input type="text" class="input" value="1">
-                                                        <div class="button-wrapper-action">
-                                                            <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                            <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                        </div>
-                                                    </div>
-                                                    <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                        <div class="btn-text">
-                                                            Add To Cart
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="natural-value">
-                                                <h6 class="title">
-                                                    Nutritional Values
-                                                </h6>
-                                                <div class="single">
-                                                    <span>Energy(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Protein(g):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>magnetiam(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Calory(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Vitamine(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="single-shopping-card-one discount-offer">
-                                        <a href="/Catalog/Details" class="thumbnail-preview">
-                                            <div class="badge">
-                                                <span>25% <br> 
-                                                    Off
-                                                </span>
-                                                <i class="fa-solid fa-bookmark"></i>
-                                            </div>
-                                            <img src="/assets/ekomart/images/grocery/06.jpg" alt="grocery">
-                                        </a>
-                                        <div class="body-content">
-                                            <div class="title-area-left">
-                                                <a href="/Catalog/Details">
-                                                    <h4 class="title">Nestle Cerelac Mixed Fruits &amp;
-                                                        Wheat with Milk</h4>
-                                                </a>
-                                                <span class="availability">500g Pack</span>
-                                                <div class="price-area">
-                                                    <span class="current">$36.00</span>
-                                                    <div class="previous">$36.00</div>
-                                                </div>
-                                                <div class="cart-counter-action">
-                                                    <div class="quantity-edit">
-                                                        <input type="text" class="input" value="1">
-                                                        <div class="button-wrapper-action">
-                                                            <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                            <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                        </div>
-                                                    </div>
-                                                    <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                        <div class="btn-text">
-                                                            Add To Cart
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="natural-value">
-                                                <h6 class="title">
-                                                    Nutritional Values
-                                                </h6>
-                                                <div class="single">
-                                                    <span>Energy(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Protein(g):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>magnetiam(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Calory(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Vitamine(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="single-shopping-card-one discount-offer">
-                                        <a href="/Catalog/Details" class="thumbnail-preview">
-                                            <div class="badge">
-                                                <span>25% <br> 
-                                                    Off
-                                                </span>
-                                                <i class="fa-solid fa-bookmark"></i>
-                                            </div>
-                                            <img src="/assets/ekomart/images/grocery/01.jpg" alt="grocery">
-                                        </a>
-                                        <div class="body-content">
-                                            <div class="title-area-left">
-                                                <a href="/Catalog/Details">
-                                                    <h4 class="title">Nestle Cerelac Mixed Fruits &amp;
-                                                        Wheat with Milk</h4>
-                                                </a>
-                                                <span class="availability">500g Pack</span>
-                                                <div class="price-area">
-                                                    <span class="current">$36.00</span>
-                                                    <div class="previous">$36.00</div>
-                                                </div>
-                                                <div class="cart-counter-action">
-                                                    <div class="quantity-edit">
-                                                        <input type="text" class="input" value="1">
-                                                        <div class="button-wrapper-action">
-                                                            <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                            <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                        </div>
-                                                    </div>
-                                                    <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                        <div class="btn-text">
-                                                            Add To Cart
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="natural-value">
-                                                <h6 class="title">
-                                                    Nutritional Values
-                                                </h6>
-                                                <div class="single">
-                                                    <span>Energy(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Protein(g):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>magnetiam(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Calory(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Vitamine(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="single-shopping-card-one discount-offer">
-                                        <a href="/Catalog/Details" class="thumbnail-preview">
-                                            <div class="badge">
-                                                <span>25% <br> 
-                                                    Off
-                                                </span>
-                                                <i class="fa-solid fa-bookmark"></i>
-                                            </div>
-                                            <img src="/assets/ekomart/images/grocery/03.jpg" alt="grocery">
-                                        </a>
-                                        <div class="body-content">
-                                            <div class="title-area-left">
-                                                <a href="/Catalog/Details">
-                                                    <h4 class="title">Nestle Cerelac Mixed Fruits &amp;
-                                                        Wheat with Milk</h4>
-                                                </a>
-                                                <span class="availability">500g Pack</span>
-                                                <div class="price-area">
-                                                    <span class="current">$36.00</span>
-                                                    <div class="previous">$36.00</div>
-                                                </div>
-                                                <div class="cart-counter-action">
-                                                    <div class="quantity-edit">
-                                                        <input type="text" class="input" value="1">
-                                                        <div class="button-wrapper-action">
-                                                            <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                            <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                        </div>
-                                                    </div>
-                                                    <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                        <div class="btn-text">
-                                                            Add To Cart
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="natural-value">
-                                                <h6 class="title">
-                                                    Nutritional Values
-                                                </h6>
-                                                <div class="single">
-                                                    <span>Energy(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Protein(g):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>magnetiam(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Calory(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Vitamine(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="single-shopping-card-one discount-offer">
-                                        <a href="/Catalog/Details" class="thumbnail-preview">
-                                            <div class="badge">
-                                                <span>25% <br> 
-                                                    Off
-                                                </span>
-                                                <i class="fa-solid fa-bookmark"></i>
-                                            </div>
-                                            <img src="/assets/ekomart/images/grocery/04.jpg" alt="grocery">
-                                        </a>
-                                        <div class="body-content">
-                                            <div class="title-area-left">
-                                                <a href="/Catalog/Details">
-                                                    <h4 class="title">Nestle Cerelac Mixed Fruits &amp;
-                                                        Wheat with Milk</h4>
-                                                </a>
-                                                <span class="availability">500g Pack</span>
-                                                <div class="price-area">
-                                                    <span class="current">$36.00</span>
-                                                    <div class="previous">$36.00</div>
-                                                </div>
-                                                <div class="cart-counter-action">
-                                                    <div class="quantity-edit">
-                                                        <input type="text" class="input" value="1">
-                                                        <div class="button-wrapper-action">
-                                                            <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                            <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                        </div>
-                                                    </div>
-                                                    <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                        <div class="btn-text">
-                                                            Add To Cart
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="natural-value">
-                                                <h6 class="title">
-                                                    Nutritional Values
-                                                </h6>
-                                                <div class="single">
-                                                    <span>Energy(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Protein(g):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>magnetiam(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Calory(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Vitamine(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="single-shopping-card-one discount-offer">
-                                        <a href="/Catalog/Details" class="thumbnail-preview">
-                                            <div class="badge">
-                                                <span>25% <br> 
-                                                    Off
-                                                </span>
-                                                <i class="fa-solid fa-bookmark"></i>
-                                            </div>
-                                            <img src="/assets/ekomart/images/grocery/05.jpg" alt="grocery">
-                                        </a>
-                                        <div class="body-content">
-                                            <div class="title-area-left">
-                                                <a href="/Catalog/Details">
-                                                    <h4 class="title">Nestle Cerelac Mixed Fruits &amp;
-                                                        Wheat with Milk</h4>
-                                                </a>
-                                                <span class="availability">500g Pack</span>
-                                                <div class="price-area">
-                                                    <span class="current">$36.00</span>
-                                                    <div class="previous">$36.00</div>
-                                                </div>
-                                                <div class="cart-counter-action">
-                                                    <div class="quantity-edit">
-                                                        <input type="text" class="input" value="1">
-                                                        <div class="button-wrapper-action">
-                                                            <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                            <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                        </div>
-                                                    </div>
-                                                    <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                        <div class="btn-text">
-                                                            Add To Cart
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="natural-value">
-                                                <h6 class="title">
-                                                    Nutritional Values
-                                                </h6>
-                                                <div class="single">
-                                                    <span>Energy(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Protein(g):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>magnetiam(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Calory(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Vitamine(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="single-shopping-card-one discount-offer">
-                                        <a href="/Catalog/Details" class="thumbnail-preview">
-                                            <div class="badge">
-                                                <span>25% <br> 
-                                                    Off
-                                                </span>
-                                                <i class="fa-solid fa-bookmark"></i>
-                                            </div>
-                                            <img src="/assets/ekomart/images/grocery/06.jpg" alt="grocery">
-                                        </a>
-                                        <div class="body-content">
-                                            <div class="title-area-left">
-                                                <a href="/Catalog/Details">
-                                                    <h4 class="title">Nestle Cerelac Mixed Fruits &amp;
-                                                        Wheat with Milk</h4>
-                                                </a>
-                                                <span class="availability">500g Pack</span>
-                                                <div class="price-area">
-                                                    <span class="current">$36.00</span>
-                                                    <div class="previous">$36.00</div>
-                                                </div>
-                                                <div class="cart-counter-action">
-                                                    <div class="quantity-edit">
-                                                        <input type="text" class="input" value="1">
-                                                        <div class="button-wrapper-action">
-                                                            <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                            <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                        </div>
-                                                    </div>
-                                                    <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                        <div class="btn-text">
-                                                            Add To Cart
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="natural-value">
-                                                <h6 class="title">
-                                                    Nutritional Values
-                                                </h6>
-                                                <div class="single">
-                                                    <span>Energy(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Protein(g):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>magnetiam(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Calory(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Vitamine(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="single-shopping-card-one discount-offer">
-                                        <a href="/Catalog/Details" class="thumbnail-preview">
-                                            <div class="badge">
-                                                <span>25% <br> 
-                                                    Off
-                                                </span>
-                                                <i class="fa-solid fa-bookmark"></i>
-                                            </div>
-                                            <img src="/assets/ekomart/images/grocery/01.jpg" alt="grocery">
-                                        </a>
-                                        <div class="body-content">
-                                            <div class="title-area-left">
-                                                <a href="/Catalog/Details">
-                                                    <h4 class="title">Nestle Cerelac Mixed Fruits &amp;
-                                                        Wheat with Milk</h4>
-                                                </a>
-                                                <span class="availability">500g Pack</span>
-                                                <div class="price-area">
-                                                    <span class="current">$36.00</span>
-                                                    <div class="previous">$36.00</div>
-                                                </div>
-                                                <div class="cart-counter-action">
-                                                    <div class="quantity-edit">
-                                                        <input type="text" class="input" value="1">
-                                                        <div class="button-wrapper-action">
-                                                            <button class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                            <button class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                        </div>
-                                                    </div>
-                                                    <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                                        <div class="btn-text">
-                                                            Add To Cart
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                        <div class="arrow-icon">
-                                                            <i class="fa-regular fa-cart-shopping"></i>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="natural-value">
-                                                <h6 class="title">
-                                                    Nutritional Values
-                                                </h6>
-                                                <div class="single">
-                                                    <span>Energy(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Protein(g):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>magnetiam(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Calory(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                                <div class="single">
-                                                    <span>Vitamine(kcal):</span>
-                                                    <span>211</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    }
+
                 </div>
             </div>
         </div>

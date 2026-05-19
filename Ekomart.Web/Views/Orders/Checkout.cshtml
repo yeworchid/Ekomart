@@ -1,4 +1,14 @@
-@{ Layout = null; }
+@model Ekomart.Web.Models.Store.CheckoutPageViewModel
+@using Ekomart.Web.Models.Store
+@{
+    Layout = null;
+    var currentPlan = Model.CurrentSubscription is null
+        ? null
+        : Model.Plans.FirstOrDefault(plan => plan.Id == Model.CurrentSubscription.SubscriptionPlanId);
+    var discountPercent = currentPlan?.DiscountPercent ?? 0m;
+    var discountAmount = Math.Round(Model.Cart.ItemsTotal * discountPercent / 100m, 2);
+    var totalAmount = Math.Max(0m, Model.Cart.ItemsTotal - discountAmount);
+}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,8 +20,8 @@
     <title>Shared on THEMELOCK.COM - Ekomart-Grocery-Store(e-Commerce) HTML Template</title>
     <link rel="shortcut icon" type="image/x-icon" href="/assets/ekomart/images/fav.png">
     <!-- plugins css -->
-    <link rel="stylesheet preload" href="/assets/ekomart/css/plugins.css" as="style">
-    <link rel="stylesheet preload" href="/assets/ekomart/css/style.css" as="style">
+    <link rel="stylesheet" href="/assets/ekomart/css/plugins.css">
+    <link rel="stylesheet" href="/assets/ekomart/css/style.css">
 
 </head>
 
@@ -971,54 +981,32 @@
 
                     <div class="rts-billing-details-area">
                         <h3 class="title">Billing Details</h3>
-                        <form action="#">
+                        <form id="checkout-form" asp-controller="Orders" asp-action="Checkout" method="post">
+                            @Html.AntiForgeryToken()
+                            <div asp-validation-summary="ModelOnly" class="text-danger mb--20"></div>
                             <div class="single-input">
                                 <label for="email">Email Address*</label>
-                                <input id="email" type="text" required>
+                                <input id="email" name="CustomerEmail" type="email" value="@Model.Checkout.CustomerEmail" required>
+                                @Html.ValidationMessage("CustomerEmail", null, new { @class = "text-danger" })
                             </div>
                             <div class="half-input-wrapper">
                                 <div class="single-input">
-                                    <label for="f-name">First Name*</label>
-                                    <input id="f-name" type="text" required>
+                                    <label for="customer-name">Full Name*</label>
+                                    <input id="customer-name" name="CustomerName" type="text" value="@Model.Checkout.CustomerName" required>
+                                    @Html.ValidationMessage("CustomerName", null, new { @class = "text-danger" })
                                 </div>
                                 <div class="single-input">
-                                    <label for="l-name">Last Name*</label>
-                                    <input id="l-name" type="text">
+                                    <label for="phone">Phone*</label>
+                                    <input id="phone" name="CustomerPhone" type="text" value="@Model.Checkout.CustomerPhone" required>
+                                    @Html.ValidationMessage("CustomerPhone", null, new { @class = "text-danger" })
                                 </div>
                             </div>
                             <div class="single-input">
-                                <label for="comp">Company Name (Optional)*</label>
-                                <input id="comp" type="text">
+                                <label for="delivery-address">Delivery Address*</label>
+                                <textarea id="delivery-address" name="DeliveryAddress" required>@Model.Checkout.DeliveryAddress</textarea>
+                                @Html.ValidationMessage("DeliveryAddress", null, new { @class = "text-danger" })
                             </div>
-                            <div class="single-input">
-                                <label for="country">Country / Region*</label>
-                                <input id="country" type="text">
-                            </div>
-                            <div class="single-input">
-                                <label for="street">Street Address*</label>
-                                <input id="street" type="text" required>
-                            </div>
-                            <div class="single-input">
-                                <label for="city">Town / City*</label>
-                                <input id="city" type="text">
-                            </div>
-                            <div class="single-input">
-                                <label for="state">State*</label>
-                                <input id="state" type="text">
-                            </div>
-                            <div class="single-input">
-                                <label for="zip">Zip Code*</label>
-                                <input id="zip" type="text" required>
-                            </div>
-                            <div class="single-input">
-                                <label for="phone">Phone*</label>
-                                <input id="phone" type="text">
-                            </div>
-                            <div class="single-input">
-                                <label for="ordernotes">Order Notes*</label>
-                                <textarea id="ordernotes"></textarea>
-                            </div>
-                            <button class="rts-btn btn-primary">Update Cart</button>
+                            <button class="rts-btn btn-primary" type="submit" @(Model.Cart.Items.Count == 0 ? "disabled" : null)>Place Order</button>
                         </form>
                     </div>
                 </div>
@@ -1033,67 +1021,50 @@
                                 Price
                             </div>
                         </div>
-                        <div class="single-shop-list">
-                            <div class="left-area">
-                                <a href="#" class="thumbnail">
-                                    <img src="/assets/ekomart/images/shop/04.png" alt="">
-                                </a>
-                                <a href="#" class="title">
-                                    Foster Farms Breast Nuggets Shaped Chicken
-                                </a>
+                        @if (Model.Cart.Items.Count == 0)
+                        {
+                            <div class="single-shop-list">
+                                <div class="left-area">
+                                    <span>Your cart is empty</span>
+                                </div>
+                                <a asp-controller="Catalog" asp-action="Index" class="price">Go Shopping</a>
                             </div>
-                            <span class="price">$500.00</span>
-                        </div>
-                        <div class="single-shop-list">
-                            <div class="left-area">
-                                <a href="#" class="thumbnail">
-                                    <img src="/assets/ekomart/images/shop/04.png" alt="">
-                                </a>
-                                <a href="#" class="title">
-                                    Foster Farms Breast Nuggets Shaped Chicken
-                                </a>
-                            </div>
-                            <span class="price">$500.00</span>
-                        </div>
-                        <div class="single-shop-list">
-                            <div class="left-area">
-                                <a href="#" class="thumbnail">
-                                    <img src="/assets/ekomart/images/shop/04.png" alt="">
-                                </a>
-                                <a href="#" class="title">
-                                    Foster Farms Breast Nuggets Shaped Chicken
-                                </a>
-                            </div>
-                            <span class="price">$500.00</span>
-                        </div>
-                        <div class="single-shop-list">
-                            <div class="left-area">
-                                <a href="#" class="thumbnail">
-                                    <img src="/assets/ekomart/images/shop/04.png" alt="">
-                                </a>
-                                <a href="#" class="title">
-                                    Foster Farms Breast Nuggets Shaped Chicken
-                                </a>
-                            </div>
-                            <span class="price">$500.00</span>
-                        </div>
+                        }
+                        else
+                        {
+                            foreach (var item in Model.Cart.Items)
+                            {
+                                var image = StoreViewHelpers.ProductImage(item.ImageUrl, item.ProductId);
+                                <div class="single-shop-list">
+                                    <div class="left-area">
+                                        <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@item.ProductSlug" class="thumbnail">
+                                            <img src="@image" alt="@item.ProductName">
+                                        </a>
+                                        <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@item.ProductSlug" class="title">
+                                            @item.ProductName x @item.Quantity
+                                        </a>
+                                    </div>
+                                    <span class="price">@StoreViewHelpers.Money(item.LineTotal)</span>
+                                </div>
+                            }
+                        }
                         <div class="single-shop-list">
                             <div class="left-area">
                                 <span>Subtotal</span>
                             </div>
-                            <span class="price">$500.00</span>
+                            <span class="price">@StoreViewHelpers.Money(Model.Cart.ItemsTotal)</span>
                         </div>
                         <div class="single-shop-list">
                             <div class="left-area">
-                                <span>Shipping</span>
+                                <span>Subscription Discount</span>
                             </div>
-                            <span class="price">Flat rate: $500.00</span>
+                            <span class="price">@discountPercent.ToString("0.##")% (-@StoreViewHelpers.Money(discountAmount))</span>
                         </div>
                         <div class="single-shop-list">
                             <div class="left-area">
                                 <span style="font-weight: 600; color: #2C3C28;">Total Price:</span>
                             </div>
-                            <span class="price" style="color: #629D23;">$550.00</span>
+                            <span class="price" style="color: #629D23;">@StoreViewHelpers.Money(totalAmount)</span>
                         </div>
                         <div class="cottom-cart-right-area">
                             <ul>
@@ -1135,11 +1106,11 @@
                             </ul>
                             <p class="mb--20">Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our privacy policy.</p>
                             <div class="single-category mb--30">
-                                <input id="cat14" type="checkbox">
+                                <input id="cat14" type="checkbox" required>
                                 <label for="cat14"> I have read and agree terms and conditions *
                                 </label>
                             </div>
-                            <a href="#" class="rts-btn btn-primary">Place Order</a>
+                            <button form="checkout-form" type="submit" class="rts-btn btn-primary" @(Model.Cart.Items.Count == 0 ? "disabled" : null)>Place Order</button>
                         </div>
                     </div>
                 </div>
