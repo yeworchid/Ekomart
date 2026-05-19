@@ -1,0 +1,61 @@
+@{
+    Layout = null;
+}
+<!doctype html>
+<html lang="en" class="layout-navbar-fixed layout-menu-fixed layout-compact" dir="ltr" data-bs-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>Audit Logs | Ekomart Admin</title>
+    <link rel="icon" type="image/x-icon" href="/assets/vuexy/img/favicon/favicon.ico" />
+    <link rel="stylesheet" href="/assets/vuexy/vendor/fonts/iconify-icons.css" />
+    <link rel="stylesheet" href="/assets/vuexy/vendor/css/core.css" />
+    <link rel="stylesheet" href="/assets/vuexy/css/demo.css" />
+    <link rel="stylesheet" href="/assets/vuexy/vendor/libs/datatables-bs5/datatables.bootstrap5.css" />
+</head>
+<body>
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <div class="layout-page">
+                <div class="content-wrapper">
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="mb-0">Audit Logs</h4>
+                            <a class="btn btn-label-secondary" href="/Admin/Dashboard">Dashboard</a>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">User and admin actions</h5>
+                            </div>
+                            <div class="table-responsive text-nowrap">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>User</th>
+                                            <th>Action</th>
+                                            <th>Entity</th>
+                                            <th>Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-border-bottom-0">
+                                        <tr>
+                                            <td>Seed data</td>
+                                            <td>admin@ekomart.test</td>
+                                            <td>UserRoleChanged</td>
+                                            <td>ApplicationUser</td>
+                                            <td>This placeholder will be replaced by AuditService data.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/assets/vuexy/vendor/libs/jquery/jquery.js"></script>
+    <script src="/assets/vuexy/vendor/js/bootstrap.js"></script>
+</body>
+</html>
