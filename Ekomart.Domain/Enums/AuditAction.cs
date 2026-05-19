@@ -14,5 +14,8 @@ public enum AuditAction
     OrderCreated = 30,
     OrderStatusChanged = 31,
     SubscriptionRenewed = 40,
+    SubscriptionPlanCreated = 41,
+    SubscriptionPlanUpdated = 42,
+    SubscriptionPlanDeleted = 43,
     UserRoleChanged = 50
 }
