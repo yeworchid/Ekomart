@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
   // Variable declaration for table
   const dt_product_table = document.querySelector('.datatables-products'),
-    productAdd = '/Ecommerce/ProductAdd',
+    productAdd = '/Admin/Products/Create',
     statusObj = {
       1: { title: 'Scheduled', class: 'bg-label-warning' },
       2: { title: 'Publish', class: 'bg-label-success' },
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
   if (dt_product_table) {
     var dt_products = new DataTable(dt_product_table, {
-      ajax: assetsPath + 'json/ecommerce-product-list.json',
+      ajax: '/Admin/Products/Data',
       columns: [
         // columns according to JSON
         { data: 'id' },
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           targets: 3,
           responsivePriority: 5,
           render: function (data, type, full, meta) {
-            let category = categoryObj[full['category']].title;
+            let category = categoryObj[full['category']]?.title || full['category'] || 'Catalog';
 
             if (type === 'display') {
               let categoryBadgeObj = {
@@ -251,13 +251,13 @@ document.addEventListener('DOMContentLoaded', function (e) {
           render: function (data, type, full, meta) {
             return `
               <div class="d-inline-block text-nowrap">
-                <button class="btn btn-text-secondary rounded-pill waves-effect btn-icon"><i class="icon-base ti tabler-edit icon-22px"></i></button>
+                <a href="/Admin/Products/Edit/${full['id']}" class="btn btn-text-secondary rounded-pill waves-effect btn-icon"><i class="icon-base ti tabler-edit icon-22px"></i></a>
                 <button class="btn btn-text-secondary rounded-pill waves-effect btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
                   <i class="icon-base ti tabler-dots-vertical icon-22px"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end m-0">
-                  <a href="javascript:void(0);" class="dropdown-item">View</a>
-                  <a href="javascript:void(0);" class="dropdown-item">Suspend</a>
+                  <a href="/Catalog/Details?slug=${full['sku']}" class="dropdown-item">View</a>
+                  <a href="/Admin/Products/Edit/${full['id']}" class="dropdown-item">Edit</a>
                 </div>
               </div>
             `;
@@ -611,9 +611,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
             .unique()
             .sort()
             .each(function (d) {
+              const label = categoryObj[d]?.title || d;
               const option = document.createElement('option');
-              option.value = categoryObj[d].title;
-              option.textContent = categoryObj[d].title;
+              option.value = label;
+              option.textContent = label;
               select.appendChild(option);
             });
         });

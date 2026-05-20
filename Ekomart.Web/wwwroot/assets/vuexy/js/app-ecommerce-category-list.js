@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
   if (dt_category_list_table) {
     var dt_category = new DataTable(dt_category_list_table, {
-      ajax: assetsPath + 'json/ecommerce-category-list.json', // JSON file to add data
+      ajax: '/Admin/Categories/Data',
       columns: [
         // columns according to JSON
         { data: 'id' },
@@ -136,13 +136,13 @@ document.addEventListener('DOMContentLoaded', function (e) {
           render: function (data, type, full, meta) {
             return `
               <div class="d-flex align-items-sm-center justify-content-sm-center">
-                <button class="btn btn-text-secondary rounded-pill waves-effect btn-icon"><i class="icon-base ti tabler-edit icon-22px"></i></button>
+                <a href="/Admin/Categories/Edit/${full['id']}" class="btn btn-text-secondary rounded-pill waves-effect btn-icon"><i class="icon-base ti tabler-edit icon-22px"></i></a>
                 <button class="btn btn-text-secondary rounded-pill waves-effect btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
                   <i class="icon-base ti tabler-dots-vertical icon-22px"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end m-0">
-                  <a href="javascript:void(0);" class="dropdown-item">View</a>
-                  <a href="javascript:void(0);" class="dropdown-item">Suspend</a>
+                  <a href="/Catalog?categoryId=${full['id']}" class="dropdown-item">View</a>
+                  <a href="/Admin/Categories/Edit/${full['id']}" class="dropdown-item">Edit</a>
                 </div>
               </div>
             `;

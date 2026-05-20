@@ -20,7 +20,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
       1: { title: 'Dispatched', class: 'bg-label-warning' },
       2: { title: 'Delivered', class: 'bg-label-success' },
       3: { title: 'Out for Delivery', class: 'bg-label-primary' },
-      4: { title: 'Ready to Pickup', class: 'bg-label-info' }
+      4: { title: 'Ready to Pickup', class: 'bg-label-info' },
+      5: { title: 'Cancelled', class: 'bg-label-danger' }
     },
     paymentObj = {
       1: { title: 'Paid', class: 'text-success' },
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
   if (dt_order_table) {
     const dt_products = new DataTable(dt_order_table, {
-      ajax: assetsPath + 'json/ecommerce-customer-order.json', // JSON file to add data
+      ajax: '/Admin/Orders/Data',
       columns: [
         // columns according to JSON
         { data: 'id' },
@@ -78,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
           render: function (data, type, full, meta) {
             const order_id = full['order'];
             // Creates full output for row
-            const row_output = '<a href="/Ecommerce/OrderDetails"><span>#' + order_id + '</span></a>';
+            const row_output = '<a href="/Admin/Orders/Details/' + full['id'] + '"><span>#' + order_id + '</span></a>';
             return row_output;
           }
         },
@@ -191,8 +192,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                   <i class="icon-base ti tabler-dots-vertical"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end m-0">
-                  <a href="/Ecommerce/OrderDetails" class="dropdown-item">View</a>
-                  <a href="javascript:void(0);" class="dropdown-item delete-record">Delete</a>
+                  <a href="/Admin/Orders/Details/${full['id']}" class="dropdown-item">View</a>
                 </div>
               </div>`;
           }

@@ -13,7 +13,8 @@ public static class CatalogMappings
             Name = category.Name,
             Slug = category.Slug,
             Description = category.Description,
-            DisplayOrder = category.DisplayOrder
+            DisplayOrder = category.DisplayOrder,
+            IsActive = category.IsActive
         };
     }
 

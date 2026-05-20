@@ -39,4 +39,9 @@ public interface ISubscriptionService
         int id,
         string adminUserId,
         CancellationToken cancellationToken = default);
+
+    Task ActivatePlanAsync(
+        int id,
+        string adminUserId,
+        CancellationToken cancellationToken = default);
 }

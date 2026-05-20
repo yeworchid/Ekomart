@@ -229,6 +229,26 @@ public class SubscriptionService : ISubscriptionService
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task ActivatePlanAsync(
+        int id,
+        string adminUserId,
+        CancellationToken cancellationToken = default)
+    {
+        var plan = await _dbContext.SubscriptionPlans
+            .FirstOrDefaultAsync(item => item.Id == id, cancellationToken);
+
+        if (plan is null)
+        {
+            return;
+        }
+
+        plan.IsActive = true;
+        plan.UpdatedAtUtc = DateTime.UtcNow;
+
+        AddAudit(adminUserId, AuditAction.SubscriptionPlanUpdated, nameof(SubscriptionPlan), plan.Id.ToString(), $"Plan activated: {plan.Name}.");
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
     private void AddAudit(
         string userId,
         AuditAction action,
