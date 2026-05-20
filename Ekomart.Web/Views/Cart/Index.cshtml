@@ -1003,7 +1003,7 @@
                                 var image = StoreViewHelpers.ProductImage(item.ImageUrl, item.ProductId);
                                 <div class="single-cart-area-list main item-parent">
                                     <div class="product-main-cart">
-                                        <form asp-controller="Cart" asp-action="Remove" method="post" class="close section-activation">
+                                        <form asp-controller="Cart" asp-action="Remove" method="post" class="close section-activation" data-ajax-cart>
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="productId" value="@item.ProductId">
                                             <button type="submit" class="border-0 bg-transparent p-0"><i class="fa-regular fa-x"></i></button>
@@ -1022,7 +1022,7 @@
                                         <p>@StoreViewHelpers.Money(item.UnitPrice)</p>
                                     </div>
                                     <div class="quantity">
-                                        <form asp-controller="Cart" asp-action="Update" method="post" class="quantity-edit">
+                                        <form asp-controller="Cart" asp-action="Update" method="post" class="quantity-edit" data-ajax-cart>
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="ProductId" value="@item.ProductId">
                                             <input type="number" name="Quantity" class="input" value="@item.Quantity" min="0">
@@ -1688,6 +1688,7 @@
 
     <!-- custom js -->
     <script defer src="/assets/ekomart/js/main.js"></script>
+    @await Html.PartialAsync("_StorefrontAjaxScripts")
     <!-- header style two End -->
 
 </body>

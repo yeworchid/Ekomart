@@ -1252,7 +1252,7 @@
                                                     <div class="price-area">
                                                         <span class="current">@StoreViewHelpers.Money(featuredProduct.Price)</span>
                                                     </div>
-                                                    <form asp-controller="Cart" asp-action="Add" method="post" class="cart-counter-action">
+                                                    <form asp-controller="Cart" asp-action="Add" method="post" class="cart-counter-action" data-ajax-cart>
                                                         @Html.AntiForgeryToken()
                                                         <input type="hidden" name="productId" value="@featuredProduct.Id">
                                                         <input type="hidden" name="returnUrl" value="@ViewContext.HttpContext.Request.Path">
@@ -5845,6 +5845,7 @@
 
     <!-- custom js -->
     <script defer src="/assets/ekomart/js/main.js"></script>
+    @await Html.PartialAsync("_StorefrontAjaxScripts")
     <!-- header style two End -->
 
 

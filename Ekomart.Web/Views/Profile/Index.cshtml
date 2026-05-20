@@ -1037,15 +1037,15 @@
                         </div>
                         <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab" tabindex="0">
                             <div class="shipping-address-billing-address-account">
-                                <div class="half">
+                                <div class="half" data-current-subscription>
                                     <h2 class="title">Current Subscription</h2>
                                     @if (Model.CurrentSubscription is null)
                                     {
-                                        <p class="address">No active subscription.</p>
+                                        <p class="address" data-current-subscription-details>No active subscription.</p>
                                     }
                                     else
                                     {
-                                        <p class="address">
+                                        <p class="address" data-current-subscription-details>
                                             @Model.CurrentSubscription.PlanName <br>
                                             Status: @Model.CurrentSubscription.Status <br>
                                             Active until @Model.CurrentSubscription.EndsAtUtc.ToLocalTime().ToString("dd.MM.yyyy")
@@ -1056,7 +1056,7 @@
                                     <h2 class="title">Plans</h2>
                                     @foreach (var plan in Model.SubscriptionPlans)
                                     {
-                                        <form asp-controller="Profile" asp-action="RenewSubscription" method="post" class="mb--20">
+                                        <form asp-controller="Profile" asp-action="RenewSubscription" method="post" class="mb--20" data-ajax-subscription>
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="SubscriptionPlanId" value="@plan.Id">
                                             <p class="address">
@@ -1841,6 +1841,7 @@
 
     <!-- custom js -->
     <script defer src="/assets/ekomart/js/main.js"></script>
+    @await Html.PartialAsync("_StorefrontAjaxScripts")
     <!-- header style two End -->
 
 

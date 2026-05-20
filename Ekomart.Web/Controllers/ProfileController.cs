@@ -83,6 +83,15 @@ public class ProfileController : Controller
     {
         if (!ModelState.IsValid)
         {
+            if (IsAjaxRequest())
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Выберите тариф подписки."
+                });
+            }
+
             TempData["SubscriptionError"] = "Выберите тариф подписки.";
             return RedirectToAction(nameof(Index));
         }
@@ -94,10 +103,31 @@ public class ProfileController : Controller
                 dto,
                 cancellationToken);
 
+            if (IsAjaxRequest())
+            {
+                return Json(new
+                {
+                    success = true,
+                    message = $"Подписка {subscription.PlanName} активна до {subscription.EndsAtUtc:d}.",
+                    planName = subscription.PlanName,
+                    status = subscription.Status.ToString(),
+                    endsAt = subscription.EndsAtUtc.ToLocalTime().ToString("dd.MM.yyyy")
+                });
+            }
+
             TempData["SubscriptionMessage"] = $"Подписка {subscription.PlanName} активна до {subscription.EndsAtUtc:d}.";
         }
         catch (InvalidOperationException exception)
         {
+            if (IsAjaxRequest())
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = exception.Message
+                });
+            }
+
             TempData["SubscriptionError"] = exception.Message;
         }
 
@@ -139,5 +169,13 @@ public class ProfileController : Controller
     {
         return _userManager.GetUserId(User)
             ?? throw new InvalidOperationException("Authenticated user id was not found.");
+    }
+
+    private bool IsAjaxRequest()
+    {
+        return string.Equals(
+            Request.Headers["X-Requested-With"].ToString(),
+            "XMLHttpRequest",
+            StringComparison.OrdinalIgnoreCase);
     }
 }

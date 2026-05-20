@@ -404,6 +404,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
       }
     });
 
+    window.ekomartOrdersTable = dt_products;
+
     //? The 'delete-record' class is necessary for the functionality of the following code.
     document.addEventListener('click', function (e) {
       if (e.target.classList.contains('delete-record')) {

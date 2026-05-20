@@ -2,8 +2,10 @@ using Ekomart.Web.Authorization;
 using Ekomart.Application.DTOs.Orders;
 using Ekomart.Application.Interfaces;
 using Ekomart.Web.Areas.Admin.Models;
+using Ekomart.Web.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Ekomart.Web.Areas.Admin.Controllers;
 
@@ -12,10 +14,14 @@ namespace Ekomart.Web.Areas.Admin.Controllers;
 public class OrdersController : Controller
 {
     private readonly IOrderService _orderService;
+    private readonly IHubContext<OrderHub> _orderHub;
 
-    public OrdersController(IOrderService orderService)
+    public OrdersController(
+        IOrderService orderService,
+        IHubContext<OrderHub> orderHub)
     {
         _orderService = orderService;
+        _orderHub = orderHub;
     }
 
     public async Task<IActionResult> Index(
@@ -85,10 +91,43 @@ public class OrdersController : Controller
         try
         {
             await _orderService.ChangeStatusAsync(id, dto, CurrentUserId(), cancellationToken);
+            var order = await _orderService.GetOrderAsync(id, cancellationToken: cancellationToken);
+            if (order is not null)
+            {
+                await _orderHub.Clients.Group(OrderHub.UserGroup(order.UserId)).SendAsync(
+                    "OrderStatusChanged",
+                    new
+                    {
+                        id = order.Id,
+                        status = order.Status.ToString(),
+                        message = $"Статус заказа #{order.Id}: {order.Status}"
+                    },
+                    cancellationToken);
+            }
+
+            if (IsAjaxRequest())
+            {
+                return Json(new
+                {
+                    success = true,
+                    message = "Order status updated.",
+                    status = dto.Status.ToString()
+                });
+            }
+
             TempData["Success"] = "Order status updated.";
         }
         catch (InvalidOperationException exception)
         {
+            if (IsAjaxRequest())
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = exception.Message
+                });
+            }
+
             TempData["Error"] = exception.Message;
         }
 
@@ -98,6 +137,14 @@ public class OrdersController : Controller
     private string CurrentUserId()
     {
         return User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+    }
+
+    private bool IsAjaxRequest()
+    {
+        return string.Equals(
+            Request.Headers["X-Requested-With"].ToString(),
+            "XMLHttpRequest",
+            StringComparison.OrdinalIgnoreCase);
     }
 
     private static int OrderStatusCode(Ekomart.Domain.Enums.OrderStatus status)

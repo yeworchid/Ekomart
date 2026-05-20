@@ -53,7 +53,10 @@ public class CatalogService : ICatalogService
         query = filter.Sort?.Trim().ToLowerInvariant() switch
         {
             "price-asc" => query.OrderBy(product => product.Price).ThenBy(product => product.Name),
+            "price_asc" => query.OrderBy(product => product.Price).ThenBy(product => product.Name),
             "price-desc" => query.OrderByDescending(product => product.Price).ThenBy(product => product.Name),
+            "price_desc" => query.OrderByDescending(product => product.Price).ThenBy(product => product.Name),
+            "name" => query.OrderBy(product => product.Name),
             "name-desc" => query.OrderByDescending(product => product.Name),
             "newest" => query.OrderByDescending(product => product.CreatedAtUtc),
             _ => query.OrderBy(product => product.Name)

@@ -321,7 +321,7 @@
                   <div class="mb-1">
                     <span class="h5">Order #@order.Id</span>
                     <span class="badge @AdminViewHelpers.PaymentStatusBadge(order.PaymentStatus) me-1 ms-2">@order.PaymentStatus</span>
-                    <span class="badge @AdminViewHelpers.OrderStatusBadge(order.Status)">@order.Status</span>
+                    <span class="badge @AdminViewHelpers.OrderStatusBadge(order.Status)" data-order-status-badge>@order.Status</span>
                   </div>
                   <p class="mb-0">@AdminViewHelpers.DateTime(order.CreatedAtUtc)</p>
                 </div>
@@ -407,7 +407,7 @@
                       <h5 class="card-title mb-0">Status</h5>
                     </div>
                     <div class="card-body">
-                      <form asp-action="ChangeStatus" asp-route-id="@order.Id" method="post" class="row g-4 align-items-end">
+                      <form asp-action="ChangeStatus" asp-route-id="@order.Id" method="post" class="row g-4 align-items-end" data-ajax-order-status>
                         @Html.AntiForgeryToken()
                         <div class="col-12 col-md-8">
                           <label class="form-label" for="order-status">Order status</label>
@@ -517,6 +517,7 @@
       <div class="drag-target"></div>
     </div>
     <!-- / Layout wrapper -->
+    <div data-order-realtime hidden></div>
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/theme.js  -->
@@ -551,6 +552,8 @@
     <!-- Main JS -->
 
     <script src="/assets/vuexy/js/main.js"></script>
+    <script src="/lib/signalr/signalr.min.js"></script>
+    <script src="/js/ekomart-ajax.js"></script>
 
     <!-- Page JS -->
   </body>

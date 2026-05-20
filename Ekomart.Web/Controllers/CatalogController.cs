@@ -23,12 +23,19 @@ public class CatalogController : Controller
         var products = await _catalogService.GetProductsAsync(filter, cancellationToken);
         var categories = await _catalogService.GetActiveCategoriesAsync(cancellationToken);
 
-        return View(new CatalogIndexViewModel
+        var model = new CatalogIndexViewModel
         {
             Filter = filter,
             Categories = categories,
             Products = products
-        });
+        };
+
+        if (IsAjaxRequest())
+        {
+            return PartialView("_CatalogResults", model);
+        }
+
+        return View(model);
     }
 
     public async Task<IActionResult> Details(
@@ -51,5 +58,13 @@ public class CatalogController : Controller
             Product = product,
             Categories = await _catalogService.GetActiveCategoriesAsync(cancellationToken)
         });
+    }
+
+    private bool IsAjaxRequest()
+    {
+        return string.Equals(
+            Request.Headers["X-Requested-With"].ToString(),
+            "XMLHttpRequest",
+            StringComparison.OrdinalIgnoreCase);
     }
 }

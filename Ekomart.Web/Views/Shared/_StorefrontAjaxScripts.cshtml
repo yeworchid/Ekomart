@@ -1,0 +1,6 @@
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <div data-order-realtime hidden></div>
+    <script defer src="/lib/signalr/signalr.min.js"></script>
+}
+<script defer src="/js/ekomart-ajax.js"></script>

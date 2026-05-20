@@ -1,10 +1,12 @@
 using Ekomart.Infrastructure;
 using Ekomart.Web.Authorization;
+using Ekomart.Web.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 
 builder.Services.AddInfrastructure(
     builder.Configuration);
@@ -57,5 +59,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+app.MapHub<OrderHub>("/hubs/orders");
 
 app.Run();

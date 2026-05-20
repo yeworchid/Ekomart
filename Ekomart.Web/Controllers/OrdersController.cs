@@ -1,10 +1,12 @@
 using Ekomart.Application.DTOs.Orders;
 using Ekomart.Application.Interfaces;
 using Ekomart.Infrastructure.Identity;
+using Ekomart.Web.Hubs;
 using Ekomart.Web.Models.Store;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Ekomart.Web.Controllers;
 
@@ -14,17 +16,20 @@ public class OrdersController : Controller
     private readonly ICartService _cartService;
     private readonly IOrderService _orderService;
     private readonly ISubscriptionService _subscriptionService;
+    private readonly IHubContext<OrderHub> _orderHub;
     private readonly UserManager<ApplicationUser> _userManager;
 
     public OrdersController(
         ICartService cartService,
         IOrderService orderService,
         ISubscriptionService subscriptionService,
+        IHubContext<OrderHub> orderHub,
         UserManager<ApplicationUser> userManager)
     {
         _cartService = cartService;
         _orderService = orderService;
         _subscriptionService = subscriptionService;
+        _orderHub = orderHub;
         _userManager = userManager;
     }
 
@@ -62,6 +67,17 @@ public class OrdersController : Controller
         try
         {
             var order = await _orderService.CheckoutAsync(userId, checkout, cancellationToken);
+            await _orderHub.Clients.Group(OrderHub.ManagersGroup).SendAsync(
+                "OrderCreated",
+                new
+                {
+                    id = order.Id,
+                    customer = order.CustomerName ?? "Customer",
+                    total = StoreViewHelpers.Money(order.TotalAmount),
+                    message = $"Новый заказ #{order.Id}"
+                },
+                cancellationToken);
+
             TempData["CheckoutSuccess"] = $"Заказ #{order.Id} оформлен. Итог: {StoreViewHelpers.Money(order.TotalAmount)}.";
             return RedirectToAction("Index", "Profile");
         }

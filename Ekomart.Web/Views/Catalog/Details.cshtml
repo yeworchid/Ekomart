@@ -970,7 +970,7 @@
                                                 @(string.IsNullOrWhiteSpace(product.Description) ? "Fresh grocery product from the Ekomart catalog." : product.Description)
                                             </p>
                                             <span class="product-price mb--15 d-block" style="color: #DC2626; font-weight: 600;">@StoreViewHelpers.Money(product.Price)</span>
-                                            <form asp-controller="Cart" asp-action="Add" method="post" class="product-bottom-action">
+                                            <form asp-controller="Cart" asp-action="Add" method="post" class="product-bottom-action" data-ajax-cart>
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="productId" value="@product.Id">
                                                 <input type="hidden" name="returnUrl" value="@returnUrl">
@@ -2357,6 +2357,7 @@
 
     <!-- custom js -->
     <script defer src="/assets/ekomart/js/main.js"></script>
+    @await Html.PartialAsync("_StorefrontAjaxScripts")
     <!-- header style two End -->
 
 
