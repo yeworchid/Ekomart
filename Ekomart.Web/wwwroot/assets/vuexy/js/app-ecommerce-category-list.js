@@ -85,8 +85,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
             const id = full['id'];
             let output;
             if (image) {
+              const imageSrc = image.startsWith('/') || image.startsWith('http') ? image : `${assetsPath}img/ecommerce-images/${image}`;
               // For Product image
-              output = `<img src="${assetsPath}img/ecommerce-images/${image}" alt="Product-${id}" class="rounded">`;
+              output = `<img src="${imageSrc}" alt="Product-${id}" class="rounded">`;
             } else {
               // For Product badge
               const stateNum = Math.floor(Math.random() * 6);
@@ -179,8 +180,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 text: `<i class="icon-base ti tabler-plus icon-16px me-0 me-sm-2"></i><span class="d-none d-sm-inline-block">Add Category</span>`,
                 className: 'add-new btn btn-primary',
                 attr: {
-                  'data-bs-toggle': 'offcanvas',
-                  'data-bs-target': '#offcanvasEcommerceCategoryList'
+                  onclick: "window.location.href='/Admin/Categories/Create'"
                 }
               }
             ]

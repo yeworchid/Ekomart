@@ -39,6 +39,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStatusCodePagesWithReExecute("/Errors/StatusCode", "?code={0}");
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();

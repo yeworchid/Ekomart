@@ -93,8 +93,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
             let output;
 
             if (image) {
+              const imageSrc = image.startsWith('/') || image.startsWith('http') ? image : `${assetsPath}img/ecommerce-images/${image}`;
               // For Product image
-              output = `<img src="${assetsPath}img/ecommerce-images/${image}" alt="Product-${id}" class="rounded">`;
+              output = `<img src="${imageSrc}" alt="Product-${id}" class="rounded">`;
             } else {
               // For Product badge
               let stateNum = Math.floor(Math.random() * 6);

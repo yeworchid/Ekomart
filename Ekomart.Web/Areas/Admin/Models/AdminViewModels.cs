@@ -26,6 +26,7 @@ public class AdminProductFormViewModel
 public class AdminCategoriesIndexViewModel
 {
     public IReadOnlyList<CategoryDto> Categories { get; set; } = Array.Empty<CategoryDto>();
+    public IReadOnlyDictionary<int, int> ProductCounts { get; set; } = new Dictionary<int, int>();
 }
 
 public class AdminCategoryFormViewModel

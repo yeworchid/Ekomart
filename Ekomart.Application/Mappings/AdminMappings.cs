@@ -13,6 +13,7 @@ public static class AdminMappings
             CategoryName = product.Category?.Name ?? string.Empty,
             Name = product.Name,
             Slug = product.Slug,
+            ImageUrl = product.ImageUrl,
             Price = product.Price,
             StockQuantity = product.StockQuantity,
             IsActive = product.IsActive,

@@ -1,3 +1,4 @@
+@model AdminCategoriesIndexViewModel
 @{
     Layout = null;
     var adminController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
@@ -323,6 +324,35 @@
                           <th class="text-lg-center">Actions</th>
                         </tr>
                       </thead>
+                      <tbody>
+                        @foreach (var category in Model.Categories)
+                        {
+                          var categoryImage = StoreViewHelpers.CategoryImage(category.Id);
+                          var productCount = Model.ProductCounts.TryGetValue(category.Id, out var count) ? count : 0;
+                          <tr>
+                            <td></td>
+                            <td><input type="checkbox" class="dt-checkboxes form-check-input" /></td>
+                            <td>
+                              <div class="d-flex align-items-center">
+                                <div class="avatar-wrapper me-3 rounded-2 bg-label-secondary">
+                                  <div class="avatar"><img src="@categoryImage" alt="@category.Name" class="rounded" /></div>
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                  <span class="text-heading text-wrap fw-medium">@category.Name</span>
+                                  <span class="text-truncate mb-0 d-none d-sm-block"><small>@(category.Description ?? category.Slug)</small></span>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="text-sm-end">@productCount</td>
+                            <td class="text-sm-end">@(category.IsActive ? "Active" : "Disabled")</td>
+                            <td class="text-lg-center">
+                              <a href="/Admin/Categories/Edit/@category.Id" class="btn btn-text-secondary rounded-pill waves-effect btn-icon">
+                                <i class="icon-base ti tabler-edit icon-22px"></i>
+                              </a>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
                     </table>
                   </div>
                 </div>

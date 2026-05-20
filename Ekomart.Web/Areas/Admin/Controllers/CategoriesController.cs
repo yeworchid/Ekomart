@@ -2,6 +2,7 @@ using Ekomart.Web.Authorization;
 using Ekomart.Application.DTOs.Admin;
 using Ekomart.Application.Interfaces;
 using Ekomart.Web.Areas.Admin.Models;
+using Ekomart.Web.Models.Store;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,9 +25,26 @@ public class CategoriesController : Controller
 
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
+        var categories = await _categoryService.GetCategoriesAsync(cancellationToken);
+        var productCounts = new Dictionary<int, int>();
+
+        foreach (var category in categories)
+        {
+            var products = await _productService.GetProductsForAdminAsync(
+                new AdminProductFilterDto
+                {
+                    CategoryId = category.Id,
+                    PageSize = 1
+                },
+                cancellationToken);
+
+            productCounts[category.Id] = products.TotalCount;
+        }
+
         return View(new AdminCategoriesIndexViewModel
         {
-            Categories = await _categoryService.GetCategoriesAsync(cancellationToken)
+            Categories = categories,
+            ProductCounts = productCounts
         });
     }
 
@@ -50,7 +68,7 @@ public class CategoriesController : Controller
                 id = category.Id,
                 categories = category.Name,
                 category_detail = category.Description ?? category.Slug,
-                cat_image = (string?)null,
+                cat_image = StoreViewHelpers.CategoryImage(category.Id),
                 total_products = products.TotalCount,
                 total_earnings = category.IsActive ? "Active" : "Disabled"
             });

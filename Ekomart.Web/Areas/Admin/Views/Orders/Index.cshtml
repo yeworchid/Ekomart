@@ -1,3 +1,4 @@
+@model AdminOrdersIndexViewModel
 @{
     Layout = null;
     var adminController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
@@ -382,10 +383,44 @@
                         <th>customers</th>
                         <th>payment</th>
                         <th>status</th>
-                        <th>method</th>
+                        <th>total</th>
                         <th>actions</th>
                       </tr>
                     </thead>
+                    <tbody>
+                      @foreach (var order in Model.Orders.Items)
+                      {
+                        <tr>
+                          <td></td>
+                          <td><input type="checkbox" class="dt-checkboxes form-check-input" /></td>
+                          <td><a href="/Admin/Orders/Details/@order.Id"><span>#@order.Id</span></a></td>
+                          <td><span class="text-nowrap">@AdminViewHelpers.DateTime(order.CreatedAtUtc)</span></td>
+                          <td>
+                            <div class="d-flex justify-content-start align-items-center order-name text-nowrap">
+                              <div class="avatar-wrapper">
+                                <div class="avatar avatar-sm me-3">
+                                  <span class="avatar-initial rounded-circle bg-label-primary">
+                                    @((order.CustomerName ?? "Customer").Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(part => part[0]).Take(2).Aggregate("", (current, ch) => current + ch).ToUpperInvariant())
+                                  </span>
+                                </div>
+                              </div>
+                              <div class="d-flex flex-column">
+                                <h6 class="m-0">@(!string.IsNullOrWhiteSpace(order.CustomerName) ? order.CustomerName : "Customer")</h6>
+                                <small>@order.CustomerEmail</small>
+                              </div>
+                            </div>
+                          </td>
+                          <td><span class="badge @AdminViewHelpers.PaymentStatusBadge(order.PaymentStatus)">@order.PaymentStatus</span></td>
+                          <td><span class="badge @AdminViewHelpers.OrderStatusBadge(order.Status)">@order.Status</span></td>
+                          <td>@AdminViewHelpers.Money(order.TotalAmount)</td>
+                          <td>
+                            <a href="/Admin/Orders/Details/@order.Id" class="btn btn-text-secondary rounded-pill waves-effect btn-icon">
+                              <i class="icon-base ti tabler-eye icon-22px"></i>
+                            </a>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
                   </table>
                 </div>
               </div>

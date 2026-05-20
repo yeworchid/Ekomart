@@ -46,6 +46,7 @@ public class OrdersController : Controller
             {
                 id = order.Id,
                 order = order.Id,
+                created_at = order.CreatedAtUtc.ToString("o", System.Globalization.CultureInfo.InvariantCulture),
                 date = order.CreatedAtUtc.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
                 time = order.CreatedAtUtc.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture),
                 customer = order.CustomerName ?? "Customer",
@@ -53,7 +54,8 @@ public class OrdersController : Controller
                 avatar = (string?)null,
                 payment = PaymentStatusCode(order.PaymentStatus),
                 status = OrderStatusCode(order.Status),
-                method = "mastercard",
+                total = AdminMoney(order.TotalAmount),
+                method = "total",
                 method_number = order.TotalAmount.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
             })
         });
@@ -119,5 +121,10 @@ public class OrdersController : Controller
             Ekomart.Domain.Enums.PaymentStatus.Refunded => 4,
             _ => 1
         };
+    }
+
+    private static string AdminMoney(decimal value)
+    {
+        return value.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ru-RU"));
     }
 }

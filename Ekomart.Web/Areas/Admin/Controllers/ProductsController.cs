@@ -2,6 +2,7 @@ using Ekomart.Web.Authorization;
 using Ekomart.Application.DTOs.Admin;
 using Ekomart.Application.Interfaces;
 using Ekomart.Web.Areas.Admin.Models;
+using Ekomart.Web.Models.Store;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -53,7 +54,7 @@ public class ProductsController : Controller
                 id = product.Id,
                 product_name = product.Name,
                 product_brand = product.CategoryName,
-                image = (string?)null,
+                image = StoreViewHelpers.ProductImage(product.ImageUrl, product.Id),
                 category = product.CategoryName,
                 stock = product.StockQuantity > 0 ? 1 : 0,
                 sku = product.Slug,

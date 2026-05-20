@@ -1,3 +1,4 @@
+@model AdminCategoryFormViewModel
 @{
     Layout = null;
     var adminController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
@@ -308,126 +309,102 @@
           <div class="content-wrapper">
             <!-- Content -->
             <div class="container-xxl flex-grow-1 container-p-y">
-              <div class="app-ecommerce-category">
-                <!-- Category List Table -->
-                <div class="card">
-                  <div class="card-datatable">
-                    <table class="datatables-category-list table">
-                      <thead>
-                        <tr>
-                          <th></th>
-                          <th></th>
-                          <th>Categories</th>
-                          <th class="text-nowrap text-sm-end">Total Products &nbsp;</th>
-                          <th class="text-nowrap text-sm-end">Total Earning</th>
-                          <th class="text-lg-center">Actions</th>
-                        </tr>
-                      </thead>
-                    </table>
+@{
+    var isEdit = Model.Category.Id > 0;
+    var pageTitle = isEdit ? "Edit category" : "Add category";
+    var pageSubtitle = isEdit ? "Update catalog group" : "Create a catalog group";
+    var submitText = isEdit ? "Save changes" : "Create category";
+    var formAction = isEdit
+        ? Url.Action("Edit", "Categories", new { area = "Admin", id = Model.Category.Id })
+        : Url.Action("Create", "Categories", new { area = "Admin" });
+    var previewKey = Model.Category.Id == 0 ? 1 : Model.Category.Id;
+    var previewImage = StoreViewHelpers.CategoryImage(previewKey);
+}
+              <form method="post" action="@formAction" class="app-ecommerce-category">
+                @Html.AntiForgeryToken()
+                <input asp-for="Category.Id" type="hidden" />
+
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-6 row-gap-4">
+                  <div class="d-flex flex-column justify-content-center">
+                    <h4 class="mb-1">@pageTitle</h4>
+                    <p class="mb-0">@pageSubtitle</p>
+                  </div>
+                  <div class="d-flex align-content-center flex-wrap gap-4">
+                    <a href="/Admin/Categories" class="btn btn-label-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">@submitText</button>
                   </div>
                 </div>
-                <!-- Offcanvas to add new customer -->
-                <div
-                  class="offcanvas offcanvas-end"
-                  tabindex="-1"
-                  id="offcanvasEcommerceCategoryList"
-                  aria-labelledby="offcanvasEcommerceCategoryListLabel">
-                  <!-- Offcanvas Header -->
-                  <div class="offcanvas-header py-6">
-                    <h5 id="offcanvasEcommerceCategoryListLabel" class="offcanvas-title">Add Category</h5>
-                    <button
-                      type="button"
-                      class="btn-close text-reset"
-                      data-bs-dismiss="offcanvas"
-                      aria-label="Close"></button>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                  <div class="alert alert-danger mb-6" role="alert">
+                    <div asp-validation-summary="All"></div>
                   </div>
-                  <!-- Offcanvas Body -->
-                  <div class="offcanvas-body border-top">
-                    <form class="pt-0" id="eCommerceCategoryListForm" onsubmit="return true">
-                      <!-- Title -->
-                      <div class="mb-6 form-control-validation">
-                        <label class="form-label" for="ecommerce-category-title">Title</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="ecommerce-category-title"
-                          placeholder="Enter category title"
-                          name="categoryTitle"
-                          aria-label="category title" />
+                }
+
+                <div class="row">
+                  <div class="col-12 col-lg-8">
+                    <div class="card mb-6">
+                      <div class="card-header">
+                        <h5 class="card-title mb-0">Category information</h5>
                       </div>
-                      <!-- Slug -->
-                      <div class="mb-6 form-control-validation">
-                        <label class="form-label" for="ecommerce-category-slug">Slug</label>
-                        <input
-                          type="text"
-                          id="ecommerce-category-slug"
-                          class="form-control"
-                          placeholder="Enter slug"
-                          aria-label="slug"
-                          name="slug" />
+                      <div class="card-body">
+                        <div class="mb-6 form-control-validation">
+                          <label class="form-label" asp-for="Category.Name"></label>
+                          <input asp-for="Category.Name" class="form-control" placeholder="Fresh fruits" />
+                          <span class="text-danger" asp-validation-for="Category.Name"></span>
+                        </div>
+                        <div class="mb-6 form-control-validation">
+                          <label class="form-label" asp-for="Category.Slug"></label>
+                          <input asp-for="Category.Slug" class="form-control" placeholder="fresh-fruits" />
+                          <span class="text-danger" asp-validation-for="Category.Slug"></span>
+                        </div>
+                        <div class="mb-0 form-control-validation">
+                          <label class="form-label" asp-for="Category.Description"></label>
+                          <textarea asp-for="Category.Description" class="form-control" rows="8" placeholder="Short category description"></textarea>
+                          <span class="text-danger" asp-validation-for="Category.Description"></span>
+                        </div>
                       </div>
-                      <!-- Image -->
-                      <div class="mb-6">
-                        <label class="form-label" for="ecommerce-category-image">Attachment</label>
-                        <input class="form-control" type="file" id="ecommerce-category-image" />
+                    </div>
+                  </div>
+
+                  <div class="col-12 col-lg-4">
+                    <div class="card mb-6">
+                      <div class="card-header">
+                        <h5 class="card-title mb-0">Category preview</h5>
                       </div>
-                      <!-- Parent category -->
-                      <div class="mb-6 ecommerce-select2-dropdown">
-                        <label class="form-label" for="ecommerce-category-parent-category">Parent category</label>
-                        <select
-                          id="ecommerce-category-parent-category"
-                          class="select2 form-select"
-                          data-placeholder="Select parent category">
-                          <option value="">Select parent Category</option>
-                          <option value="Household">Household</option>
-                          <option value="Management">Management</option>
-                          <option value="Electronics">Electronics</option>
-                          <option value="Office">Office</option>
-                          <option value="Automotive">Automotive</option>
-                        </select>
-                      </div>
-                      <!-- Description -->
-                      <div class="mb-6">
-                        <label class="form-label">Description</label>
-                        <div class="form-control p-0 py-1">
-                          <div class="comment-editor border-0" id="ecommerce-category-description"></div>
-                          <div class="comment-toolbar border-0 rounded">
-                            <div class="d-flex justify-content-end">
-                              <span class="ql-formats me-0">
-                                <button class="ql-bold"></button>
-                                <button class="ql-italic"></button>
-                                <button class="ql-underline"></button>
-                                <button class="ql-list" value="ordered"></button>
-                                <button class="ql-list" value="bullet"></button>
-                                <button class="ql-link"></button>
-                                <button class="ql-image"></button>
-                              </span>
-                            </div>
+                      <div class="card-body">
+                        <div class="d-flex align-items-center gap-4">
+                          <div class="avatar avatar-xl rounded-2 bg-label-secondary">
+                            <img src="@previewImage" alt="Category preview" class="rounded-2" />
+                          </div>
+                          <div>
+                            <h6 class="mb-1">@(string.IsNullOrWhiteSpace(Model.Category.Name) ? "Category" : Model.Category.Name)</h6>
+                            <small class="text-body-secondary">@(string.IsNullOrWhiteSpace(Model.Category.Slug) ? "category-slug" : Model.Category.Slug)</small>
                           </div>
                         </div>
                       </div>
-                      <!-- Status -->
-                      <div class="mb-6 ecommerce-select2-dropdown">
-                        <label class="form-label">Select category status</label>
-                        <select
-                          id="ecommerce-category-status"
-                          class="select2 form-select"
-                          data-placeholder="Select category status">
-                          <option value="">Select category status</option>
-                          <option value="Scheduled">Scheduled</option>
-                          <option value="Publish">Publish</option>
-                          <option value="Inactive">Inactive</option>
-                        </select>
+                    </div>
+
+                    <div class="card mb-6">
+                      <div class="card-header">
+                        <h5 class="card-title mb-0">Settings</h5>
                       </div>
-                      <!-- Submit and reset -->
-                      <div class="mb-6">
-                        <button type="submit" class="btn btn-primary me-sm-3 me-1 data-submit">Add</button>
-                        <button type="reset" class="btn btn-label-danger" data-bs-dismiss="offcanvas">Discard</button>
+                      <div class="card-body">
+                        <div class="mb-6 form-control-validation">
+                          <label class="form-label" asp-for="Category.DisplayOrder"></label>
+                          <input asp-for="Category.DisplayOrder" class="form-control" min="0" />
+                          <span class="text-danger" asp-validation-for="Category.DisplayOrder"></span>
+                        </div>
+                        <div class="form-check form-switch mb-0">
+                          <input asp-for="Category.IsActive" class="form-check-input" />
+                          <label class="form-check-label" asp-for="Category.IsActive"></label>
+                        </div>
                       </div>
-                    </form>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
             <!-- / Content -->
 
@@ -500,6 +477,5 @@
     <script src="/assets/vuexy/js/main.js"></script>
 
     <!-- Page JS -->
-    <script src="/assets/vuexy/js/app-ecommerce-category-list.js"></script>
   </body>
 </html>

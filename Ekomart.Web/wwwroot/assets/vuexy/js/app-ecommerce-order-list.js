@@ -17,17 +17,17 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
   const dt_order_table = document.querySelector('.datatables-order'),
     statusObj = {
-      1: { title: 'Dispatched', class: 'bg-label-warning' },
-      2: { title: 'Delivered', class: 'bg-label-success' },
-      3: { title: 'Out for Delivery', class: 'bg-label-primary' },
-      4: { title: 'Ready to Pickup', class: 'bg-label-info' },
+      1: { title: 'Paid', class: 'bg-label-info' },
+      2: { title: 'Completed', class: 'bg-label-success' },
+      3: { title: 'Processing', class: 'bg-label-primary' },
+      4: { title: 'Created', class: 'bg-label-secondary' },
       5: { title: 'Cancelled', class: 'bg-label-danger' }
     },
     paymentObj = {
       1: { title: 'Paid', class: 'text-success' },
       2: { title: 'Pending', class: 'text-warning' },
       3: { title: 'Failed', class: 'text-danger' },
-      4: { title: 'Cancelled', class: 'text-secondary' }
+      4: { title: 'Refunded', class: 'text-secondary' }
     };
 
   // E-commerce Products datatable
@@ -86,6 +86,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
         {
           targets: 3,
           render: function (data, type, full, meta) {
+            if (type === 'sort' || type === 'type') {
+              return full['created_at'] || data;
+            }
             const date = new Date(full.date);
             const timeX = full['time'].substring(0, 5);
             const formattedDate = date.toLocaleDateString('en-US', {
@@ -166,18 +169,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
         {
           targets: -2,
           render: function (data, type, full, meta) {
-            let method = full['method'];
-            let methodNumber = full['method_number'];
+            const total = full['total'] || full['method_number'];
 
-            if (method === 'paypal') {
-              methodNumber = '@gmail.com';
-            }
-
-            return `
-              <div class="d-flex align-items-center text-nowrap">
-                <img src="${assetsPath}img/icons/payments/${method}.png" alt="${method}" width="29">
-                <span><i class="icon-base ti tabler-dots mt-1 me-1"></i>${methodNumber}</span>
-              </div>`;
+            return `<span class="text-nowrap">${total}</span>`;
           }
         },
         {
@@ -202,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
         style: 'multi',
         selector: 'td:nth-child(2)'
       },
-      order: [3, 'asc'],
+      order: [3, 'desc'],
       layout: {
         topStart: {
           search: {
