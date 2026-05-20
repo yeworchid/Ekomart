@@ -88,6 +88,21 @@ public class OrdersController : Controller
         UpdateOrderStatusDto dto,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            if (IsAjaxRequest())
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Invalid order status."
+                });
+            }
+
+            TempData["Error"] = "Invalid order status.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
         try
         {
             await _orderService.ChangeStatusAsync(id, dto, CurrentUserId(), cancellationToken);

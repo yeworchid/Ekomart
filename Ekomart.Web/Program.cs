@@ -1,11 +1,16 @@
 using Ekomart.Infrastructure;
 using Ekomart.Web.Authorization;
 using Ekomart.Web.Hubs;
+using Ekomart.Web.Middleware;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+});
 builder.Services.AddSignalR();
 
 builder.Services.AddInfrastructure(
@@ -45,6 +50,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
+app.UseMiddleware<TechnicalLogMiddleware>();
 app.UseAuthorization();
 
 app.MapStaticAssets();

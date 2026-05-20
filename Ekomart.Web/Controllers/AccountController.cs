@@ -1,3 +1,5 @@
+using Ekomart.Application.Interfaces;
+using Ekomart.Domain.Enums;
 using Ekomart.Infrastructure.Identity;
 using Ekomart.Web.Authorization;
 using Ekomart.Web.Models.Account;
@@ -9,6 +11,7 @@ namespace Ekomart.Web.Controllers;
 
 public class AccountController : Controller
 {
+    private readonly IAuditService _auditService;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
@@ -16,11 +19,13 @@ public class AccountController : Controller
     public AccountController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        RoleManager<IdentityRole> roleManager)
+        RoleManager<IdentityRole> roleManager,
+        IAuditService auditService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
+        _auditService = auditService;
     }
 
     [AllowAnonymous]
@@ -53,8 +58,21 @@ public class AccountController : Controller
 
         if (result.Succeeded)
         {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            await LogAuditAsync(
+                AuditAction.Login,
+                nameof(ApplicationUser),
+                user?.Id,
+                user?.Id,
+                $"Successful login for {model.Email}.");
+
             return RedirectToLocal(model.ReturnUrl);
         }
+
+        await LogAuditAsync(
+            AuditAction.Login,
+            nameof(ApplicationUser),
+            details: $"Failed login attempt for {model.Email}.");
 
         ModelState.AddModelError(string.Empty, "Неверный email или пароль.");
         return View(model);
@@ -109,6 +127,13 @@ public class AccountController : Controller
         }
 
         await _signInManager.SignInAsync(user, isPersistent: false);
+        await LogAuditAsync(
+            AuditAction.Register,
+            nameof(ApplicationUser),
+            user.Id,
+            user.Id,
+            $"Registered user {user.Email}.");
+
         return RedirectToLocal(model.ReturnUrl);
     }
 
@@ -117,6 +142,14 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
+        var userId = _userManager.GetUserId(User);
+        await LogAuditAsync(
+            AuditAction.Logout,
+            nameof(ApplicationUser),
+            userId,
+            userId,
+            "User signed out.");
+
         await _signInManager.SignOutAsync();
         return RedirectToAction(nameof(Login));
     }
@@ -160,5 +193,23 @@ public class AccountController : Controller
         {
             ModelState.AddModelError(string.Empty, error.Description);
         }
+    }
+
+    private Task LogAuditAsync(
+        AuditAction action,
+        string entityName,
+        string? entityId = null,
+        string? userId = null,
+        string? details = null)
+    {
+        return _auditService.LogAsync(
+            action,
+            entityName,
+            entityId,
+            userId,
+            details,
+            HttpContext.Connection.RemoteIpAddress?.ToString(),
+            Request.Headers["User-Agent"].ToString(),
+            HttpContext.RequestAborted);
     }
 }

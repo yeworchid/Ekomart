@@ -42,6 +42,7 @@ public static class DependencyInjection
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ISubscriptionService, SubscriptionService>();
+        services.AddScoped<ITechnicalLogService, TechnicalLogService>();
         services.AddScoped<IUserManagementService, UserManagementService>();
         services.AddScoped<DatabaseSeeder>();
 
