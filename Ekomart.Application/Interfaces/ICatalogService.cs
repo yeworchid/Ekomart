@@ -13,6 +13,12 @@ public interface ICatalogService
         string slug,
         CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<ProductListItemDto>> GetRelatedProductsAsync(
+        int productId,
+        int categoryId,
+        int take = 8,
+        CancellationToken cancellationToken = default);
+
     Task<IReadOnlyList<CategoryDto>> GetActiveCategoriesAsync(
         CancellationToken cancellationToken = default);
 }

@@ -56,7 +56,11 @@ public class CatalogController : Controller
         return View(new ProductDetailsViewModel
         {
             Product = product,
-            Categories = await _catalogService.GetActiveCategoriesAsync(cancellationToken)
+            Categories = await _catalogService.GetActiveCategoriesAsync(cancellationToken),
+            RelatedProducts = await _catalogService.GetRelatedProductsAsync(
+                product.Id,
+                product.CategoryId,
+                cancellationToken: cancellationToken)
         });
     }
 

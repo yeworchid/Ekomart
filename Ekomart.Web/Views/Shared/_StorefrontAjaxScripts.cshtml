@@ -1,4 +1,54 @@
-@if (User.Identity?.IsAuthenticated == true)
+@{
+    var isAuthenticated = User.Identity?.IsAuthenticated == true;
+}
+
+<style>
+    .btn-border-only.wishlist,
+    .successfully-addedin-wishlist,
+    .modal-compare-area-start,
+    .message-show-action,
+    [data-bs-target="#exampleModal"],
+    .product-details-popup-btn,
+    .share-option-shop-details,
+    .coupon-input-area-1,
+    .bottom-cupon-code-cart-area form,
+    .footersubscribe-form,
+    .our-payment-method,
+    .nav-h_top.language .language-hover,
+    .nav-h_top li:has(> a[href*="about.html"]),
+    .nav-h_top li:has(> a[href*="wishlist.html"]),
+    .nav-h_top li:has(> a[href*="trackorder.html"]),
+    .nav-area .parent-nav > li:nth-child(2),
+    .nav-area .parent-nav > li:nth-child(n+4),
+    .nav-area .parent-nav > li:nth-child(1) .submenu,
+    .nav-area .parent-nav > li:nth-child(3) .rts-megamenu,
+    .mobile-menu-main nav > ul > li:nth-child(2),
+    .mobile-menu-main nav > ul > li:nth-child(4),
+    .mobile-menu-main nav > ul > li:nth-child(1) .submenu,
+    .mobile-menu-main nav > ul > li:nth-child(3) .submenu,
+    .category-sub-menu .submenu,
+    .right-btn-area,
+    .price-input-area input.range,
+    .social-one-wrapper,
+    .playstore-app-area,
+    .single-footer-wized:has(.footer-nav),
+    .single-footer-wized:has(.footersubscribe-form),
+    #profile-tabt,
+    #profile-tab-panes {
+        display: none !important;
+    }
+
+    @if (!isAuthenticated)
+    {
+        <text>
+    .accont-wishlist-cart-area-header .btn-border-only.cart {
+        display: none !important;
+    }
+        </text>
+    }
+</style>
+
+@if (isAuthenticated)
 {
     <div data-order-realtime hidden></div>
     <script defer src="/lib/signalr/signalr.min.js"></script>

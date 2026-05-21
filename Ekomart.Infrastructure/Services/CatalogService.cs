@@ -91,6 +91,46 @@ public class CatalogService : ICatalogService
         return product?.ToDetailsDto();
     }
 
+    public async Task<IReadOnlyList<ProductListItemDto>> GetRelatedProductsAsync(
+        int productId,
+        int categoryId,
+        int take = 8,
+        CancellationToken cancellationToken = default)
+    {
+        var products = await _dbContext.Products
+            .AsNoTracking()
+            .Include(product => product.Category)
+            .Where(product =>
+                product.Id != productId &&
+                product.CategoryId == categoryId &&
+                product.IsActive &&
+                product.Category != null &&
+                product.Category.IsActive)
+            .OrderBy(product => product.Name)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+
+        if (products.Count < take)
+        {
+            var fallback = await _dbContext.Products
+                .AsNoTracking()
+                .Include(product => product.Category)
+                .Where(product =>
+                    product.Id != productId &&
+                    product.CategoryId != categoryId &&
+                    product.IsActive &&
+                    product.Category != null &&
+                    product.Category.IsActive)
+                .OrderBy(product => product.Name)
+                .Take(take - products.Count)
+                .ToListAsync(cancellationToken);
+
+            products.AddRange(fallback);
+        }
+
+        return products.Select(product => product.ToListItemDto()).ToArray();
+    }
+
     public async Task<IReadOnlyList<CategoryDto>> GetActiveCategoriesAsync(
         CancellationToken cancellationToken = default)
     {
