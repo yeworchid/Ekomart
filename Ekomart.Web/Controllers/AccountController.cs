@@ -158,8 +158,7 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult AccessDenied()
     {
-        Response.StatusCode = StatusCodes.Status403Forbidden;
-        return View("~/Views/Errors/Forbidden.cshtml");
+        return RedirectToAction("Forbidden", "Errors");
     }
 
     private async Task<bool> EnsureUserRoleAsync()

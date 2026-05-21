@@ -1,8 +1,6 @@
-using System.Diagnostics;
 using Ekomart.Application.DTOs.Catalog;
 using Ekomart.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Ekomart.Web.Models;
 using Ekomart.Web.Models.Store;
 
 namespace Ekomart.Web.Controllers;
@@ -43,6 +41,6 @@ public class HomeController : Controller
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return RedirectToAction("ServerError", "Errors");
     }
 }
