@@ -310,6 +310,8 @@
     var customerEmail = string.IsNullOrWhiteSpace(order.CustomerEmail) ? "No email" : order.CustomerEmail;
     var customerPhone = string.IsNullOrWhiteSpace(order.CustomerPhone) ? "No phone" : order.CustomerPhone;
     var deliveryAddress = string.IsNullOrWhiteSpace(order.DeliveryAddress) ? "No delivery address" : order.DeliveryAddress;
+    var deliveryMethod = StoreViewHelpers.DeliveryMethodName(order.DeliveryMethod);
+    var paymentMethod = StoreViewHelpers.PaymentMethodName(order.PaymentMethod);
     var customerInitials = string.Join("", customerName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(part => part[0])).ToUpperInvariant();
     if (string.IsNullOrWhiteSpace(customerInitials))
     {
@@ -458,9 +460,10 @@
 
                   <div class="card mb-6">
                     <div class="card-header">
-                      <h5 class="card-title m-0">Delivery address</h5>
+                      <h5 class="card-title m-0">Delivery</h5>
                     </div>
                     <div class="card-body">
+                      <p class="mb-1">Method: @deliveryMethod</p>
                       <p class="mb-0">@deliveryAddress</p>
                     </div>
                   </div>
@@ -470,6 +473,10 @@
                       <h5 class="card-title m-0">Payment</h5>
                     </div>
                     <div class="card-body">
+                      <div class="d-flex justify-content-between mb-2">
+                        <span class="text-heading">Payment method</span>
+                        <span class="fw-medium">@paymentMethod</span>
+                      </div>
                       <div class="d-flex justify-content-between mb-2">
                         <span class="text-heading">Payment status</span>
                         <span class="badge @AdminViewHelpers.PaymentStatusBadge(order.PaymentStatus)">@order.PaymentStatus</span>

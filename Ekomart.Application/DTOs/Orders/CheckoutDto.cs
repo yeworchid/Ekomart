@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ekomart.Domain.Enums;
 
 namespace Ekomart.Application.DTOs.Orders;
 
@@ -21,4 +22,13 @@ public class CheckoutDto
     [Required]
     [StringLength(300)]
     public string DeliveryAddress { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Select a delivery method.")]
+    public DeliveryMethod? DeliveryMethod { get; set; }
+
+    [Required(ErrorMessage = "Select a payment method.")]
+    public PaymentMethod? PaymentMethod { get; set; }
+
+    [Range(typeof(bool), "true", "true", ErrorMessage = "Accept the terms and conditions.")]
+    public bool TermsAccepted { get; set; }
 }

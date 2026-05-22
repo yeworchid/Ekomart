@@ -1,5 +1,6 @@
 using Ekomart.Application.DTOs.Orders;
 using Ekomart.Application.Interfaces;
+using Ekomart.Domain.Enums;
 using Ekomart.Infrastructure.Identity;
 using Ekomart.Web.Hubs;
 using Ekomart.Web.Models.Store;
@@ -34,7 +35,9 @@ public class OrdersController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Checkout(CancellationToken cancellationToken)
+    public async Task<IActionResult> Checkout(
+        DeliveryMethod? deliveryMethod,
+        CancellationToken cancellationToken)
     {
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
@@ -46,7 +49,8 @@ public class OrdersController : Controller
         {
             CustomerName = user.FullName ?? user.UserName ?? string.Empty,
             CustomerEmail = user.Email ?? string.Empty,
-            CustomerPhone = user.PhoneNumber ?? string.Empty
+            CustomerPhone = user.PhoneNumber ?? string.Empty,
+            DeliveryMethod = deliveryMethod
         };
 
         return View(await BuildCheckoutModelAsync(user.Id, checkout, cancellationToken));

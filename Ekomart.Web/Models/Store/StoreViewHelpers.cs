@@ -1,4 +1,5 @@
 using System.Globalization;
+using Ekomart.Domain.Enums;
 
 namespace Ekomart.Web.Models.Store;
 
@@ -30,6 +31,20 @@ public static class StoreViewHelpers
         "/assets/ekomart/images/category/10.png"
     };
 
+    private static readonly string[] CategoryIcons =
+    {
+        "/assets/ekomart/images/icons/01.svg",
+        "/assets/ekomart/images/icons/02.svg",
+        "/assets/ekomart/images/icons/03.svg",
+        "/assets/ekomart/images/icons/04.svg",
+        "/assets/ekomart/images/icons/05.svg",
+        "/assets/ekomart/images/icons/06.svg",
+        "/assets/ekomart/images/icons/07.svg",
+        "/assets/ekomart/images/icons/08.svg",
+        "/assets/ekomart/images/icons/09.svg",
+        "/assets/ekomart/images/icons/10.svg"
+    };
+
     public static string ProductImage(string? imageUrl, int stableKey)
     {
         if (!string.IsNullOrWhiteSpace(imageUrl) && imageUrl.StartsWith("/assets/", StringComparison.OrdinalIgnoreCase))
@@ -47,8 +62,37 @@ public static class StoreViewHelpers
         return CategoryImages[index];
     }
 
+    public static string CategoryIcon(int stableKey)
+    {
+        var index = Math.Abs(stableKey) % CategoryIcons.Length;
+        return CategoryIcons[index];
+    }
+
     public static string Money(decimal amount)
     {
         return amount.ToString("C", CultureInfo.GetCultureInfo("en-US"));
+    }
+
+    public static string DeliveryMethodName(DeliveryMethod method)
+    {
+        return method switch
+        {
+            DeliveryMethod.FreeShipping => "Free Shipping",
+            DeliveryMethod.FlatRate => "Flat Rate",
+            DeliveryMethod.LocalPickup => "Local Pickup",
+            _ => method.ToString()
+        };
+    }
+
+    public static string PaymentMethodName(PaymentMethod method)
+    {
+        return method switch
+        {
+            PaymentMethod.DirectBankTransfer => "Direct Bank Transfer",
+            PaymentMethod.CheckPayments => "Check Payments",
+            PaymentMethod.CashOnDelivery => "Cash On Delivery",
+            PaymentMethod.PayPal => "PayPal",
+            _ => method.ToString()
+        };
     }
 }

@@ -127,6 +127,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.HasIndex(x => x.UserId);
             entity.HasIndex(x => x.Status);
             entity.HasIndex(x => x.CreatedAtUtc);
+            entity.HasIndex(x => x.DeliveryMethod);
+            entity.HasIndex(x => x.PaymentMethod);
 
             entity.Property(x => x.ItemsTotal)
                 .HasPrecision(18, 2);

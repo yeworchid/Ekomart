@@ -1001,7 +1001,7 @@
                                                         <td>@order.CreatedAtUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
                                                         <td>@order.Status</td>
                                                         <td>@StoreViewHelpers.Money(order.TotalAmount) for @order.Items.Count item(s)</td>
-                                                        <td><span class="btn-small d-block">@order.PaymentStatus</span></td>
+                                                        <td><span class="btn-small d-block">@StoreViewHelpers.PaymentMethodName(order.PaymentMethod)</span></td>
                                                     </tr>
                                                 }
                                             }

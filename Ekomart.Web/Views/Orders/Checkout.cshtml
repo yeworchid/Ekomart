@@ -1,4 +1,5 @@
 @model Ekomart.Web.Models.Store.CheckoutPageViewModel
+@using Ekomart.Domain.Enums
 @using Ekomart.Web.Models.Store
 @{
     Layout = null;
@@ -978,6 +979,9 @@
                         <form id="checkout-form" asp-controller="Orders" asp-action="Checkout" method="post">
                             @Html.AntiForgeryToken()
                             <div asp-validation-summary="ModelOnly" class="text-danger mb--20"></div>
+                            @Html.ValidationMessage("DeliveryMethod", null, new { @class = "text-danger d-block mb--10" })
+                            @Html.ValidationMessage("PaymentMethod", null, new { @class = "text-danger d-block mb--10" })
+                            @Html.ValidationMessage("TermsAccepted", null, new { @class = "text-danger d-block mb--10" })
                             <div class="single-input">
                                 <label for="email">Email Address*</label>
                                 <input id="email" name="CustomerEmail" type="email" value="@Model.Checkout.CustomerEmail" required>
@@ -1061,10 +1065,42 @@
                             <span class="price" style="color: #629D23;">@StoreViewHelpers.Money(totalAmount)</span>
                         </div>
                         <div class="cottom-cart-right-area">
+                            <div data-checkout-choice-group="DeliveryMethod">
+                                <h6 class="mb--15">Delivery Method</h6>
+                                <ul>
+                                    <li>
+                                        <input type="radio" id="checkout-delivery-free-shipping" name="DeliveryMethod" value="@DeliveryMethod.FreeShipping" form="checkout-form" required @(Model.Checkout.DeliveryMethod == DeliveryMethod.FreeShipping ? "checked" : null)>
+                                        <label for="checkout-delivery-free-shipping">Free Shipping</label>
+
+                                        <div class="check"></div>
+                                    </li>
+
+                                    <li>
+                                        <input type="radio" id="checkout-delivery-flat-rate" name="DeliveryMethod" value="@DeliveryMethod.FlatRate" form="checkout-form" required @(Model.Checkout.DeliveryMethod == DeliveryMethod.FlatRate ? "checked" : null)>
+                                        <label for="checkout-delivery-flat-rate">Flat Rate</label>
+
+                                        <div class="check">
+                                            <div class="inside"></div>
+                                        </div>
+                                    </li>
+
+                                    <li>
+                                        <input type="radio" id="checkout-delivery-local-pickup" name="DeliveryMethod" value="@DeliveryMethod.LocalPickup" form="checkout-form" required @(Model.Checkout.DeliveryMethod == DeliveryMethod.LocalPickup ? "checked" : null)>
+                                        <label for="checkout-delivery-local-pickup">Local Pickup</label>
+
+                                        <div class="check">
+                                            <div class="inside"></div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <p class="text-danger checkout-field-error" data-checkout-error-for="DeliveryMethod" hidden>Select a delivery method.</p>
+                            </div>
+                            <div data-checkout-choice-group="PaymentMethod">
+                            <h6 class="mb--15">Payment Method</h6>
                             <ul>
                                 <li>
-                                    <input type="radio" id="f-options" name="selector">
-                                    <label for="f-options">Direct Bank Transfer</label>
+                                    <input type="radio" id="payment-direct-bank-transfer" name="PaymentMethod" value="@PaymentMethod.DirectBankTransfer" form="checkout-form" required @(Model.Checkout.PaymentMethod == PaymentMethod.DirectBankTransfer ? "checked" : null)>
+                                    <label for="payment-direct-bank-transfer">Direct Bank Transfer</label>
 
                                     <div class="check"></div>
                                 </li>
@@ -1074,15 +1110,15 @@
                             </p>
                             <ul>
                                 <li>
-                                    <input type="radio" id="f-option" name="selector">
-                                    <label for="f-option">Check Payments</label>
+                                    <input type="radio" id="payment-check-payments" name="PaymentMethod" value="@PaymentMethod.CheckPayments" form="checkout-form" required @(Model.Checkout.PaymentMethod == PaymentMethod.CheckPayments ? "checked" : null)>
+                                    <label for="payment-check-payments">Check Payments</label>
 
                                     <div class="check"></div>
                                 </li>
 
                                 <li>
-                                    <input type="radio" id="s-option" name="selector">
-                                    <label for="s-option">Cash On Delivery</label>
+                                    <input type="radio" id="payment-cash-on-delivery" name="PaymentMethod" value="@PaymentMethod.CashOnDelivery" form="checkout-form" required @(Model.Checkout.PaymentMethod == PaymentMethod.CashOnDelivery ? "checked" : null)>
+                                    <label for="payment-cash-on-delivery">Cash On Delivery</label>
 
                                     <div class="check">
                                         <div class="inside"></div>
@@ -1090,19 +1126,22 @@
                                 </li>
 
                                 <li>
-                                    <input type="radio" id="t-option" name="selector">
-                                    <label for="t-option">Paypal</label>
+                                    <input type="radio" id="payment-paypal" name="PaymentMethod" value="@PaymentMethod.PayPal" form="checkout-form" required @(Model.Checkout.PaymentMethod == PaymentMethod.PayPal ? "checked" : null)>
+                                    <label for="payment-paypal">Paypal</label>
 
                                     <div class="check">
                                         <div class="inside"></div>
                                     </div>
                                 </li>
                             </ul>
+                            <p class="text-danger checkout-field-error" data-checkout-error-for="PaymentMethod" hidden>Select a payment method.</p>
+                            </div>
                             <p class="mb--20">Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our privacy policy.</p>
                             <div class="single-category mb--30">
-                                <input id="cat14" type="checkbox" required>
-                                <label for="cat14"> I have read and agree terms and conditions *
+                                <input id="terms-accepted" name="TermsAccepted" value="true" type="checkbox" form="checkout-form" required @(Model.Checkout.TermsAccepted ? "checked" : null)>
+                                <label for="terms-accepted"> I have read and agree terms and conditions *
                                 </label>
+                                <p class="text-danger checkout-field-error" data-checkout-error-for="TermsAccepted" hidden>Accept the terms and conditions.</p>
                             </div>
                             <button form="checkout-form" type="submit" class="rts-btn btn-primary" @(Model.Cart.Items.Count == 0 ? "disabled" : null)>Place Order</button>
                         </div>

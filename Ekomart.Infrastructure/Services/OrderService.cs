@@ -23,6 +23,21 @@ public class OrderService : IOrderService
         CheckoutDto dto,
         CancellationToken cancellationToken = default)
     {
+        if (!dto.DeliveryMethod.HasValue)
+        {
+            throw new InvalidOperationException("Select a delivery method.");
+        }
+
+        if (!dto.PaymentMethod.HasValue)
+        {
+            throw new InvalidOperationException("Select a payment method.");
+        }
+
+        if (!dto.TermsAccepted)
+        {
+            throw new InvalidOperationException("Accept the terms and conditions.");
+        }
+
         var cartItems = await _dbContext.CartItems
             .Include(item => item.Product)
             .Where(item => item.UserId == userId)
@@ -66,6 +81,9 @@ public class OrderService : IOrderService
             CustomerPhone = dto.CustomerPhone,
             CustomerEmail = dto.CustomerEmail,
             DeliveryAddress = dto.DeliveryAddress,
+            DeliveryMethod = dto.DeliveryMethod.Value,
+            PaymentMethod = dto.PaymentMethod.Value,
+            TermsAccepted = dto.TermsAccepted,
             Items = validCartItems
                 .Select(item => new OrderItem
                 {
@@ -85,7 +103,7 @@ public class OrderService : IOrderService
             UserId = userId,
             Action = AuditAction.OrderCreated,
             EntityName = nameof(Order),
-            Details = $"Order checkout total: {order.TotalAmount:0.00}"
+            Details = $"Order checkout total: {order.TotalAmount:0.00}; delivery: {order.DeliveryMethod}; payment: {order.PaymentMethod}"
         });
 
         await _dbContext.SaveChangesAsync(cancellationToken);

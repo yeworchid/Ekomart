@@ -3,6 +3,7 @@ using Ekomart.Application.DTOs.Orders;
 using Ekomart.Application.Interfaces;
 using Ekomart.Web.Areas.Admin.Models;
 using Ekomart.Web.Hubs;
+using Ekomart.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -29,11 +30,18 @@ public class OrdersController : Controller
         CancellationToken cancellationToken)
     {
         var orders = await _orderService.GetOrdersForAdminAsync(filter, cancellationToken);
+        var paid = await CountOrdersAsync(status: OrderStatus.Paid, cancellationToken: cancellationToken);
+        var processing = await CountOrdersAsync(status: OrderStatus.Processing, cancellationToken: cancellationToken);
+        var completed = await CountOrdersAsync(status: OrderStatus.Completed, cancellationToken: cancellationToken);
 
         return View(new AdminOrdersIndexViewModel
         {
             Filter = filter,
-            Orders = orders
+            Orders = orders,
+            TotalCount = orders.TotalCount,
+            PaidCount = paid,
+            ProcessingCount = processing,
+            CompletedCount = completed
         });
     }
 
@@ -160,6 +168,24 @@ public class OrdersController : Controller
             Request.Headers["X-Requested-With"].ToString(),
             "XMLHttpRequest",
             StringComparison.OrdinalIgnoreCase);
+    }
+
+    private async Task<int> CountOrdersAsync(
+        OrderStatus? status = null,
+        PaymentStatus? paymentStatus = null,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await _orderService.GetOrdersForAdminAsync(
+            new OrderFilterDto
+            {
+                Status = status,
+                PaymentStatus = paymentStatus,
+                PageNumber = 1,
+                PageSize = 1
+            },
+            cancellationToken);
+
+        return result.TotalCount;
     }
 
     private static int OrderStatusCode(Ekomart.Domain.Enums.OrderStatus status)

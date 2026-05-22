@@ -1,4 +1,5 @@
 @model Ekomart.Web.Models.Store.CartPageViewModel
+@using Ekomart.Domain.Enums
 @using Ekomart.Web.Models.Store
 @{
     Layout = null;
@@ -1016,13 +1017,12 @@
                                         <p>@StoreViewHelpers.Money(item.UnitPrice)</p>
                                     </div>
                                     <div class="quantity">
-                                        <form asp-controller="Cart" asp-action="Update" method="post" class="quantity-edit" data-ajax-cart>
+                                        <form asp-controller="Cart" asp-action="Update" method="post" class="quantity-edit cart-quantity-edit" data-ajax-cart data-cart-quantity-form>
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="ProductId" value="@item.ProductId">
-                                            <input type="number" name="Quantity" class="input" value="@item.Quantity" min="0">
-                                            <div class="button-wrapper-action">
-                                                <button type="submit" class="button plus"><i class="fa-regular fa-check"></i></button>
-                                            </div>
+                                            <button type="button" class="button minus" aria-label="Decrease quantity"><i class="fa-regular fa-minus"></i></button>
+                                            <input type="number" name="Quantity" class="input" value="@item.Quantity" min="1" max="99">
+                                            <button type="button" class="button plus" aria-label="Increase quantity"><i class="fa-regular fa-plus"></i></button>
                                         </form>
                                     </div>
                                     <div class="subtotal">
@@ -1047,19 +1047,19 @@
                             <span>Subtotal</span>
                             <h6 class="price">@StoreViewHelpers.Money(Model.Cart.ItemsTotal)</h6>
                         </div>
-                        <div class="shipping">
+                        <div class="shipping" data-cart-delivery-section>
                             <span>Shipping</span>
                             <ul>
                                 <li>
-                                    <input type="radio" id="f-option" name="selector">
-                                    <label for="f-option">Free Shipping</label>
+                                    <input type="radio" id="cart-delivery-free-shipping" name="DeliveryMethod" value="@DeliveryMethod.FreeShipping" data-cart-delivery-method required>
+                                    <label for="cart-delivery-free-shipping">Free Shipping</label>
 
                                     <div class="check"></div>
                                 </li>
 
                                 <li>
-                                    <input type="radio" id="s-option" name="selector">
-                                    <label for="s-option">Flat Rate</label>
+                                    <input type="radio" id="cart-delivery-flat-rate" name="DeliveryMethod" value="@DeliveryMethod.FlatRate" data-cart-delivery-method required>
+                                    <label for="cart-delivery-flat-rate">Flat Rate</label>
 
                                     <div class="check">
                                         <div class="inside"></div>
@@ -1067,8 +1067,8 @@
                                 </li>
 
                                 <li>
-                                    <input type="radio" id="t-option" name="selector">
-                                    <label for="t-option">Local Pickup</label>
+                                    <input type="radio" id="cart-delivery-local-pickup" name="DeliveryMethod" value="@DeliveryMethod.LocalPickup" data-cart-delivery-method required>
+                                    <label for="cart-delivery-local-pickup">Local Pickup</label>
 
                                     <div class="check">
                                         <div class="inside"></div>
@@ -1081,6 +1081,7 @@
                                     <p class="bold">@Model.Cart.TotalQuantity item(s)</p>
                                 </li>
                             </ul>
+                            <p class="text-danger checkout-field-error" data-cart-delivery-error hidden>Select a delivery method.</p>
                         </div>
                         <div class="bottom">
                             <div class="wrapper">
@@ -1094,7 +1095,7 @@
                                 }
                                 else
                                 {
-                                    <a asp-controller="Orders" asp-action="Checkout" class="rts-btn btn-primary">Proceed To Checkout</a>
+                                    <a asp-controller="Orders" asp-action="Checkout" class="rts-btn btn-primary" data-cart-checkout-link>Proceed To Checkout</a>
                                 }
                             </div>
                         </div>

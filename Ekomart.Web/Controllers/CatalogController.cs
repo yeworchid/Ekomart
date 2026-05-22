@@ -38,6 +38,20 @@ public class CatalogController : Controller
         return View(model);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> CategoriesMenu(CancellationToken cancellationToken)
+    {
+        var categories = await _catalogService.GetActiveCategoriesAsync(cancellationToken);
+
+        return Json(categories.Select(category => new
+        {
+            category.Name,
+            category.Slug,
+            Icon = StoreViewHelpers.CategoryIcon(category.Id),
+            Href = Url.Action(nameof(Index), "Catalog", new { categorySlug = category.Slug }) ?? "/Catalog"
+        }));
+    }
+
     public async Task<IActionResult> Details(
         string? slug = null,
         CancellationToken cancellationToken = default)

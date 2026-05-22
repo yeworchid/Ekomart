@@ -952,7 +952,7 @@
                                     </div>
                                     <input type="range" class="range">
                                     <div class="filter-value-min-max">
-                                        <span>Price: @(Model.Filter.MinPrice?.ToString("0.##") ?? "0") — @(Model.Filter.MaxPrice?.ToString("0.##") ?? "Any")</span>
+                                        <span data-price-filter-label>Price: @(Model.Filter.MinPrice?.ToString("0.##") ?? "0") — @(Model.Filter.MaxPrice?.ToString("0.##") ?? "Any")</span>
                                         <button class="rts-btn btn-primary">Filter</button>
                                     </div>
                                 </form>

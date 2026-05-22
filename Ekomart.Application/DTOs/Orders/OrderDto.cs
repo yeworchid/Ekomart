@@ -16,6 +16,9 @@ public class OrderDto
     public string? CustomerPhone { get; set; }
     public string? CustomerEmail { get; set; }
     public string? DeliveryAddress { get; set; }
+    public DeliveryMethod DeliveryMethod { get; set; }
+    public PaymentMethod PaymentMethod { get; set; }
+    public bool TermsAccepted { get; set; }
     public DateTime CreatedAtUtc { get; set; }
     public IReadOnlyList<OrderItemDto> Items { get; set; } = Array.Empty<OrderItemDto>();
 }

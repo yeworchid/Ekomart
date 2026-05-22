@@ -357,6 +357,9 @@ public class DatabaseSeeder
             CustomerPhone = "+10000000000",
             CustomerEmail = UserEmail,
             DeliveryAddress = "Demo Street, 1",
+            DeliveryMethod = DeliveryMethod.FreeShipping,
+            PaymentMethod = PaymentMethod.DirectBankTransfer,
+            TermsAccepted = true,
             Items = orderItems
         });
 

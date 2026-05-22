@@ -1,7 +1,18 @@
 @model Ekomart.Web.Models.Store.HomeIndexViewModel
 @using Ekomart.Web.Models.Store
+@using System.Text.Json
 @{
     Layout = null;
+    var homeProductsJson = JsonSerializer.Serialize(Model.FeaturedProducts.Select(product => new
+    {
+        id = product.Id,
+        name = product.Name,
+        slug = product.Slug,
+        category = product.CategoryName,
+        price = StoreViewHelpers.Money(product.Price),
+        image = StoreViewHelpers.ProductImage(product.ImageUrl, product.Id),
+        stockQuantity = product.StockQuantity
+    }));
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -124,90 +135,15 @@
                                     <img class="parent" src="/assets/ekomart/images/icons/bar-1.svg" alt="icons">
                                     <span>Categories</span>
                                     <ul class="category-sub-menu" id="category-active-four">
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/01.svg" alt="icons">
-                                                <span>Breakfast &amp; Dairy</span>
-                                                <i class="fa-regular fa-plus"></i>
-                                            </a>
-                                            <ul class="submenu mm-collapse">
-                                                <li><a class="mobile-menu-link" href="#">Breakfast</a></li>
-                                                <li><a class="mobile-menu-link" href="#">Dinner</a></li>
-                                                <li><a class="mobile-menu-link" href="#"> Pumking</a></li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/02.svg" alt="icons">
-                                                <span>Meats &amp; Seafood</span>
-                                                <i class="fa-regular fa-plus"></i>
-                                            </a>
-                                            <ul class="submenu mm-collapse">
-                                                <li><a class="mobile-menu-link" href="#">Breakfast</a></li>
-                                                <li><a class="mobile-menu-link" href="#">Dinner</a></li>
-                                                <li><a class="mobile-menu-link" href="#"> Pumking</a></li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/03.svg" alt="icons">
-                                                <span>Breads &amp; Bakery</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/04.svg" alt="icons">
-                                                <span>Chips &amp; Snacks</span>
-                                                <i class="fa-regular fa-plus"></i>
-                                            </a>
-                                            <ul class="submenu mm-collapse">
-                                                <li><a class="mobile-menu-link" href="#">Breakfast</a></li>
-                                                <li><a class="mobile-menu-link" href="#">Dinner</a></li>
-                                                <li><a class="mobile-menu-link" href="#"> Pumking</a></li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/05.svg" alt="icons">
-                                                <span>Medical Healthcare</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/06.svg" alt="icons">
-                                                <span>Breads &amp; Bakery</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/07.svg" alt="icons">
-                                                <span>Biscuits &amp; Snacks</span>
-                                                <i class="fa-regular fa-plus"></i>
-                                            </a>
-                                            <ul class="submenu mm-collapse">
-                                                <li><a class="mobile-menu-link" href="#">Breakfast</a></li>
-                                                <li><a class="mobile-menu-link" href="#">Dinner</a></li>
-                                                <li><a class="mobile-menu-link" href="#"> Pumking</a></li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/08.svg" alt="icons">
-                                                <span>Frozen Foods</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/09.svg" alt="icons">
-                                                <span>Grocery &amp; Staples</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/10.svg" alt="icons">
-                                                <span>Other Items</span>
-                                            </a>
-                                        </li>
+                                        @foreach (var category in Model.Categories)
+                                        {
+                                            <li>
+                                                <a asp-controller="Catalog" asp-action="Index" asp-route-categorySlug="@category.Slug" class="menu-item">
+                                                    <img src="@StoreViewHelpers.CategoryIcon(category.Id)" alt="@category.Name">
+                                                    <span>@category.Name</span>
+                                                </a>
+                                            </li>
+                                        }
                                     </ul>
                                 </div>
                                 <form action="/Catalog" method="get" class="search-header">
@@ -475,70 +411,15 @@
                                     <img class="parent" src="/assets/ekomart/images/icons/bar-1.svg" alt="icons">
                                     <span>Categories</span>
                                     <ul class="category-sub-menu">
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/01.svg" alt="icons">
-                                                <span>Breakfast & Dairy</span>
-                                                <i class="fa-regular fa-plus"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/02.svg" alt="icons">
-                                                <span>Meats & Seafood</span>
-                                                <i class="fa-regular fa-plus"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/03.svg" alt="icons">
-                                                <span>Breads & Bakery</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/04.svg" alt="icons">
-                                                <span>Chips & Snacks</span>
-                                                <i class="fa-regular fa-plus"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/05.svg" alt="icons">
-                                                <span>Medical Healthcare</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/06.svg" alt="icons">
-                                                <span>Breads & Bakery</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/07.svg" alt="icons">
-                                                <span>Biscuits & Snacks</span>
-                                                <i class="fa-regular fa-plus"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/08.svg" alt="icons">
-                                                <span>Frozen Foods</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/09.svg" alt="icons">
-                                                <span>Grocery & Staples</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Catalog" class="menu-item">
-                                                <img src="/assets/ekomart/images/icons/10.svg" alt="icons">
-                                                <span>Other Items</span>
-                                            </a>
-                                        </li>
+                                        @foreach (var category in Model.Categories)
+                                        {
+                                            <li>
+                                                <a asp-controller="Catalog" asp-action="Index" asp-route-categorySlug="@category.Slug" class="menu-item">
+                                                    <img src="@StoreViewHelpers.CategoryIcon(category.Id)" alt="@category.Name">
+                                                    <span>@category.Name</span>
+                                                </a>
+                                            </li>
+                                        }
                                     </ul>
                                 </div>
                                 <form action="/Catalog" method="get" class="search-header">
@@ -5839,6 +5720,7 @@
 
     <!-- custom js -->
     <script defer src="/assets/ekomart/js/main.js"></script>
+    <script type="application/json" id="home-product-data">@Html.Raw(homeProductsJson)</script>
     @await Html.PartialAsync("_StorefrontAjaxScripts")
     <!-- header style two End -->
 

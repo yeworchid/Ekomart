@@ -21,6 +21,9 @@ public static class OrderMappings
             CustomerPhone = order.CustomerPhone,
             CustomerEmail = order.CustomerEmail,
             DeliveryAddress = order.DeliveryAddress,
+            DeliveryMethod = order.DeliveryMethod,
+            PaymentMethod = order.PaymentMethod,
+            TermsAccepted = order.TermsAccepted,
             CreatedAtUtc = order.CreatedAtUtc,
             Items = order.Items.Select(item => item.ToDto()).ToArray()
         };

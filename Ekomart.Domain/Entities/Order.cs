@@ -19,6 +19,9 @@ public class Order : Entity
     public string? CustomerPhone { get; set; }
     public string? CustomerEmail { get; set; }
     public string? DeliveryAddress { get; set; }
+    public DeliveryMethod DeliveryMethod { get; set; } = DeliveryMethod.FreeShipping;
+    public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.DirectBankTransfer;
+    public bool TermsAccepted { get; set; }
 
     public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
 }

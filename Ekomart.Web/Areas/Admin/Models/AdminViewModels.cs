@@ -38,6 +38,10 @@ public class AdminOrdersIndexViewModel
 {
     public OrderFilterDto Filter { get; set; } = new();
     public PagedResult<OrderDto> Orders { get; set; } = new();
+    public int TotalCount { get; set; }
+    public int PaidCount { get; set; }
+    public int ProcessingCount { get; set; }
+    public int CompletedCount { get; set; }
 }
 
 public class AdminOrderDetailsViewModel
