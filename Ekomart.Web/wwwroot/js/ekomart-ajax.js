@@ -575,9 +575,13 @@
       badge.innerHTML = `${Number(product.stockQuantity) > 0 ? 'In' : 'Out'}<br>Stock`;
     }
 
-    const addButton = card.querySelector('.cart-counter-action > a.rts-btn');
+    const cartAction = ensureTemplateCartAction(card, product);
+    const addButton = cartAction?.querySelector('[data-template-cart-add], .rts-btn');
     if (addButton) {
-      addButton.href = '#';
+      if (addButton instanceof HTMLAnchorElement) {
+        addButton.href = '#';
+      }
+
       addButton.dataset.templateCartAdd = 'true';
       addButton.dataset.productId = product.id;
       addButton.dataset.stockQuantity = product.stockQuantity;
@@ -585,7 +589,7 @@
       addButton.setAttribute('aria-disabled', Number(product.stockQuantity) <= 0 ? 'true' : 'false');
     }
 
-    const quantityInput = card.querySelector('.quantity-edit .input');
+    const quantityInput = cartAction?.querySelector('.quantity-edit .input') || card.querySelector('.quantity-edit .input');
     if (quantityInput) {
       quantityInput.type = 'text';
       quantityInput.name = 'quantity';
@@ -593,6 +597,68 @@
       quantityInput.max = String(Math.max(Number(product.stockQuantity) || 0, 1));
       quantityInput.value = clampQuantity(quantityInput.value, quantityInput);
     }
+  }
+
+  function ensureTemplateCartAction(card, product) {
+    let action = card.querySelector('.cart-counter-action');
+    const body = card.querySelector('.body-content');
+
+    if (!body) {
+      return action;
+    }
+
+    if (!action) {
+      action = document.createElement('div');
+      action.className = 'cart-counter-action';
+      action.append(createTemplateQuantityControl(product), createTemplateCartButton());
+
+      const priceArea = body.querySelector('.price-area');
+      if (priceArea) {
+        priceArea.insertAdjacentElement('afterend', action);
+      } else {
+        body.appendChild(action);
+      }
+
+      return action;
+    }
+
+    if (!action.querySelector('.quantity-edit')) {
+      action.insertBefore(createTemplateQuantityControl(product), action.firstChild);
+    }
+
+    if (!action.querySelector('[data-template-cart-add], .rts-btn')) {
+      action.appendChild(createTemplateCartButton());
+    }
+
+    return action;
+  }
+
+  function createTemplateQuantityControl(product) {
+    const wrapper = document.createElement('div');
+    const input = document.createElement('input');
+
+    wrapper.className = 'quantity-edit';
+    input.type = 'text';
+    input.name = 'quantity';
+    input.className = 'input';
+    input.value = '1';
+    input.min = '1';
+    input.max = String(Math.max(Number(product.stockQuantity) || 0, 1));
+
+    wrapper.appendChild(input);
+    return wrapper;
+  }
+
+  function createTemplateCartButton() {
+    const button = document.createElement('a');
+    button.href = '#';
+    button.className = 'rts-btn btn-primary radious-sm with-icon';
+    button.innerHTML = [
+      '<div class="btn-text">Add To Cart</div>',
+      '<div class="arrow-icon"><i class="fa-regular fa-cart-shopping"></i></div>',
+      '<div class="arrow-icon"><i class="fa-regular fa-cart-shopping"></i></div>'
+    ].join('');
+    return button;
   }
 
   async function initCategoryDropdowns() {
