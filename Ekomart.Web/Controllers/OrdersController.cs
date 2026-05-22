@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Localization;
 
 namespace Ekomart.Web.Controllers;
 
@@ -18,6 +19,7 @@ public class OrdersController : Controller
     private readonly IOrderService _orderService;
     private readonly ISubscriptionService _subscriptionService;
     private readonly IHubContext<OrderHub> _orderHub;
+    private readonly IStringLocalizer<SharedResource> _localizer;
     private readonly UserManager<ApplicationUser> _userManager;
 
     public OrdersController(
@@ -25,13 +27,15 @@ public class OrdersController : Controller
         IOrderService orderService,
         ISubscriptionService subscriptionService,
         IHubContext<OrderHub> orderHub,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        IStringLocalizer<SharedResource> localizer)
     {
         _cartService = cartService;
         _orderService = orderService;
         _subscriptionService = subscriptionService;
         _orderHub = orderHub;
         _userManager = userManager;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -76,18 +80,21 @@ public class OrdersController : Controller
                 new
                 {
                     id = order.Id,
-                    customer = order.CustomerName ?? "Customer",
+                    customer = order.CustomerName ?? _localizer["Customer"].Value,
                     total = StoreViewHelpers.Money(order.TotalAmount),
-                    message = $"Новый заказ #{order.Id}"
+                    message = _localizer["New order #{0}", order.Id].Value
                 },
                 cancellationToken);
 
-            TempData["CheckoutSuccess"] = $"Заказ #{order.Id} оформлен. Итог: {StoreViewHelpers.Money(order.TotalAmount)}.";
+            TempData["CheckoutSuccess"] = _localizer[
+                "Order #{0} has been placed. Total: {1}.",
+                order.Id,
+                StoreViewHelpers.Money(order.TotalAmount)].Value;
             return RedirectToAction("Index", "Profile");
         }
         catch (InvalidOperationException exception)
         {
-            ModelState.AddModelError(string.Empty, exception.Message);
+            ModelState.AddModelError(string.Empty, _localizer[exception.Message].Value);
             return View(await BuildCheckoutModelAsync(userId, checkout, cancellationToken));
         }
     }

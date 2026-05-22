@@ -4,20 +4,20 @@ namespace Ekomart.Web.Models.Account;
 
 public class RegisterViewModel
 {
-    [Required(ErrorMessage = "Введите имя.")]
-    [StringLength(120, ErrorMessage = "Имя не должно быть длиннее 120 символов.")]
+    [Required(ErrorMessage = "Enter name.")]
+    [StringLength(120, ErrorMessage = "Name cannot be longer than 120 characters.")]
     public string FullName { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Введите email.")]
-    [EmailAddress(ErrorMessage = "Введите корректный email.")]
+    [Required(ErrorMessage = "Enter email.")]
+    [EmailAddress(ErrorMessage = "Enter a valid email.")]
     public string Email { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Введите пароль.")]
-    [StringLength(100, MinimumLength = 6, ErrorMessage = "Пароль должен быть от 6 до 100 символов.")]
+    [Required(ErrorMessage = "Enter password.")]
+    [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be between 6 and 100 characters.")]
     [DataType(DataType.Password)]
     public string Password { get; set; } = string.Empty;
 
-    [Compare(nameof(Password), ErrorMessage = "Пароли должны совпадать.")]
+    [Compare(nameof(Password), ErrorMessage = "Passwords must match.")]
     [DataType(DataType.Password)]
     public string ConfirmPassword { get; set; } = string.Empty;
 

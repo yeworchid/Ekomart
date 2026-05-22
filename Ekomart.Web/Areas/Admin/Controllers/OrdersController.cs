@@ -213,6 +213,6 @@ public class OrdersController : Controller
 
     private static string AdminMoney(decimal value)
     {
-        return value.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ru-RU"));
+        return value.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"));
     }
 }

@@ -6,6 +6,7 @@ using Ekomart.Web.Models.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Ekomart.Web.Controllers;
 
@@ -14,18 +15,21 @@ public class AccountController : Controller
     private readonly IAuditService _auditService;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IStringLocalizer<SharedResource> _localizer;
     private readonly UserManager<ApplicationUser> _userManager;
 
     public AccountController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         RoleManager<IdentityRole> roleManager,
-        IAuditService auditService)
+        IAuditService auditService,
+        IStringLocalizer<SharedResource> localizer)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
         _auditService = auditService;
+        _localizer = localizer;
     }
 
     [AllowAnonymous]
@@ -74,7 +78,7 @@ public class AccountController : Controller
             nameof(ApplicationUser),
             details: $"Failed login attempt for {model.Email}.");
 
-        ModelState.AddModelError(string.Empty, "Неверный email или пароль.");
+        ModelState.AddModelError(string.Empty, _localizer["Invalid email or password."].Value);
         return View(model);
     }
 

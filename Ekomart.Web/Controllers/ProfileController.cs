@@ -6,6 +6,7 @@ using Ekomart.Web.Models.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Ekomart.Web.Controllers;
 
@@ -13,17 +14,20 @@ namespace Ekomart.Web.Controllers;
 public class ProfileController : Controller
 {
     private readonly IOrderService _orderService;
+    private readonly IStringLocalizer<SharedResource> _localizer;
     private readonly ISubscriptionService _subscriptionService;
     private readonly UserManager<ApplicationUser> _userManager;
 
     public ProfileController(
         UserManager<ApplicationUser> userManager,
         IOrderService orderService,
-        ISubscriptionService subscriptionService)
+        ISubscriptionService subscriptionService,
+        IStringLocalizer<SharedResource> localizer)
     {
         _userManager = userManager;
         _orderService = orderService;
         _subscriptionService = subscriptionService;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -71,7 +75,7 @@ public class ProfileController : Controller
             return View(model);
         }
 
-        TempData["ProfileSaved"] = "Данные профиля сохранены.";
+        TempData["ProfileSaved"] = _localizer["Profile saved."].Value;
         return RedirectToAction(nameof(Index));
     }
 
@@ -88,11 +92,11 @@ public class ProfileController : Controller
                 return BadRequest(new
                 {
                     success = false,
-                    message = "Выберите тариф подписки."
+                    message = _localizer["Select a subscription plan."].Value
                 });
             }
 
-            TempData["SubscriptionError"] = "Выберите тариф подписки.";
+            TempData["SubscriptionError"] = _localizer["Select a subscription plan."].Value;
             return RedirectToAction(nameof(Index));
         }
 
@@ -108,14 +112,20 @@ public class ProfileController : Controller
                 return Json(new
                 {
                     success = true,
-                    message = $"Подписка {subscription.PlanName} активна до {subscription.EndsAtUtc:d}.",
+                    message = _localizer[
+                        "Subscription {0} is active until {1}.",
+                        subscription.PlanName,
+                        subscription.EndsAtUtc.ToLocalTime().ToString("dd.MM.yyyy")].Value,
                     planName = subscription.PlanName,
                     status = subscription.Status.ToString(),
                     endsAt = subscription.EndsAtUtc.ToLocalTime().ToString("dd.MM.yyyy")
                 });
             }
 
-            TempData["SubscriptionMessage"] = $"Подписка {subscription.PlanName} активна до {subscription.EndsAtUtc:d}.";
+            TempData["SubscriptionMessage"] = _localizer[
+                "Subscription {0} is active until {1}.",
+                subscription.PlanName,
+                subscription.EndsAtUtc.ToLocalTime().ToString("dd.MM.yyyy")].Value;
         }
         catch (InvalidOperationException exception)
         {
@@ -124,11 +134,11 @@ public class ProfileController : Controller
                 return BadRequest(new
                 {
                     success = false,
-                    message = exception.Message
+                    message = _localizer[exception.Message].Value
                 });
             }
 
-            TempData["SubscriptionError"] = exception.Message;
+            TempData["SubscriptionError"] = _localizer[exception.Message].Value;
         }
 
         return RedirectToAction(nameof(Index));

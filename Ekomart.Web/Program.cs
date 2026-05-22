@@ -1,16 +1,27 @@
 using Ekomart.Infrastructure;
+using Ekomart.Web;
 using Ekomart.Web.Authorization;
 using Ekomart.Web.Hubs;
 using Ekomart.Web.Middleware;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews(options =>
-{
-    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-});
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services
+    .AddControllersWithViews(options =>
+    {
+        options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+    })
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization(options =>
+    {
+        options.DataAnnotationLocalizerProvider = (_, factory) =>
+            factory.Create(typeof(SharedResource));
+    });
 builder.Services.AddSignalR();
 
 builder.Services.AddInfrastructure(
@@ -35,6 +46,23 @@ builder.Services.AddAuthorization(options =>
 });
 
 var app = builder.Build();
+var supportedCultures = new[]
+{
+    new CultureInfo("en"),
+    new CultureInfo("ru")
+};
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
+localizationOptions.RequestCultureProviders =
+[
+    new CookieRequestCultureProvider(),
+    new QueryStringRequestCultureProvider(),
+    new AcceptLanguageHeaderRequestCultureProvider()
+];
 
 // Configure the HTTP request pipeline.
 app.UseExceptionHandler("/Errors/500");
@@ -46,6 +74,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStatusCodePagesWithReExecute("/Errors/StatusCode", "?code={0}");
+app.UseRequestLocalization(localizationOptions);
 app.UseStaticFiles();
 app.UseRouting();
 

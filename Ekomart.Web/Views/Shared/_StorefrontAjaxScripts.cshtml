@@ -1,5 +1,103 @@
+@using System.Globalization
+@using System.Text.Json
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<SharedResource> L
 @{
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
+    var currentCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var localizationKeys = new[]
+    {
+        "English",
+        "Russian",
+        "About Us",
+        "About",
+        "My Account",
+        "Account",
+        "Login",
+        "Wishlist",
+        "We deliver to your everyday from 7:00 to 22:00",
+        "Need help? Call Us:",
+        "Home",
+        "Shop",
+        "Catalog",
+        "All Categories",
+        "Search for products, categories or brands",
+        "Add",
+        "Add To Cart",
+        "Shopping Cart",
+        "View Cart",
+        "Checkout",
+        "Place Order",
+        "Cart Totals",
+        "Sub Total:",
+        "Total:",
+        "Delivery Options",
+        "Payment Method",
+        "Free shipping",
+        "Flat rate",
+        "Local pickup",
+        "Direct bank transfer",
+        "Cash on delivery",
+        "I have read and agree to terms and conditions.",
+        "No products found",
+        "Try changing the filters.",
+        "Price",
+        "Any",
+        "item(s)",
+        "In Stock",
+        "Out Stock",
+        "New Item",
+        "Top Trending Products",
+        "Featured Grocery",
+        "Weekly Best Selling Groceries",
+        "Product added to cart.",
+        "Cart updated.",
+        "Product removed from cart.",
+        "Invalid product quantity.",
+        "Could not update catalog.",
+        "Could not prepare cart request.",
+        "Subscription updated.",
+        "Order status updated.",
+        "Login is required.",
+        "Request failed.",
+        "Fill required checkout fields.",
+        "New order #{0}",
+        "Order #{0} status updated.",
+        "Customer",
+        "Order #{0} has been placed. Total: {1}.",
+        "Realtime notifications are temporarily unavailable.",
+        "Select a delivery method.",
+        "Select a payment method.",
+        "Accept the terms and conditions.",
+        "Cart is empty.",
+        "Add products from the catalog to continue.",
+        "Go Shopping",
+        "Quantity must be greater than zero.",
+        "Product was not found.",
+        "Product is out of stock.",
+        "Cart item was not found.",
+        "Invalid email or password.",
+        "Enter email.",
+        "Enter a valid email.",
+        "Enter password.",
+        "Enter name.",
+        "Name cannot be longer than 120 characters.",
+        "Password must be between 6 and 100 characters.",
+        "Passwords must match.",
+        "Profile saved.",
+        "Select a subscription plan.",
+        "Subscription {0} is active until {1}.",
+        "Subscription plan was not found.",
+        "Status",
+        "Active until"
+    };
+    var translations = localizationKeys.ToDictionary(key => key, key => L[key].Value);
+    translations["CheckOut"] = translations["Checkout"];
+    var localizationPayload = new
+    {
+        currentCulture,
+        translations
+    };
 }
 
 <style>
@@ -17,7 +115,7 @@
     .bottom-cupon-code-cart-area form,
     .footersubscribe-form,
     .our-payment-method,
-    .nav-h_top.language .language-hover,
+    .nav-h_top.language .language-hover:nth-child(n+2),
     .nav-h_top li:has(> a[href*="about.html"]),
     .nav-h_top li:has(> a[href*="wishlist.html"]),
     .nav-h_top li:has(> a[href*="trackorder.html"]),
@@ -235,4 +333,5 @@
     <div data-order-realtime hidden></div>
     <script defer src="/lib/signalr/signalr.min.js"></script>
 }
-<script defer src="/js/ekomart-ajax.js?v=product-card-actions-1"></script>
+<script type="application/json" id="storefront-localization">@Html.Raw(JsonSerializer.Serialize(localizationPayload))</script>
+<script defer src="/js/ekomart-ajax.js?v=localization-1"></script>

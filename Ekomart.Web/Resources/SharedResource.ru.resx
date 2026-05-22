@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="English" xml:space="preserve">
+    <value>Английский</value>
+  </data>
+  <data name="Russian" xml:space="preserve">
+    <value>Русский</value>
+  </data>
+  <data name="About Us" xml:space="preserve">
+    <value>О нас</value>
+  </data>
+  <data name="About" xml:space="preserve">
+    <value>О нас</value>
+  </data>
+  <data name="My Account" xml:space="preserve">
+    <value>Аккаунт</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>Аккаунт</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="Wishlist" xml:space="preserve">
+    <value>Избранное</value>
+  </data>
+  <data name="We deliver to your everyday from 7:00 to 22:00" xml:space="preserve">
+    <value>Доставка каждый день с 7:00 до 22:00</value>
+  </data>
+  <data name="Need help? Call Us:" xml:space="preserve">
+    <value>Нужна помощь? Позвоните:</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Главная</value>
+  </data>
+  <data name="Shop" xml:space="preserve">
+    <value>Каталог</value>
+  </data>
+  <data name="Catalog" xml:space="preserve">
+    <value>Каталог</value>
+  </data>
+  <data name="All Categories" xml:space="preserve">
+    <value>Все категории</value>
+  </data>
+  <data name="Search for products, categories or brands" xml:space="preserve">
+    <value>Поиск товаров, категорий или брендов</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>В корзину</value>
+  </data>
+  <data name="Add To Cart" xml:space="preserve">
+    <value>В корзину</value>
+  </data>
+  <data name="Shopping Cart" xml:space="preserve">
+    <value>Корзина</value>
+  </data>
+  <data name="View Cart" xml:space="preserve">
+    <value>Корзина</value>
+  </data>
+  <data name="Checkout" xml:space="preserve">
+    <value>Оформление</value>
+  </data>
+  <data name="Place Order" xml:space="preserve">
+    <value>Оформить заказ</value>
+  </data>
+  <data name="Cart Totals" xml:space="preserve">
+    <value>Итого в корзине</value>
+  </data>
+  <data name="Sub Total:" xml:space="preserve">
+    <value>Подытог:</value>
+  </data>
+  <data name="Total:" xml:space="preserve">
+    <value>Итого:</value>
+  </data>
+  <data name="Delivery Options" xml:space="preserve">
+    <value>Способ доставки</value>
+  </data>
+  <data name="Payment Method" xml:space="preserve">
+    <value>Способ оплаты</value>
+  </data>
+  <data name="Free shipping" xml:space="preserve">
+    <value>Бесплатная доставка</value>
+  </data>
+  <data name="Flat rate" xml:space="preserve">
+    <value>Фиксированная доставка</value>
+  </data>
+  <data name="Local pickup" xml:space="preserve">
+    <value>Самовывоз</value>
+  </data>
+  <data name="Direct bank transfer" xml:space="preserve">
+    <value>Банковский перевод</value>
+  </data>
+  <data name="Cash on delivery" xml:space="preserve">
+    <value>Оплата при получении</value>
+  </data>
+  <data name="I have read and agree to terms and conditions." xml:space="preserve">
+    <value>Я прочитал и принимаю условия.</value>
+  </data>
+  <data name="No products found" xml:space="preserve">
+    <value>Товары не найдены</value>
+  </data>
+  <data name="Try changing the filters." xml:space="preserve">
+    <value>Попробуйте изменить фильтры.</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Цена</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>Любая</value>
+  </data>
+  <data name="item(s)" xml:space="preserve">
+    <value>тов.</value>
+  </data>
+  <data name="In Stock" xml:space="preserve">
+    <value>В наличии</value>
+  </data>
+  <data name="Out Stock" xml:space="preserve">
+    <value>Нет в наличии</value>
+  </data>
+  <data name="New Item" xml:space="preserve">
+    <value>Новинка</value>
+  </data>
+  <data name="Top Trending Products" xml:space="preserve">
+    <value>Популярные товары</value>
+  </data>
+  <data name="Featured Grocery" xml:space="preserve">
+    <value>Рекомендуемые продукты</value>
+  </data>
+  <data name="Weekly Best Selling Groceries" xml:space="preserve">
+    <value>Лучшие товары недели</value>
+  </data>
+  <data name="Product added to cart." xml:space="preserve">
+    <value>Товар добавлен в корзину.</value>
+  </data>
+  <data name="Cart updated." xml:space="preserve">
+    <value>Корзина обновлена.</value>
+  </data>
+  <data name="Product removed from cart." xml:space="preserve">
+    <value>Товар удален из корзины.</value>
+  </data>
+  <data name="Invalid product quantity." xml:space="preserve">
+    <value>Некорректное количество товара.</value>
+  </data>
+  <data name="Could not update catalog." xml:space="preserve">
+    <value>Не удалось обновить каталог.</value>
+  </data>
+  <data name="Could not prepare cart request." xml:space="preserve">
+    <value>Не удалось подготовить добавление в корзину.</value>
+  </data>
+  <data name="Subscription updated." xml:space="preserve">
+    <value>Подписка обновлена.</value>
+  </data>
+  <data name="Order status updated." xml:space="preserve">
+    <value>Статус заказа обновлен.</value>
+  </data>
+  <data name="Login is required." xml:space="preserve">
+    <value>Нужно войти в аккаунт.</value>
+  </data>
+  <data name="Request failed." xml:space="preserve">
+    <value>Запрос не выполнен.</value>
+  </data>
+  <data name="Fill required checkout fields." xml:space="preserve">
+    <value>Заполните обязательные поля оформления заказа.</value>
+  </data>
+  <data name="New order #{0}" xml:space="preserve">
+    <value>Новый заказ #{0}</value>
+  </data>
+  <data name="Order #{0} status updated." xml:space="preserve">
+    <value>Статус заказа #{0} обновлен.</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>Покупатель</value>
+  </data>
+  <data name="Order #{0} has been placed. Total: {1}." xml:space="preserve">
+    <value>Заказ #{0} оформлен. Итог: {1}.</value>
+  </data>
+  <data name="Realtime notifications are temporarily unavailable." xml:space="preserve">
+    <value>Realtime-уведомления временно недоступны.</value>
+  </data>
+  <data name="Select a delivery method." xml:space="preserve">
+    <value>Выберите способ доставки.</value>
+  </data>
+  <data name="Select a payment method." xml:space="preserve">
+    <value>Выберите способ оплаты.</value>
+  </data>
+  <data name="Accept the terms and conditions." xml:space="preserve">
+    <value>Примите условия оформления заказа.</value>
+  </data>
+  <data name="Cart is empty." xml:space="preserve">
+    <value>Корзина пуста.</value>
+  </data>
+  <data name="Add products from the catalog to continue." xml:space="preserve">
+    <value>Добавьте товары из каталога, чтобы продолжить.</value>
+  </data>
+  <data name="Go Shopping" xml:space="preserve">
+    <value>Перейти в каталог</value>
+  </data>
+  <data name="Quantity must be greater than zero." xml:space="preserve">
+    <value>Количество должно быть больше нуля.</value>
+  </data>
+  <data name="Product was not found." xml:space="preserve">
+    <value>Товар не найден.</value>
+  </data>
+  <data name="Product is out of stock." xml:space="preserve">
+    <value>Товара нет в наличии.</value>
+  </data>
+  <data name="Cart item was not found." xml:space="preserve">
+    <value>Позиция корзины не найдена.</value>
+  </data>
+  <data name="Invalid email or password." xml:space="preserve">
+    <value>Неверный email или пароль.</value>
+  </data>
+  <data name="Enter email." xml:space="preserve">
+    <value>Введите email.</value>
+  </data>
+  <data name="Enter a valid email." xml:space="preserve">
+    <value>Введите корректный email.</value>
+  </data>
+  <data name="Enter password." xml:space="preserve">
+    <value>Введите пароль.</value>
+  </data>
+  <data name="Enter name." xml:space="preserve">
+    <value>Введите имя.</value>
+  </data>
+  <data name="Name cannot be longer than 120 characters." xml:space="preserve">
+    <value>Имя не должно быть длиннее 120 символов.</value>
+  </data>
+  <data name="Password must be between 6 and 100 characters." xml:space="preserve">
+    <value>Пароль должен быть от 6 до 100 символов.</value>
+  </data>
+  <data name="Passwords must match." xml:space="preserve">
+    <value>Пароли должны совпадать.</value>
+  </data>
+  <data name="Profile saved." xml:space="preserve">
+    <value>Данные профиля сохранены.</value>
+  </data>
+  <data name="Select a subscription plan." xml:space="preserve">
+    <value>Выберите тариф подписки.</value>
+  </data>
+  <data name="Subscription {0} is active until {1}." xml:space="preserve">
+    <value>Подписка {0} активна до {1}.</value>
+  </data>
+  <data name="Subscription plan was not found." xml:space="preserve">
+    <value>Тариф подписки не найден.</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="Active until" xml:space="preserve">
+    <value>Активна до</value>
+  </data>
+</root>

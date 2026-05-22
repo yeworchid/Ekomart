@@ -5,6 +5,7 @@ using Ekomart.Web.Models.Store;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Ekomart.Web.Controllers;
 
@@ -12,14 +13,17 @@ namespace Ekomart.Web.Controllers;
 public class CartController : Controller
 {
     private readonly ICartService _cartService;
+    private readonly IStringLocalizer<SharedResource> _localizer;
     private readonly UserManager<ApplicationUser> _userManager;
 
     public CartController(
         ICartService cartService,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        IStringLocalizer<SharedResource> localizer)
     {
         _cartService = cartService;
         _userManager = userManager;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -44,10 +48,10 @@ public class CartController : Controller
             var cart = await _cartService.AddItemAsync(GetUserId(), productId, quantity, cancellationToken);
             if (IsAjaxRequest())
             {
-                return Json(CartResponse(cart, "Товар добавлен в корзину."));
+                return Json(CartResponse(cart, _localizer["Product added to cart."].Value));
             }
 
-            TempData["CartMessage"] = "Товар добавлен в корзину.";
+            TempData["CartMessage"] = _localizer["Product added to cart."].Value;
         }
         catch (Exception exception) when (exception is InvalidOperationException or ArgumentOutOfRangeException)
         {
@@ -56,11 +60,11 @@ public class CartController : Controller
                 return BadRequest(new
                 {
                     success = false,
-                    message = exception.Message
+                    message = _localizer[exception.Message].Value
                 });
             }
 
-            TempData["CartError"] = exception.Message;
+            TempData["CartError"] = _localizer[exception.Message].Value;
         }
 
         return RedirectToLocal(returnUrl);
@@ -79,11 +83,11 @@ public class CartController : Controller
                 return BadRequest(new
                 {
                     success = false,
-                    message = "Некорректное количество товара."
+                    message = _localizer["Invalid product quantity."].Value
                 });
             }
 
-            TempData["CartError"] = "Некорректное количество товара.";
+            TempData["CartError"] = _localizer["Invalid product quantity."].Value;
             return RedirectToAction(nameof(Index));
         }
 
@@ -102,11 +106,11 @@ public class CartController : Controller
                 return BadRequest(new
                 {
                     success = false,
-                    message = exception.Message
+                    message = _localizer[exception.Message].Value
                 });
             }
 
-            TempData["CartError"] = exception.Message;
+            TempData["CartError"] = _localizer[exception.Message].Value;
         }
 
         return RedirectToAction(nameof(Index));
@@ -121,7 +125,7 @@ public class CartController : Controller
         var cart = await _cartService.RemoveItemAsync(GetUserId(), productId, cancellationToken);
         if (IsAjaxRequest())
         {
-            return Json(CartResponse(cart, "Товар удалён из корзины."));
+            return Json(CartResponse(cart, _localizer["Product removed from cart."].Value));
         }
 
         return RedirectToAction(nameof(Index));

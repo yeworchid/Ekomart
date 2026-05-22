@@ -5,13 +5,15 @@
     'X-Requested-With': 'XMLHttpRequest'
   };
   const deliveryStorageKey = 'ekomartDeliveryMethod';
+  let localizationConfig;
 
   document.addEventListener('DOMContentLoaded', function () {
     initCategoryDropdowns();
-    initPriceFilterLabels();
     initQuantityControls();
     initCheckoutValidation();
     hydrateHomeProductCards();
+    initStorefrontLocalization();
+    initPriceFilterLabels();
     loadCartCount();
     startOrderHub();
   });
@@ -160,7 +162,7 @@
       });
 
       if (!response.ok) {
-        throw new Error('Не удалось обновить каталог.');
+        throw new Error(t('Could not update catalog.'));
       }
 
       container.innerHTML = await response.text();
@@ -168,6 +170,7 @@
         history.pushState({}, '', url);
       }
       initQuantityControls(container);
+      localizeStaticTexts(container);
     } catch (error) {
       showNotice(error.message, 'danger');
     } finally {
@@ -182,7 +185,7 @@
     try {
       const data = await postFormJson(form);
       updateCartUi(data, form);
-      showNotice(data.message || 'Корзина обновлена.', 'success');
+      showNotice(data.message || t('Cart updated.'), 'success');
     } catch (error) {
       showNotice(error.message, 'danger');
     } finally {
@@ -202,7 +205,7 @@
 
     const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
     if (!token) {
-      showNotice('Не удалось подготовить добавление в корзину.', 'danger');
+      showNotice(t('Could not prepare cart request.'), 'danger');
       return;
     }
 
@@ -220,7 +223,7 @@
     try {
       const data = await postFormDataJson('/Cart/Add', formData);
       updateCartBadges(data.totalQuantity);
-      showNotice(data.message || 'Товар добавлен в корзину.', 'success');
+      showNotice(data.message || t('Product added to cart.'), 'success');
     } catch (error) {
       showNotice(error.message, 'danger');
     } finally {
@@ -235,10 +238,10 @@
       const data = await postFormJson(form);
       const details = document.querySelector('[data-current-subscription-details]');
       if (details) {
-        details.innerHTML = `${escapeHtml(data.planName)}<br>Status: ${escapeHtml(data.status)}<br>Active until ${escapeHtml(data.endsAt)}`;
+        details.innerHTML = `${escapeHtml(data.planName)}<br>${escapeHtml(t('Status'))}: ${escapeHtml(data.status)}<br>${escapeHtml(t('Active until'))} ${escapeHtml(data.endsAt)}`;
       }
 
-      showNotice(data.message || 'Подписка обновлена.', 'success');
+      showNotice(data.message || t('Subscription updated.'), 'success');
     } catch (error) {
       showNotice(error.message, 'danger');
     } finally {
@@ -256,7 +259,7 @@
         badge.textContent = data.status;
       }
 
-      showNotice(data.message || 'Order status updated.', 'success');
+      showNotice(data.message || t('Order status updated.'), 'success');
     } catch (error) {
       showNotice(error.message, 'danger');
     } finally {
@@ -278,7 +281,7 @@
 
     if (response.redirected && response.url.includes('/Account/Login')) {
       window.location.href = response.url;
-      throw new Error('Нужно войти в аккаунт.');
+      throw new Error(t('Login is required.'));
     }
 
     const data = await response.json().catch(function () {
@@ -286,7 +289,7 @@
     });
 
     if (!response.ok || data.success === false) {
-      throw new Error(data.message || 'Запрос не выполнен.');
+      throw new Error(data.message || t('Request failed.'));
     }
 
     return data;
@@ -343,7 +346,7 @@
     });
 
     document.querySelectorAll('.cart-total-area-start-right .bold').forEach(function (element) {
-      element.textContent = `${data.totalQuantity} item(s)`;
+      element.textContent = `${data.totalQuantity} ${t('item(s)')}`;
     });
 
     const productIdInput = form.querySelector('input[name="ProductId"], input[name="productId"]');
@@ -378,7 +381,7 @@
     });
 
     document.querySelectorAll('.shopping-cart-number').forEach(function (heading) {
-      heading.textContent = `Shopping Cart (${quantity})`;
+      heading.textContent = `${t('Shopping Cart')} (${quantity})`;
     });
   }
 
@@ -654,11 +657,174 @@
     button.href = '#';
     button.className = 'rts-btn btn-primary radious-sm with-icon';
     button.innerHTML = [
-      '<div class="btn-text">Add To Cart</div>',
+      `<div class="btn-text">${escapeHtml(t('Add To Cart'))}</div>`,
       '<div class="arrow-icon"><i class="fa-regular fa-cart-shopping"></i></div>',
       '<div class="arrow-icon"><i class="fa-regular fa-cart-shopping"></i></div>'
     ].join('');
     return button;
+  }
+
+  function initStorefrontLocalization(root) {
+    const config = getLocalizationConfig();
+    if (config.currentCulture) {
+      document.documentElement.lang = config.currentCulture;
+    }
+
+    initLanguageSwitchers(config);
+    localizeStaticTexts(root || document);
+  }
+
+  function initLanguageSwitchers(config) {
+    document.querySelectorAll('.nav-h_top.language').forEach(function (menu) {
+      const languageItems = Array.from(menu.querySelectorAll('.language-hover'));
+      const languageItem = languageItems[0];
+      if (!languageItem) {
+        return;
+      }
+
+      languageItems.slice(1).forEach(function (item) {
+        item.hidden = true;
+      });
+
+      const currentCulture = config.currentCulture === 'ru' ? 'ru' : 'en';
+      const currentLabel = currentCulture === 'ru' ? t('Russian') : t('English');
+      const toggle = Array.from(languageItem.children).find(function (child) {
+        return child.matches?.('a');
+      });
+
+      if (toggle) {
+        toggle.textContent = currentLabel;
+        toggle.href = '#';
+      }
+
+      const submenu = languageItem.querySelector('.category-sub-menu');
+      if (submenu) {
+        submenu.replaceChildren(
+          createLanguageMenuItem('en', t('English'), currentCulture === 'en'),
+          createLanguageMenuItem('ru', t('Russian'), currentCulture === 'ru')
+        );
+      }
+    });
+  }
+
+  function createLanguageMenuItem(culture, label, isCurrent) {
+    const item = document.createElement('li');
+    const link = document.createElement('a');
+    const text = document.createElement('span');
+    const url = new URL('/Localization/SetLanguage', window.location.origin);
+
+    url.searchParams.set('culture', culture);
+    url.searchParams.set('returnUrl', `${window.location.pathname}${window.location.search}`);
+
+    link.className = 'menu-item';
+    link.href = url.toString();
+    link.setAttribute('hreflang', culture);
+    if (isCurrent) {
+      link.setAttribute('aria-current', 'true');
+    }
+
+    text.textContent = label;
+    link.appendChild(text);
+    item.appendChild(link);
+    return item;
+  }
+
+  function localizeStaticTexts(root) {
+    const translations = getLocalizationConfig().translations || {};
+    const scope = root instanceof Document ? root.body : root;
+    if (!scope) {
+      return;
+    }
+
+    translateAttributes(scope, translations);
+
+    const walker = document.createTreeWalker(
+      scope,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: function (node) {
+          const parent = node.parentElement;
+          if (!parent || parent.closest('[data-no-localize]')) {
+            return NodeFilter.FILTER_REJECT;
+          }
+
+          if (['SCRIPT', 'STYLE', 'TEXTAREA', 'NOSCRIPT'].includes(parent.tagName)) {
+            return NodeFilter.FILTER_REJECT;
+          }
+
+          return normalizeLocalizableText(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
+      }
+    );
+
+    const nodes = [];
+    let node = walker.nextNode();
+    while (node) {
+      nodes.push(node);
+      node = walker.nextNode();
+    }
+
+    nodes.forEach(function (textNode) {
+      const key = normalizeLocalizableText(textNode.nodeValue);
+      const translated = translations[key];
+      if (!translated || translated === key) {
+        return;
+      }
+
+      const leading = textNode.nodeValue.match(/^\s*/)?.[0] || '';
+      const trailing = textNode.nodeValue.match(/\s*$/)?.[0] || '';
+      textNode.nodeValue = `${leading}${translated}${trailing}`;
+    });
+  }
+
+  function translateAttributes(scope, translations) {
+    scope.querySelectorAll('[placeholder], [title], [aria-label]').forEach(function (element) {
+      ['placeholder', 'title', 'aria-label'].forEach(function (attribute) {
+        const value = element.getAttribute(attribute);
+        const key = normalizeLocalizableText(value);
+        if (key && translations[key] && translations[key] !== key) {
+          element.setAttribute(attribute, translations[key]);
+        }
+      });
+    });
+  }
+
+  function normalizeLocalizableText(value) {
+    return String(value || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function getLocalizationConfig() {
+    if (localizationConfig) {
+      return localizationConfig;
+    }
+
+    const source = document.getElementById('storefront-localization');
+    if (!source) {
+      localizationConfig = { currentCulture: 'en', translations: {} };
+      return localizationConfig;
+    }
+
+    try {
+      localizationConfig = JSON.parse(source.textContent || '{}');
+    } catch {
+      localizationConfig = { currentCulture: 'en', translations: {} };
+    }
+
+    localizationConfig.currentCulture = localizationConfig.currentCulture || 'en';
+    localizationConfig.translations = localizationConfig.translations || {};
+    return localizationConfig;
+  }
+
+  function t(key) {
+    const translations = getLocalizationConfig().translations || {};
+    return translations[key] || key;
+  }
+
+  function formatLocalized(key) {
+    const args = Array.prototype.slice.call(arguments, 1);
+    return args.reduce(function (message, value, index) {
+      return message.replaceAll(`{${index}}`, value);
+    }, t(key));
   }
 
   async function initCategoryDropdowns() {
@@ -720,7 +886,7 @@
       const updateLabel = function () {
         const minValue = String(minInput.value || '').trim();
         const maxValue = String(maxInput.value || '').trim();
-        label.textContent = `Price: ${minValue || '0'} — ${maxValue || 'Any'}`;
+        label.textContent = `${t('Price')}: ${minValue || '0'} — ${maxValue || t('Any')}`;
       };
 
       if (!form.dataset.priceFilterLabelReady) {
@@ -850,7 +1016,7 @@
         behavior: 'smooth',
         block: 'center'
       });
-      showNotice('Заполните обязательные поля оформления заказа.', 'danger');
+      showNotice(t('Fill required checkout fields.'), 'danger');
     }
 
     return isValid;
@@ -887,12 +1053,12 @@
     const emptyRow = document.createElement('div');
     emptyRow.className = 'single-cart-area-list main item-parent';
     emptyRow.setAttribute('data-empty-cart-row', '');
-    emptyRow.innerHTML = '<div class="product-main-cart"><div class="information"><h6 class="title">Your cart is empty</h6><span>Add products from the catalog to continue.</span></div></div>';
+    emptyRow.innerHTML = `<div class="product-main-cart"><div class="information"><h6 class="title">${escapeHtml(t('Cart is empty.'))}</h6><span>${escapeHtml(t('Add products from the catalog to continue.'))}</span></div></div>`;
     header?.insertAdjacentElement('afterend', emptyRow);
 
     const buttonArea = document.querySelector('.cart-total-area-start-right .button-area');
     if (buttonArea) {
-      buttonArea.innerHTML = '<a href="/Catalog" class="rts-btn btn-primary">Go Shopping</a>';
+      buttonArea.innerHTML = `<a href="/Catalog" class="rts-btn btn-primary">${escapeHtml(t('Go Shopping'))}</a>`;
     }
   }
 
@@ -908,7 +1074,7 @@
 
     connection.on('OrderCreated', function (payload) {
       refreshOrdersTable();
-      showNotice(payload.message || `Новый заказ #${payload.id}`, 'success');
+      showNotice(payload.message || formatLocalized('New order #{0}', payload.id), 'success');
     });
 
     connection.on('OrderStatusChanged', function (payload) {
@@ -917,11 +1083,11 @@
         badge.textContent = payload.status;
       }
 
-      showNotice(payload.message || `Статус заказа #${payload.id} обновлён`, 'success');
+      showNotice(payload.message || formatLocalized('Order #{0} status updated.', payload.id), 'success');
     });
 
     connection.start().catch(function () {
-      showNotice('Realtime-уведомления временно недоступны.', 'warning');
+      showNotice(t('Realtime notifications are temporarily unavailable.'), 'warning');
     });
   }
 

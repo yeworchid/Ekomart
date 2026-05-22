@@ -96,11 +96,11 @@ public class AdminPagerViewModel
 
 public static class AdminViewHelpers
 {
-    private static readonly CultureInfo RubleCulture = CultureInfo.GetCultureInfo("ru-RU");
+    private static readonly CultureInfo MoneyCulture = CultureInfo.GetCultureInfo("en-US");
 
     public static string Money(decimal value)
     {
-        return value.ToString("C", RubleCulture);
+        return value.ToString("C", MoneyCulture);
     }
 
     public static string DateTime(DateTime value)
