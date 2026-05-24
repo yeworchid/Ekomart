@@ -105,13 +105,21 @@ public class DatabaseSeeder
             new Category { Name = "Vegetables", Slug = "vegetables", Description = "Fresh vegetables for daily cooking.", DisplayOrder = 20 },
             new Category { Name = "Dairy", Slug = "dairy", Description = "Milk, cheese, yogurt and other dairy products.", DisplayOrder = 30 },
             new Category { Name = "Bakery", Slug = "bakery", Description = "Bread, buns and pastry.", DisplayOrder = 40 },
-            new Category { Name = "Pantry", Slug = "pantry", Description = "Groceries with longer shelf life.", DisplayOrder = 50 }
+            new Category { Name = "Pantry", Slug = "pantry", Description = "Groceries with longer shelf life.", DisplayOrder = 50 },
+            new Category { Name = "Beverages", Slug = "beverages", Description = "Juices, soda and everyday drinks.", DisplayOrder = 60 },
+            new Category { Name = "Snacks", Slug = "snacks", Description = "Crackers, nuts, chips and quick snacks.", DisplayOrder = 70 },
+            new Category { Name = "Baby Food", Slug = "baby-food", Description = "Formula, cereal and baby food packs.", DisplayOrder = 80 }
         };
 
         foreach (var category in categories)
         {
-            if (existingCategories.ContainsKey(category.Slug))
+            if (existingCategories.TryGetValue(category.Slug, out var existingCategory))
             {
+                existingCategory.Name = category.Name;
+                existingCategory.Description = category.Description;
+                existingCategory.DisplayOrder = category.DisplayOrder;
+                existingCategory.IsActive = true;
+                existingCategory.UpdatedAtUtc = DateTime.UtcNow;
                 continue;
             }
 
@@ -129,70 +137,189 @@ public class DatabaseSeeder
         IReadOnlyDictionary<string, Category> categories,
         CancellationToken cancellationToken)
     {
-        if (await _dbContext.Products.AnyAsync(cancellationToken))
-        {
-            return;
-        }
-
         var products = new[]
         {
-            Product("fresh-fruits", "Royal Gala Apples", "royal-gala-apples", "Crisp sweet apples for snacks and baking.", 3.49m, 70),
-            Product("fresh-fruits", "Organic Bananas", "organic-bananas", "Ripe organic bananas sold by bunch.", 2.20m, 90),
-            Product("fresh-fruits", "Seedless Grapes", "seedless-grapes", "Juicy green grapes without seeds.", 4.80m, 45),
-            Product("fresh-fruits", "Navel Oranges", "navel-oranges", "Bright oranges with balanced sweetness.", 3.90m, 60),
-            Product("fresh-fruits", "Strawberry Pack", "strawberry-pack", "Fresh strawberries in a family pack.", 5.50m, 35),
-            Product("vegetables", "Cherry Tomatoes", "cherry-tomatoes", "Small tomatoes for salads and snacks.", 3.10m, 55),
-            Product("vegetables", "Broccoli Crown", "broccoli-crown", "Fresh broccoli crowns.", 2.75m, 40),
-            Product("vegetables", "Carrot Bag", "carrot-bag", "Sweet carrots in a one kilogram bag.", 1.90m, 80),
-            Product("vegetables", "Baby Spinach", "baby-spinach", "Washed spinach leaves ready for salads.", 3.60m, 35),
-            Product("vegetables", "Red Bell Peppers", "red-bell-peppers", "Crunchy red peppers.", 4.25m, 42),
-            Product("dairy", "Whole Milk", "whole-milk", "Fresh whole milk, one liter.", 1.80m, 120),
-            Product("dairy", "Greek Yogurt", "greek-yogurt", "Thick plain Greek yogurt.", 2.95m, 75),
-            Product("dairy", "Cheddar Cheese", "cheddar-cheese", "Mature cheddar cheese block.", 4.40m, 38),
-            Product("dairy", "Salted Butter", "salted-butter", "Creamy salted butter.", 3.70m, 50),
-            Product("dairy", "Cottage Cheese", "cottage-cheese", "Fresh cottage cheese.", 2.65m, 48),
-            Product("bakery", "Sourdough Bread", "sourdough-bread", "Rustic sourdough loaf.", 4.10m, 30),
-            Product("bakery", "Croissant Pack", "croissant-pack", "Flaky butter croissants.", 5.90m, 26),
-            Product("bakery", "Wholegrain Toast", "wholegrain-toast", "Sliced wholegrain toast bread.", 2.85m, 45),
-            Product("bakery", "Cinnamon Rolls", "cinnamon-rolls", "Soft cinnamon rolls with glaze.", 4.95m, 28),
-            Product("bakery", "Bagel Set", "bagel-set", "Classic bagels for breakfast.", 3.80m, 35),
-            Product("pantry", "Basmati Rice", "basmati-rice", "Aromatic basmati rice.", 6.40m, 64),
-            Product("pantry", "Olive Oil", "olive-oil", "Extra virgin olive oil.", 8.90m, 40),
-            Product("pantry", "Pasta Fusilli", "pasta-fusilli", "Durum wheat fusilli pasta.", 1.95m, 110),
-            Product("pantry", "Tomato Passata", "tomato-passata", "Smooth tomato passata.", 2.30m, 75),
-            Product("pantry", "Granola Mix", "granola-mix", "Crunchy granola with nuts.", 4.70m, 52)
+            Product("beverages", "Apple Juice Bottle", "apple-juice-bottle", "Family-size apple juice for breakfast and snacks.", 3.49m, 70, "grocery/04.jpg", "royal-gala-apples"),
+            Product("fresh-fruits", "Farm Produce Basket", "farm-produce-basket", "Mixed fresh produce for everyday cooking.", 8.90m, 32, "category/01.png", "organic-bananas"),
+            Product("fresh-fruits", "Guava Pack", "guava-pack", "Ripe guava packed for fresh desserts and smoothies.", 4.80m, 45, "products/product-filt2.jpg", "seedless-grapes"),
+            Product("fresh-fruits", "Fresh Oranges", "fresh-oranges", "Bright oranges with balanced sweetness.", 3.90m, 60, "grocery/05.jpg", "navel-oranges"),
+            Product("fresh-fruits", "Strawberry Pack", "strawberry-pack", "Fresh strawberries in a family pack.", 5.50m, 35, "category/02.png"),
+            Product("vegetables", "Market Vegetable Basket", "market-vegetable-basket", "Fresh vegetables selected for soups and salads.", 6.20m, 44, "shop/06.jpg", "cherry-tomatoes"),
+            Product("vegetables", "Cauliflower Head", "cauliflower-head", "Fresh cauliflower for roasting and side dishes.", 2.75m, 40, "grocery/10.jpg", "broccoli-crown"),
+            Product("vegetables", "Vegetable Medley Box", "vegetable-medley-box", "Colorful vegetables for daily meals.", 4.30m, 52, "category/05.jpg", "carrot-bag"),
+            Product("pantry", "Chicken Broccoli Meal", "chicken-broccoli-meal", "Ready chicken and broccoli meal for a quick dinner.", 5.90m, 28, "grocery/23.jpg", "baby-spinach"),
+            Product("vegetables", "Mixed Vegetable Basket", "mixed-vegetable-basket", "Basket of seasonal vegetables for the week.", 7.40m, 38, "category/01.png", "red-bell-peppers"),
+            Product("dairy", "Chocolate Protein Milk", "chocolate-protein-milk", "Chocolate protein drink in a shelf-stable carton.", 2.95m, 75, "grocery/11.jpg", "whole-milk"),
+            Product("dairy", "Sour Cream Tub", "sour-cream-tub", "Classic sour cream for baked potatoes and sauces.", 2.80m, 54, "best-seller/03.png", "greek-yogurt"),
+            Product("dairy", "Shredded Mozzarella", "shredded-mozzarella", "Shredded mozzarella cheese for pizza and pasta.", 4.40m, 38, "grocery/14.jpg", "cheddar-cheese"),
+            Product("dairy", "Almond Drink Pack", "almond-drink-pack", "Almond drink for cereal, coffee and smoothies.", 3.70m, 50, "discount-product/01.jpg", "salted-butter"),
+            Product("baby-food", "Aptamil Gold Formula", "aptamil-gold-formula", "Infant formula powder in a sealed tin.", 18.90m, 24, "grocery/03.jpg", "cottage-cheese"),
+            Product("bakery", "Original Crackers", "original-crackers", "Crisp original crackers for soups and cheese boards.", 3.20m, 46, "grocery/16.jpg", "sourdough-bread"),
+            Product("bakery", "Pumpkin Spice Muffin Mix", "pumpkin-spice-muffin-mix", "Pumpkin spice muffin mix for home baking.", 4.60m, 33, "grocery/02.jpg", "croissant-pack"),
+            Product("bakery", "Pecan Granola Cereal", "pecan-granola-cereal", "Crunchy pecan cereal for breakfast bowls.", 4.95m, 28, "category/03.jpg", "wholegrain-toast"),
+            Product("bakery", "Chocolate Biscuit Pack", "chocolate-biscuit-pack", "Chocolate sandwich biscuits for tea and coffee.", 4.20m, 36, "grocery/20.jpg", "cinnamon-rolls"),
+            Product("bakery", "Pancake Mix", "pancake-mix", "Original pancake mix for quick breakfasts.", 3.80m, 35, "grocery/15.jpg", "bagel-set"),
+            Product("pantry", "Organic Rice Quinoa", "organic-rice-quinoa", "Organic rice and quinoa blend for side dishes.", 6.40m, 64, "category/07.jpg", "basmati-rice"),
+            Product("pantry", "Cooking Oil Bottle", "cooking-oil-bottle", "Everyday cooking oil for frying and baking.", 8.90m, 40, "category/01.jpg", "olive-oil"),
+            Product("pantry", "Pasta Pouch Set", "pasta-pouch-set", "Pasta and sauce pouches for weeknight meals.", 3.60m, 80, "grocery/22.jpg", "pasta-fusilli"),
+            Product("pantry", "Pasta Sauce Pouches", "pasta-sauce-pouches", "Sauce pouches for pasta, rice and vegetables.", 2.30m, 75, "grocery/06.jpg", "tomato-passata"),
+            Product("snacks", "Hunter Trail Mix", "hunter-trail-mix", "Crunchy trail mix with nuts and dried fruit.", 4.70m, 52, "grocery/08.jpg", "granola-mix"),
+            Product("pantry", "Quaker Oats", "quaker-oats", "Rolled oats for porridge, baking and granola.", 3.95m, 68, "grocery/24.jpg"),
+            Product("pantry", "Chocos Cereal", "chocos-cereal", "Chocolate breakfast cereal for milk bowls.", 3.40m, 58, "grocery/07.jpg"),
+            Product("baby-food", "Cerelac Wheat Cereal", "cerelac-wheat-cereal", "Baby wheat cereal in an easy storage tin.", 5.20m, 30, "grocery/01.jpg"),
+            Product("baby-food", "PediaSure Vanilla", "pediasure-vanilla", "Vanilla nutrition drink powder for children.", 12.90m, 22, "shop/04.jpg"),
+            Product("baby-food", "Bobbie Infant Formula", "bobbie-infant-formula", "Infant formula powder for daily feeding.", 16.50m, 26, "best-seller/05.png"),
+            Product("baby-food", "Mellin Baby Cereal", "mellin-baby-cereal", "Baby cereal with rice flour and milk.", 6.10m, 34, "best-seller/02.png"),
+            Product("baby-food", "Feeding Pouches Variety", "feeding-pouches-variety", "Assorted baby food pouches for quick meals.", 7.80m, 42, "grocery/27.jpg"),
+            Product("pantry", "Tyson Chicken Nuggets", "tyson-chicken-nuggets", "Breaded chicken nuggets for quick family dinners.", 7.20m, 39, "grocery/17.jpg"),
+            Product("pantry", "Turkey Breast Slices", "turkey-breast-slices", "Smoked turkey breast slices for sandwiches.", 5.75m, 31, "grocery/28.jpg"),
+            Product("snacks", "Cheez-It Crackers", "cheez-it-crackers", "White cheddar baked snack crackers.", 4.10m, 55, "grocery/26.jpg"),
+            Product("snacks", "Spicy Corn Curls", "spicy-corn-curls", "Spicy crunchy corn curls in a party bag.", 3.30m, 63, "grocery/21.jpg"),
+            Product("beverages", "Soda Cup Variety", "soda-cup-variety", "Assorted soda cups for parties and picnics.", 6.25m, 48, "grocery/25.jpg"),
+            Product("beverages", "Fruit Drink Pack", "fruit-drink-pack", "Fruit drink pack with assorted flavors.", 4.95m, 46, "grocery/19.jpg"),
+            Product("beverages", "Sparkling Cans", "sparkling-cans", "Colorful sparkling drinks in ready-to-chill cans.", 3.85m, 57, "category/04.jpg"),
+            Product("snacks", "McCain Potato Smiles", "mccain-potato-smiles", "Crispy potato smiles for quick sides.", 5.10m, 37, "category/10.png"),
+            Product("snacks", "Peanut Butter Sandwiches", "peanut-butter-sandwiches", "Frozen peanut butter sandwiches for lunch boxes.", 4.90m, 42, "best-seller/06.png")
         };
 
-        foreach (var product in products)
+        var existingProducts = await _dbContext.Products
+            .ToDictionaryAsync(product => product.Slug, StringComparer.OrdinalIgnoreCase, cancellationToken);
+
+        foreach (var seedProduct in products)
         {
-            product.CategoryId = categories[product.Category!.Slug].Id;
-            product.Category = null;
-            _dbContext.Products.Add(product);
+            var product = FindExistingProduct(seedProduct, existingProducts);
+            var originalSlug = product?.Slug;
+
+            if (product is null)
+            {
+                product = new Product();
+                _dbContext.Products.Add(product);
+            }
+
+            ApplySeedProduct(product, seedProduct, categories[seedProduct.CategorySlug].Id);
+
+            if (!string.IsNullOrWhiteSpace(originalSlug) &&
+                !string.Equals(originalSlug, product.Slug, StringComparison.OrdinalIgnoreCase))
+            {
+                existingProducts.Remove(originalSlug);
+            }
+
+            existingProducts[product.Slug] = product;
+        }
+
+        foreach (var product in existingProducts.Values)
+        {
+            var normalizedImageUrl = NormalizeSeedImageUrl(product.ImageUrl);
+            if (normalizedImageUrl is not null &&
+                !string.Equals(normalizedImageUrl, product.ImageUrl, StringComparison.Ordinal))
+            {
+                product.ImageUrl = normalizedImageUrl;
+                product.UpdatedAtUtc = DateTime.UtcNow;
+            }
         }
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    private static Product Product(
+    private static SeedProduct Product(
         string categorySlug,
         string name,
         string slug,
         string description,
         decimal price,
-        int stockQuantity)
+        int stockQuantity,
+        string imagePath,
+        params string[] legacySlugs)
     {
-        return new Product
-        {
-            Category = new Category { Slug = categorySlug },
-            Name = name,
-            Slug = slug,
-            Description = description,
-            Price = price,
-            ImageUrl = $"/images/products/{slug}.jpg",
-            StockQuantity = stockQuantity,
-            IsActive = true
-        };
+        return new SeedProduct(
+            categorySlug,
+            name,
+            slug,
+            description,
+            price,
+            stockQuantity,
+            $"/assets/ekomart/images/{imagePath}",
+            legacySlugs);
     }
+
+    private static string? NormalizeSeedImageUrl(string? imageUrl)
+    {
+        if (string.IsNullOrWhiteSpace(imageUrl))
+        {
+            return null;
+        }
+
+        var value = imageUrl.Trim();
+        if (value.StartsWith("images/", StringComparison.OrdinalIgnoreCase) ||
+            value.StartsWith("assets/", StringComparison.OrdinalIgnoreCase))
+        {
+            value = "/" + value;
+        }
+
+        if (value.StartsWith("/images/", StringComparison.OrdinalIgnoreCase))
+        {
+            return "/assets/ekomart/images/" + value["/images/".Length..];
+        }
+
+        if (value.StartsWith("/assets/ecomart/", StringComparison.OrdinalIgnoreCase))
+        {
+            return "/assets/ekomart/" + value["/assets/ecomart/".Length..];
+        }
+
+        return value;
+    }
+
+    private static Product? FindExistingProduct(
+        SeedProduct seedProduct,
+        IReadOnlyDictionary<string, Product> existingProducts)
+    {
+        if (existingProducts.TryGetValue(seedProduct.Slug, out var product))
+        {
+            return product;
+        }
+
+        foreach (var legacySlug in seedProduct.LegacySlugs)
+        {
+            if (existingProducts.TryGetValue(legacySlug, out product))
+            {
+                return product;
+            }
+        }
+
+        return null;
+    }
+
+    private static void ApplySeedProduct(
+        Product product,
+        SeedProduct seedProduct,
+        int categoryId)
+    {
+        var isExistingProduct = product.Id != 0;
+
+        product.CategoryId = categoryId;
+        product.Name = seedProduct.Name;
+        product.Slug = seedProduct.Slug;
+        product.Description = seedProduct.Description;
+        product.Price = seedProduct.Price;
+        product.ImageUrl = seedProduct.ImageUrl;
+        product.StockQuantity = seedProduct.StockQuantity;
+        product.IsActive = true;
+
+        if (isExistingProduct)
+        {
+            product.UpdatedAtUtc = DateTime.UtcNow;
+        }
+    }
+
+    private sealed record SeedProduct(
+        string CategorySlug,
+        string Name,
+        string Slug,
+        string Description,
+        decimal Price,
+        int StockQuantity,
+        string ImageUrl,
+        IReadOnlyCollection<string> LegacySlugs);
 
     private async Task<(SubscriptionPlan Basic, SubscriptionPlan Plus)> SeedSubscriptionPlansAsync(
         CancellationToken cancellationToken)

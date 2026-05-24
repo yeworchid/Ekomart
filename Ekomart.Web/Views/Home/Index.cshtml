@@ -19,10 +19,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Ekomart-Grocery-Store(e-Commerce) HTML Template: A sleek, responsive, and user-friendly HTML template designed for online grocery stores.">
+    <meta name="description" content="Ekomart online grocery store with catalog, cart, checkout, subscriptions and admin panel.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="Grocery, Store, stores">
-    <title>Shared on THEMELOCK.COM - Ekomart-Grocery-Store(e-Commerce) HTML Template</title>
+    <title>Ekomart</title>
     <link rel="shortcut icon" type="image/x-icon" href="/assets/ekomart/images/fav.png">
     <!-- plugins css -->
     <link rel="stylesheet" href="/assets/ekomart/css/plugins.css">
@@ -66,7 +66,6 @@
                                 <ul class="nav-h_top">
                                     <li><a href="about.html">About Us</a></li>
                                     <li><a href="/Profile">My Account</a></li>
-                                    <li><a href="wishlist.html">Wishlist</a></li>
                                 </ul>
                                 <p class="para">We deliver to your everyday from 7:00 to 22:00</p>
                             </div>
@@ -178,11 +177,6 @@
                                     <i class="fa-light fa-user"></i>
                                     <span>@(User.Identity?.IsAuthenticated == true ? "Account" : "Login")</span>
                                 </a>
-                                <a href="wishlist.html" class="btn-border-only wishlist">
-                                    <i class="fa-regular fa-heart"></i>
-                                    <span class="text">Wishlist</span>
-                                    <span class="number">2</span>
-                                </a>
                                 <div class="btn-border-only cart category-hover-header">
                                     <i class="fa-sharp fa-regular fa-cart-shopping"></i>
                                     <span  class="text">My Cart</span>
@@ -281,8 +275,7 @@
                             <div class="nav-area">
                                 <nav>
                                     <ul class="parent-nav">
-                                        <li class="parent has-dropdown">
-                                            <a class="nav-link" href="/">Home</a>
+                                        <li class="parent"><a href="/">Home</a>
                                             <ul class="submenu">
                                                 <li><a class="sub-b" href="/">Home One</a></li>
                                                 <li><a class="sub-b" href="index-two.html">Home Two</a></li>
@@ -328,7 +321,6 @@
                                                                         <li><a class="sub-b" href="shop-details-variable.html">Variable product</a></li>
                                                                         <li><a class="sub-b" href="shop-details-affiliats.html">Affiliate product</a></li>
                                                                         <li><a class="sub-b" href="shop-details-group.html">Shop Details Group</a></li>
-                                                                        <li><a class="sub-b" href="shop-compare.html">Shop Compare</a></li>
                                                                     </ul>
                                                                 </div>
                                                                 <!-- single item areas end -->
@@ -354,14 +346,6 @@
                                             </div>
                                         </li>
                                         <li class="parent has-dropdown">
-                                            <a class="nav-link" href="#">Vendors</a>
-                                            <ul class="submenu">
-                                                <li><a class="sub-b" href="vendor-list.html">Vendor List</a></li>
-                                                <li><a class="sub-b" href="vendor-grid.html">Vendor Grid</a></li>
-                                                <li><a class="sub-b" href="vendor-details.html">Vendor Details</a></li>
-                                            </ul>
-                                        </li>
-                                        <li class="parent has-dropdown">
                                             <a class="nav-link" href="#">Pages</a>
                                             <ul class="submenu">
                                                 <li><a class="sub-b" href="about.html">About</a></li>
@@ -375,15 +359,6 @@
                                                 <li><a class="sub-b" href="cookies-policy.html">Cookies Policy</a></li>
                                                 <li><a class="sub-b" href="terms-condition.html">Terms & Condition</a></li>
                                                 <li><a class="sub-b" href="/Errors/404">Error</a></li>
-                                            </ul>
-                                        </li>
-                                        <li class="parent has-dropdown">
-                                            <a class="nav-link" href="#">Blog</a>
-                                            <ul class="submenu">
-                                                <li><a class="sub-b" href="blog.html">Blog</a></li>
-                                                <li><a class="sub-b" href="blog-list-left-sidebar.html">Blog List Right Sidebar</a></li>
-                                                <li><a class="sub-b" href="blog-list-right-sidebar.html">Blog List Left Sidebar</a></li>
-                                                <li><a class="sub-b" href="blog-details.html">Blog Details</a></li>
                                             </ul>
                                         </li>
                                         <li class="parent"><a href="contact.html">Contact</a></li>
@@ -442,10 +417,6 @@
                                     <a href="@(User.Identity?.IsAuthenticated == true ? "/Profile" : "/Account/Login")" class="btn-border-only account">
                                         <i class="fa-light fa-user"></i>
                                         @(User.Identity?.IsAuthenticated == true ? "Account" : "Login")
-                                    </a>
-                                    <a href="wishlist.html" class="btn-border-only wishlist">
-                                        <i class="fa-regular fa-heart"></i>
-                                        Wishlist
                                     </a>
                                     <div class="btn-border-only cart category-hover-header">
                                         <i class="fa-sharp fa-regular fa-cart-shopping"></i>
@@ -639,7 +610,6 @@
                                                 <li><a href="shop-details-variable.html"></a>Shop Details Variable</li>
                                                 <li><a href="shop-details-affiliats.html"></a>Shop Details Affiliats</li>
                                                 <li><a href="shop-details-group.html"></a>Shop Details Group</li>
-                                                <li><a href="shop-compare.html"></a>Shop Compare</li>
                                             </ul>
                                         </li>
                                         <li class="has-droupdown third-lvl">
@@ -650,14 +620,6 @@
                                                 <li><a href="trackorder.html"></a>Trackorder</li>
                                             </ul>
                                         </li>
-                                    </ul>
-                                </li>
-                                <li class="has-droupdown">
-                                    <a href="#" class="main">Blog</a>
-                                    <ul class="submenu mm-collapse">
-                                        <li><a class="mobile-menu-link" href="blog.html">Blog</a></li>
-                                        <li><a class="mobile-menu-link" href="blog-list-left-sidebar.html">Blog Left Sidebar</a></li>
-                                        <li><a class="mobile-menu-link" href="blog-list-right-sidebar.html">Blog List Right Sidebar</a></li>
                                     </ul>
                                 </li>
                                 <li>
@@ -1108,12 +1070,6 @@
                                                         <img src="@featuredImage" alt="@featuredProduct.Name">
                                                     </a>
                                                     <div class="action-share-option">
-                                                        <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                            <i class="fa-light fa-heart"></i>
-                                                        </div>
-                                                        <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                            <i class="fa-solid fa-arrows-retweet"></i>
-                                                        </div>
                                                         <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@featuredProduct.Slug" class="single-action openuptip" data-flow="up" title="View Details">
                                                             <i class="fa-regular fa-eye"></i>
                                                         </a>
@@ -1170,12 +1126,6 @@
                                                 <img src="/assets/ekomart/images/grocery/01.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -1233,12 +1183,6 @@
                                                 <img src="/assets/ekomart/images/grocery/02.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -1294,12 +1238,6 @@
                                                 <img src="/assets/ekomart/images/grocery/03.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -1355,12 +1293,6 @@
                                                 <img src="/assets/ekomart/images/grocery/04.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -1416,12 +1348,6 @@
                                                 <img src="/assets/ekomart/images/grocery/05.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -1477,12 +1403,6 @@
                                                 <img src="/assets/ekomart/images/grocery/06.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -1538,12 +1458,6 @@
                                                 <img src="/assets/ekomart/images/grocery/15.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -1874,12 +1788,6 @@
                                                 <img src="/assets/ekomart/images/grocery/15.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <span class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </span>
-                                                <span class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </span>
                                                 <span class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </span>
@@ -1934,12 +1842,6 @@
                                                 <img src="/assets/ekomart/images/grocery/16.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -1993,12 +1895,6 @@
                                                 <img src="/assets/ekomart/images/grocery/17.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2052,12 +1948,6 @@
                                                 <img src="/assets/ekomart/images/grocery/18.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2111,12 +2001,6 @@
                                                 <img src="/assets/ekomart/images/grocery/19.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2171,12 +2055,6 @@
                                                 <img src="/assets/ekomart/images/grocery/20.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2230,12 +2108,6 @@
                                                 <img src="/assets/ekomart/images/grocery/21.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2289,12 +2161,6 @@
                                                 <img src="/assets/ekomart/images/grocery/22.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2349,12 +2215,6 @@
                                                 <img src="/assets/ekomart/images/grocery/23.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2408,12 +2268,6 @@
                                                 <img src="/assets/ekomart/images/grocery/24.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2467,12 +2321,6 @@
                                                 <img src="/assets/ekomart/images/grocery/25.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2526,12 +2374,6 @@
                                                 <img src="/assets/ekomart/images/grocery/26.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2591,12 +2433,6 @@
                                                 <img src="/assets/ekomart/images/grocery/15.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2651,12 +2487,6 @@
                                                 <img src="/assets/ekomart/images/grocery/16.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2710,12 +2540,6 @@
                                                 <img src="/assets/ekomart/images/grocery/17.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2769,12 +2593,6 @@
                                                 <img src="/assets/ekomart/images/grocery/18.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2828,12 +2646,6 @@
                                                 <img src="/assets/ekomart/images/grocery/19.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2888,12 +2700,6 @@
                                                 <img src="/assets/ekomart/images/grocery/20.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -2947,12 +2753,6 @@
                                                 <img src="/assets/ekomart/images/grocery/21.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3006,12 +2806,6 @@
                                                 <img src="/assets/ekomart/images/grocery/22.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3066,12 +2860,6 @@
                                                 <img src="/assets/ekomart/images/grocery/23.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3125,12 +2913,6 @@
                                                 <img src="/assets/ekomart/images/grocery/24.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3184,12 +2966,6 @@
                                                 <img src="/assets/ekomart/images/grocery/25.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3243,12 +3019,6 @@
                                                 <img src="/assets/ekomart/images/grocery/26.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3307,12 +3077,6 @@
                                                 <img src="/assets/ekomart/images/grocery/15.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3367,12 +3131,6 @@
                                                 <img src="/assets/ekomart/images/grocery/16.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3426,12 +3184,6 @@
                                                 <img src="/assets/ekomart/images/grocery/17.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3485,12 +3237,6 @@
                                                 <img src="/assets/ekomart/images/grocery/18.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3544,12 +3290,6 @@
                                                 <img src="/assets/ekomart/images/grocery/19.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3604,12 +3344,6 @@
                                                 <img src="/assets/ekomart/images/grocery/20.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3663,12 +3397,6 @@
                                                 <img src="/assets/ekomart/images/grocery/21.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3722,12 +3450,6 @@
                                                 <img src="/assets/ekomart/images/grocery/22.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3782,12 +3504,6 @@
                                                 <img src="/assets/ekomart/images/grocery/23.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3841,12 +3557,6 @@
                                                 <img src="/assets/ekomart/images/grocery/24.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3900,12 +3610,6 @@
                                                 <img src="/assets/ekomart/images/grocery/25.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -3959,12 +3663,6 @@
                                                 <img src="/assets/ekomart/images/grocery/26.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -4023,12 +3721,6 @@
                                                 <img src="/assets/ekomart/images/grocery/15.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -4083,12 +3775,6 @@
                                                 <img src="/assets/ekomart/images/grocery/16.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -4142,12 +3828,6 @@
                                                 <img src="/assets/ekomart/images/grocery/17.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -4201,12 +3881,6 @@
                                                 <img src="/assets/ekomart/images/grocery/18.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -4260,12 +3934,6 @@
                                                 <img src="/assets/ekomart/images/grocery/19.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -4320,12 +3988,6 @@
                                                 <img src="/assets/ekomart/images/grocery/20.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -4379,12 +4041,6 @@
                                                 <img src="/assets/ekomart/images/grocery/21.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -4438,12 +4094,6 @@
                                                 <img src="/assets/ekomart/images/grocery/22.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -4498,12 +4148,6 @@
                                                 <img src="/assets/ekomart/images/grocery/23.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -4557,12 +4201,6 @@
                                                 <img src="/assets/ekomart/images/grocery/24.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -4616,12 +4254,6 @@
                                                 <img src="/assets/ekomart/images/grocery/25.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -4675,12 +4307,6 @@
                                                 <img src="/assets/ekomart/images/grocery/26.jpg" alt="grocery">
                                             </a>
                                             <div class="action-share-option">
-                                                <div class="single-action openuptip message-show-action" data-flow="up" title="Add To Wishlist">
-                                                    <i class="fa-light fa-heart"></i>
-                                                </div>
-                                                <div class="single-action openuptip" data-flow="up" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    <i class="fa-solid fa-arrows-retweet"></i>
-                                                </div>
                                                 <div class="single-action openuptip cta-quickview product-details-popup-btn" data-flow="up" title="Quick View">
                                                     <i class="fa-regular fa-eye"></i>
                                                 </div>
@@ -5034,175 +4660,6 @@
         </div>
     </div>
     <!-- rts top tranding product area end -->
-
-    <!-- rts top tranding product area -->
-    <div class="blog-area-start rts-section-gapBottom">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="title-area-between">
-                        <h2 class="title-left mb--0">
-                            Latest Blog Post Insights
-                        </h2>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="cover-card-main-over">
-                        <div class="row g-4">
-                            <div class="col-lg-3 col-md-6 col-sm-12">
-                                <!-- single blog area start -->
-                                <div class="single-blog-area-start">
-                                    <a href="blog-details.html" class="thumbnail">
-                                        <img src="/assets/ekomart/images/blog/01.jpg" alt="blog-area">
-                                    </a>
-                                    <div class="blog-body">
-                                        <div class="top-area">
-                                            <div class="single-meta">
-                                                <i class="fa-light fa-clock"></i>
-                                                <span>15 Sep, 2023</span>
-                                            </div>
-                                            <div class="single-meta">
-                                                <i class="fa-regular fa-folder"></i>
-                                                <span>Modern Fashion</span>
-                                            </div>
-                                        </div>
-                                        <a href="blog-details.html">
-                                            <h4 class="title">
-                                                Shion Fixation: Fueling Your Passion
-                                                for All Things Stylish
-                                            </h4>
-                                        </a>
-                                        <a href="blog-details.html" class="shop-now-goshop-btn">
-                                            <span class="text">Read Details</span>
-                                            <div class="plus-icon">
-                                                <i class="fa-sharp fa-regular fa-plus"></i>
-                                            </div>
-                                            <div class="plus-icon">
-                                                <i class="fa-sharp fa-regular fa-plus"></i>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                                <!-- single blog area end -->
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-12">
-                                <!-- single blog area start -->
-                                <div class="single-blog-area-start">
-                                    <a href="blog-details.html" class="thumbnail">
-                                        <img src="/assets/ekomart/images/blog/02.jpg" alt="blog-area">
-                                    </a>
-                                    <div class="blog-body">
-                                        <div class="top-area">
-                                            <div class="single-meta">
-                                                <i class="fa-light fa-clock"></i>
-                                                <span>15 Sep, 2023</span>
-                                            </div>
-                                            <div class="single-meta">
-                                                <i class="fa-regular fa-folder"></i>
-                                                <span>Modern Fashion</span>
-                                            </div>
-                                        </div>
-                                        <a href="blog-details.html">
-                                            <h4 class="title">
-                                                Ashion Fixation: Fueling Your Passion
-                                                for All Things Stylish
-                                            </h4>
-                                        </a>
-                                        <a href="blog-details.html" class="shop-now-goshop-btn">
-                                            <span class="text">Read Details</span>
-                                            <div class="plus-icon">
-                                                <i class="fa-sharp fa-regular fa-plus"></i>
-                                            </div>
-                                            <div class="plus-icon">
-                                                <i class="fa-sharp fa-regular fa-plus"></i>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                                <!-- single blog area end -->
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-12">
-                                <!-- single blog area start -->
-                                <div class="single-blog-area-start">
-                                    <a href="blog-details.html" class="thumbnail">
-                                        <img src="/assets/ekomart/images/blog/03.jpg" alt="blog-area">
-                                    </a>
-                                    <div class="blog-body">
-                                        <div class="top-area">
-                                            <div class="single-meta">
-                                                <i class="fa-light fa-clock"></i>
-                                                <span>15 Sep, 2023</span>
-                                            </div>
-                                            <div class="single-meta">
-                                                <i class="fa-regular fa-folder"></i>
-                                                <span>Modern Fashion</span>
-                                            </div>
-                                        </div>
-                                        <a href="blog-details.html">
-                                            <h4 class="title">
-                                                Fixation: Fueling Your Passion
-                                                for All Things Stylish
-                                            </h4>
-                                        </a>
-                                        <a href="blog-details.html" class="shop-now-goshop-btn">
-                                            <span class="text">Read Details</span>
-                                            <div class="plus-icon">
-                                                <i class="fa-sharp fa-regular fa-plus"></i>
-                                            </div>
-                                            <div class="plus-icon">
-                                                <i class="fa-sharp fa-regular fa-plus"></i>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                                <!-- single blog area end -->
-                            </div>
-                            <div class="col-lg-3 col-md-6 col-sm-12">
-                                <!-- single blog area start -->
-                                <div class="single-blog-area-start">
-                                    <a href="blog-details.html" class="thumbnail">
-                                        <img src="/assets/ekomart/images/blog/04.jpg" alt="blog-area">
-                                    </a>
-                                    <div class="blog-body">
-                                        <div class="top-area">
-                                            <div class="single-meta">
-                                                <i class="fa-light fa-clock"></i>
-                                                <span>15 Sep, 2023</span>
-                                            </div>
-                                            <div class="single-meta">
-                                                <i class="fa-regular fa-folder"></i>
-                                                <span>Modern Fashion</span>
-                                            </div>
-                                        </div>
-                                        <a href="blog-details.html">
-                                            <h4 class="title">
-                                                Fashion Fixation: Fueling Your Passion
-                                                for All Things Stylish
-                                            </h4>
-                                        </a>
-                                        <a href="blog-details.html" class="shop-now-goshop-btn">
-                                            <span class="text">Read Details</span>
-                                            <div class="plus-icon">
-                                                <i class="fa-sharp fa-regular fa-plus"></i>
-                                            </div>
-                                            <div class="plus-icon">
-                                                <i class="fa-sharp fa-regular fa-plus"></i>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                                <!-- single blog area end -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- rts top tranding product area end -->
-
     <!-- rts footer one area start -->
     <div class="rts-footer-area pt--80 bg_light-1">
         <div class="container">
@@ -5441,7 +4898,6 @@
                                     <i class="fa-regular fa-cart-shopping"></i>
                                 </div>
                             </a>
-                            <a href="javascript:void(0);" class="rts-btn btn-primary ml--20"><i class="fa-light fa-heart"></i></a>
                         </div>
                         <div class="product-uniques">
                             <span class="sku product-unipue"><span>SKU: </span> BO1D0MX8SJ</span>
@@ -5460,198 +4916,6 @@
                                 class="fab fa-youtube"></i></a>
                             <a class="platform" href="http://linkedin.com" target="_blank"><i
                                 class="fab fa-linkedin"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- successfully add in wishlist -->
-    <div class="successfully-addedin-wishlist">
-        <div class="d-flex" style="align-items: center; gap: 15px;">
-            <i class="fa-regular fa-check"></i>
-            <p>Your item has already added in wishlist successfully</p>
-        </div>
-    </div>
-    <!-- successfully add in wishlist end -->
-
-
-
-    <!-- Modal -->
-    <div class="modal modal-compare-area-start fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Products Compare</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="compare-main-wrapper-body">
-                        <div class="single-compare-elements name">Preview</div>
-                        <div class="single-compare-elements">
-                            <div class="thumbnail-preview">
-                                <img src="/assets/ekomart/images/grocery/01.jpg" alt="grocery">
-                            </div>
-                        </div>
-                        <div class="single-compare-elements">
-                            <div class="thumbnail-preview">
-                                <img src="/assets/ekomart/images/grocery/02.jpg" alt="grocery">
-                            </div>
-                        </div>
-                        <div class="single-compare-elements">
-                            <div class="thumbnail-preview">
-                                <img src="/assets/ekomart/images/grocery/03.jpg" alt="grocery">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="compare-main-wrapper-body productname spacifiq">
-                        <div class="single-compare-elements name">Name</div>
-                        <div class="single-compare-elements">
-                            <p>J.Crew Mercantile Women's Short</p>
-                        </div>
-                        <div class="single-compare-elements">
-                            <p>Amazon Essentials Women's Tanks</p>
-                        </div>
-                        <div class="single-compare-elements">
-                            <p>Amazon Brand - Daily Ritual Wom</p>
-                        </div>
-                    </div>
-                    <div class="compare-main-wrapper-body productname">
-                        <div class="single-compare-elements name">Price</div>
-                        <div class="single-compare-elements price">
-                            <p>$25.00</p>
-                        </div>
-                        <div class="single-compare-elements price">
-                            <p>$39.25</p>
-                        </div>
-                        <div class="single-compare-elements price">
-                            <p>$12.00</p>
-                        </div>
-                    </div>
-                    <div class="compare-main-wrapper-body productname">
-                        <div class="single-compare-elements name">Description</div>
-                        <div class="single-compare-elements discription">
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard</p>
-                        </div>
-                        <div class="single-compare-elements discription">
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard</p>
-                        </div>
-                        <div class="single-compare-elements discription">
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard</p>
-                        </div>
-                    </div>
-                    <div class="compare-main-wrapper-body productname">
-                        <div class="single-compare-elements name">Rating</div>
-                        <div class="single-compare-elements">
-                            <div class="rating">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <span>(25)</span>
-                            </div>
-                        </div>
-                        <div class="single-compare-elements">
-                            <div class="rating">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <span>(19)</span>
-                            </div>
-                        </div>
-                        <div class="single-compare-elements">
-                            <div class="rating">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <span>(120)</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="compare-main-wrapper-body productname">
-                        <div class="single-compare-elements name">Weight</div>
-                        <div class="single-compare-elements">
-                            <div class="rating">
-                                <p>320 gram</p>
-                            </div>
-                        </div>
-                        <div class="single-compare-elements">
-                            <p>370 gram</p>
-                        </div>
-                        <div class="single-compare-elements">
-                            <p>380 gram</p>
-                        </div>
-                    </div>
-                    <div class="compare-main-wrapper-body productname">
-                        <div class="single-compare-elements name">Stock status</div>
-                        <div class="single-compare-elements">
-                            <div class="instocks">
-                                <span>In Stock</span>
-                            </div>
-                        </div>
-                        <div class="single-compare-elements">
-                            <div class="outstocks">
-                                <span class="out-stock">Out Of Stock</span>
-                            </div>
-                        </div>
-                        <div class="single-compare-elements">
-                            <div class="instocks">
-                                <span>In Stock</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="compare-main-wrapper-body productname">
-                        <div class="single-compare-elements name">Buy Now</div>
-                        <div class="single-compare-elements">
-                            <div class="cart-counter-action">
-                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                    <div class="btn-text">
-                                        Add To Cart
-                                    </div>
-                                    <div class="arrow-icon">
-                                        <i class="fa-regular fa-cart-shopping"></i>
-                                    </div>
-                                    <div class="arrow-icon">
-                                        <i class="fa-regular fa-cart-shopping"></i>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="single-compare-elements">
-                            <div class="cart-counter-action">
-                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                    <div class="btn-text">
-                                        Add To Cart
-                                    </div>
-                                    <div class="arrow-icon">
-                                        <i class="fa-regular fa-cart-shopping"></i>
-                                    </div>
-                                    <div class="arrow-icon">
-                                        <i class="fa-regular fa-cart-shopping"></i>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="single-compare-elements">
-                            <div class="cart-counter-action">
-                                <a href="#" class="rts-btn btn-primary radious-sm with-icon">
-                                    <div class="btn-text">
-                                        Add To Cart
-                                    </div>
-                                    <div class="arrow-icon">
-                                        <i class="fa-regular fa-cart-shopping"></i>
-                                    </div>
-                                    <div class="arrow-icon">
-                                        <i class="fa-regular fa-cart-shopping"></i>
-                                    </div>
-                                </a>
-                            </div>
                         </div>
                     </div>
                 </div>

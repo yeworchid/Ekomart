@@ -47,13 +47,45 @@ public static class StoreViewHelpers
 
     public static string ProductImage(string? imageUrl, int stableKey)
     {
-        if (!string.IsNullOrWhiteSpace(imageUrl) && imageUrl.StartsWith("/assets/", StringComparison.OrdinalIgnoreCase))
+        var normalizedImageUrl = NormalizeProductImageUrl(imageUrl);
+        if (normalizedImageUrl is not null)
         {
-            return imageUrl;
+            return normalizedImageUrl;
         }
 
         var index = Math.Abs(stableKey) % ProductImages.Length;
         return ProductImages[index];
+    }
+
+    private static string? NormalizeProductImageUrl(string? imageUrl)
+    {
+        if (string.IsNullOrWhiteSpace(imageUrl))
+        {
+            return null;
+        }
+
+        var value = imageUrl.Trim();
+        if (!value.StartsWith('/'))
+        {
+            value = "/" + value;
+        }
+
+        if (value.StartsWith("/images/", StringComparison.OrdinalIgnoreCase))
+        {
+            return "/assets/ekomart/images/" + value["/images/".Length..];
+        }
+
+        if (value.StartsWith("/assets/ecomart/", StringComparison.OrdinalIgnoreCase))
+        {
+            return "/assets/ekomart/" + value["/assets/ecomart/".Length..];
+        }
+
+        if (value.StartsWith("/assets/", StringComparison.OrdinalIgnoreCase))
+        {
+            return value;
+        }
+
+        return null;
     }
 
     public static string CategoryImage(int stableKey)
