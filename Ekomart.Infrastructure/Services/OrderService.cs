@@ -44,12 +44,31 @@ public class OrderService : IOrderService
             .ToListAsync(cancellationToken);
 
         var validCartItems = cartItems
-            .Where(item => item.Product is not null && item.Product.IsActive && item.Quantity > 0)
+            .Where(item => item.Product is not null && item.Quantity > 0)
             .ToArray();
 
         if (validCartItems.Length == 0)
         {
             throw new InvalidOperationException("Cart is empty.");
+        }
+
+        foreach (var item in validCartItems)
+        {
+            var product = item.Product!;
+            if (!product.IsActive)
+            {
+                throw new InvalidOperationException($"{product.Name} is no longer available.");
+            }
+
+            if (product.StockQuantity <= 0)
+            {
+                throw new InvalidOperationException($"{product.Name} is out of stock.");
+            }
+
+            if (item.Quantity > product.StockQuantity)
+            {
+                throw new InvalidOperationException(StockLimitMessage(product.Name, product.StockQuantity));
+            }
         }
 
         var now = DateTime.UtcNow;
@@ -96,6 +115,12 @@ public class OrderService : IOrderService
                 .ToList()
         };
 
+        foreach (var item in validCartItems)
+        {
+            item.Product!.StockQuantity -= item.Quantity;
+            item.Product.UpdatedAtUtc = DateTime.UtcNow;
+        }
+
         _dbContext.Orders.Add(order);
         _dbContext.CartItems.RemoveRange(cartItems);
         _dbContext.AuditLogs.Add(new AuditLog
@@ -109,6 +134,13 @@ public class OrderService : IOrderService
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return order.ToDto();
+    }
+
+    private static string StockLimitMessage(string productName, int stockQuantity)
+    {
+        return stockQuantity == 1
+            ? $"Only 1 item of {productName} is left in stock."
+            : $"Only {stockQuantity} items of {productName} are left in stock.";
     }
 
     public async Task<PagedResult<OrderDto>> GetUserOrdersAsync(

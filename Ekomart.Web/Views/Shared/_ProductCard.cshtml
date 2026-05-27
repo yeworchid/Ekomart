@@ -1,0 +1,62 @@
+@model Ekomart.Web.Models.Store.ProductCardViewModel
+@using Ekomart.Web.Models.Store
+@{
+    var product = Model.Product;
+    var image = StoreViewHelpers.ProductImage(product.ImageUrl, product.Id);
+    var isAvailable = product.IsActive && product.StockQuantity > 0;
+    var stockBadgeText = isAvailable ? "In<br>Stock" : "Sold<br>Out";
+}
+
+<div class="single-shopping-card-one ekomart-product-card @(isAvailable ? "is-in-stock" : "is-sold-out")" data-product-card data-product-id="@product.Id" data-stock-quantity="@product.StockQuantity">
+    <div class="image-and-action-area-wrapper">
+        <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@product.Slug" class="thumbnail-preview">
+            <div class="badge ekomart-stock-badge">
+                <span>@Html.Raw(stockBadgeText)</span>
+                <i class="fa-solid fa-bookmark"></i>
+            </div>
+            <img src="@image" alt="@product.Name">
+        </a>
+    </div>
+    <div class="body-content">
+        <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@product.Slug">
+            <h4 class="title">@product.Name</h4>
+        </a>
+        <span class="availability">@product.CategoryName</span>
+        <div class="price-area">
+            <span class="current">@StoreViewHelpers.Money(product.Price)</span>
+        </div>
+        @if (isAvailable)
+        {
+            <form asp-controller="Cart" asp-action="Add" method="post" class="cart-counter-action" data-ajax-cart>
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="productId" value="@product.Id">
+                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+                <div class="quantity-edit quantity-control">
+                    <button type="button" class="button minus" aria-label="Decrease quantity">-</button>
+                    <input type="text" name="quantity" class="input" value="1" min="1" max="@product.StockQuantity" inputmode="numeric" autocomplete="off">
+                    <button type="button" class="button plus" aria-label="Increase quantity">+</button>
+                </div>
+                <button type="submit" class="rts-btn btn-primary radious-sm with-icon">
+                    <div class="btn-text">@Model.AddButtonText</div>
+                    <div class="arrow-icon"><i class="fa-regular fa-cart-shopping"></i></div>
+                    <div class="arrow-icon"><i class="fa-regular fa-cart-shopping"></i></div>
+                </button>
+            </form>
+        }
+        else
+        {
+            <div class="cart-counter-action sold-out-action">
+                <div class="quantity-edit quantity-control disabled" aria-hidden="true">
+                    <button type="button" class="button minus" disabled>-</button>
+                    <input type="text" class="input" value="0" disabled>
+                    <button type="button" class="button plus" disabled>+</button>
+                </div>
+                <button type="button" class="rts-btn btn-primary radious-sm with-icon" disabled>
+                    <div class="btn-text">Sold Out</div>
+                    <div class="arrow-icon"><i class="fa-regular fa-circle-xmark"></i></div>
+                    <div class="arrow-icon"><i class="fa-regular fa-circle-xmark"></i></div>
+                </button>
+            </div>
+        }
+    </div>
+</div>

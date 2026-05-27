@@ -390,10 +390,10 @@
                     <tbody>
                       @foreach (var order in Model.Orders.Items)
                       {
-                        <tr>
+                        <tr data-order-id="@order.Id">
                           <td></td>
                           <td><input type="checkbox" class="dt-checkboxes form-check-input" /></td>
-                          <td><a href="/Admin/Orders/Details/@order.Id"><span>#@order.Id</span></a></td>
+                          <td data-order="@order.Id"><a href="/Admin/Orders/Details/@order.Id"><span>#@order.Id</span></a></td>
                           <td><span class="text-nowrap">@AdminViewHelpers.DateTime(order.CreatedAtUtc)</span></td>
                           <td>
                             <div class="d-flex justify-content-start align-items-center order-name text-nowrap">
@@ -490,8 +490,8 @@
     <script src="/assets/vuexy/js/main.js"></script>
 
     <!-- Page JS -->
-    <script src="/assets/vuexy/js/app-ecommerce-order-list.js"></script>
+    <script src="/assets/vuexy/js/app-ecommerce-order-list.js?v=no-repaint-1"></script>
     <script src="/lib/signalr/signalr.min.js"></script>
-    <script src="/js/ekomart-ajax.js"></script>
+    <script src="/js/ekomart-ajax.js?v=guest-cart-realtime-1"></script>
   </body>
 </html>

@@ -138,7 +138,7 @@
                                         {
                                             <li>
                                                 <a asp-controller="Catalog" asp-action="Index" asp-route-categorySlug="@category.Slug" class="menu-item">
-                                                    <img src="@StoreViewHelpers.CategoryIcon(category.Id)" alt="@category.Name">
+                                                    <img src="@StoreViewHelpers.CategoryIcon(category.Slug)" alt="@category.Name">
                                                     <span>@category.Name</span>
                                                 </a>
                                             </li>
@@ -390,7 +390,7 @@
                                         {
                                             <li>
                                                 <a asp-controller="Catalog" asp-action="Index" asp-route-categorySlug="@category.Slug" class="menu-item">
-                                                    <img src="@StoreViewHelpers.CategoryIcon(category.Id)" alt="@category.Name">
+                                                    <img src="@StoreViewHelpers.CategoryIcon(category.Slug)" alt="@category.Name">
                                                     <span>@category.Name</span>
                                                 </a>
                                             </li>
@@ -1058,54 +1058,13 @@
                                 {
                                     foreach (var featuredProduct in Model.FeaturedProducts)
                                     {
-                                        var featuredImage = StoreViewHelpers.ProductImage(featuredProduct.ImageUrl, featuredProduct.Id);
                                         <div class="swiper-slide">
-                                            <div class="single-shopping-card-one">
-                                                <div class="image-and-action-area-wrapper">
-                                                    <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@featuredProduct.Slug" class="thumbnail-preview">
-                                                        <div class="badge">
-                                                            <span>New<br>Item</span>
-                                                            <i class="fa-solid fa-bookmark"></i>
-                                                        </div>
-                                                        <img src="@featuredImage" alt="@featuredProduct.Name">
-                                                    </a>
-                                                    <div class="action-share-option">
-                                                        <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@featuredProduct.Slug" class="single-action openuptip" data-flow="up" title="View Details">
-                                                            <i class="fa-regular fa-eye"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                                <div class="body-content">
-                                                    <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@featuredProduct.Slug">
-                                                        <h4 class="title">@featuredProduct.Name</h4>
-                                                    </a>
-                                                    <span class="availability">@featuredProduct.CategoryName</span>
-                                                    <div class="price-area">
-                                                        <span class="current">@StoreViewHelpers.Money(featuredProduct.Price)</span>
-                                                    </div>
-                                                    <form asp-controller="Cart" asp-action="Add" method="post" class="cart-counter-action" data-ajax-cart>
-                                                        @Html.AntiForgeryToken()
-                                                        <input type="hidden" name="productId" value="@featuredProduct.Id">
-                                                        <input type="hidden" name="returnUrl" value="@ViewContext.HttpContext.Request.Path">
-                                                        <div class="quantity-edit">
-                                                            <input type="number" name="quantity" class="input" value="1" min="1" max="@Math.Max(featuredProduct.StockQuantity, 1)">
-                                                            <div class="button-wrapper-action">
-                                                                <button type="button" class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                                <button type="button" class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                            </div>
-                                                        </div>
-                                                        <button type="submit" class="rts-btn btn-primary radious-sm with-icon">
-                                                            <div class="btn-text">Add</div>
-                                                            <div class="arrow-icon">
-                                                                <i class="fa-regular fa-cart-shopping"></i>
-                                                            </div>
-                                                            <div class="arrow-icon">
-                                                                <i class="fa-regular fa-cart-shopping"></i>
-                                                            </div>
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </div>
+                                            @await Html.PartialAsync("_ProductCard", new ProductCardViewModel
+                                            {
+                                                Product = featuredProduct,
+                                                ReturnUrl = ViewContext.HttpContext.Request.Path,
+                                                AddButtonText = "Add"
+                                            })
                                         </div>
                                     }
                                 }

@@ -219,6 +219,9 @@
   <data name="Cart item was not found." xml:space="preserve">
     <value>Позиция корзины не найдена.</value>
   </data>
+  <data name="Sold Out" xml:space="preserve">
+    <value>Распродано</value>
+  </data>
   <data name="Invalid email or password." xml:space="preserve">
     <value>Неверный email или пароль.</value>
   </data>

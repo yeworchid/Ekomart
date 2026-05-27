@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Localization;
+using System.Globalization;
 
 namespace Ekomart.Web.Controllers;
 
@@ -77,13 +78,7 @@ public class OrdersController : Controller
             var order = await _orderService.CheckoutAsync(userId, checkout, cancellationToken);
             await _orderHub.Clients.Group(OrderHub.ManagersGroup).SendAsync(
                 "OrderCreated",
-                new
-                {
-                    id = order.Id,
-                    customer = order.CustomerName ?? _localizer["Customer"].Value,
-                    total = StoreViewHelpers.Money(order.TotalAmount),
-                    message = _localizer["New order #{0}", order.Id].Value
-                },
+                BuildOrderCreatedPayload(order),
                 cancellationToken);
 
             TempData["CheckoutSuccess"] = _localizer[
@@ -117,5 +112,66 @@ public class OrdersController : Controller
     {
         return _userManager.GetUserId(User)
             ?? throw new InvalidOperationException("Authenticated user id was not found.");
+    }
+
+    private object BuildOrderCreatedPayload(OrderDto order)
+    {
+        var customer = string.IsNullOrWhiteSpace(order.CustomerName)
+            ? _localizer["Customer"].Value
+            : order.CustomerName;
+
+        return new
+        {
+            id = order.Id,
+            detailsUrl = Url.Action("Details", "Orders", new { area = "Admin", id = order.Id })
+                ?? $"/Admin/Orders/Details/{order.Id}",
+            customer,
+            email = order.CustomerEmail ?? string.Empty,
+            initials = Initials(customer),
+            createdAt = order.CreatedAtUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture),
+            paymentStatus = order.PaymentStatus.ToString(),
+            paymentBadge = PaymentStatusBadge(order.PaymentStatus),
+            status = order.Status.ToString(),
+            statusBadge = OrderStatusBadge(order.Status),
+            total = StoreViewHelpers.Money(order.TotalAmount),
+            message = _localizer["New order #{0}", order.Id].Value
+        };
+    }
+
+    private static string Initials(string value)
+    {
+        var initials = value
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(part => part[0])
+            .Take(2)
+            .Aggregate(string.Empty, (current, ch) => current + ch)
+            .ToUpperInvariant();
+
+        return string.IsNullOrWhiteSpace(initials) ? "C" : initials;
+    }
+
+    private static string OrderStatusBadge(OrderStatus status)
+    {
+        return status switch
+        {
+            OrderStatus.Created => "bg-label-secondary",
+            OrderStatus.Paid => "bg-label-info",
+            OrderStatus.Processing => "bg-label-warning",
+            OrderStatus.Completed => "bg-label-success",
+            OrderStatus.Cancelled => "bg-label-danger",
+            _ => "bg-label-secondary"
+        };
+    }
+
+    private static string PaymentStatusBadge(PaymentStatus status)
+    {
+        return status switch
+        {
+            PaymentStatus.Pending => "bg-label-warning",
+            PaymentStatus.Paid => "bg-label-success",
+            PaymentStatus.Failed => "bg-label-danger",
+            PaymentStatus.Refunded => "bg-label-info",
+            _ => "bg-label-secondary"
+        };
     }
 }

@@ -979,7 +979,7 @@
                                         <p>@StoreViewHelpers.Money(item.UnitPrice)</p>
                                     </div>
                                     <div class="quantity">
-                                        <form asp-controller="Cart" asp-action="Update" method="post" class="quantity-edit cart-quantity-edit" data-ajax-cart data-cart-quantity-form>
+                                        <form asp-controller="Cart" asp-action="Update" method="post" class="quantity-edit quantity-control cart-quantity-edit" data-ajax-cart data-cart-quantity-form>
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="ProductId" value="@item.ProductId">
                                             <button type="button" class="button minus" aria-label="Decrease quantity"><i class="fa-regular fa-minus"></i></button>

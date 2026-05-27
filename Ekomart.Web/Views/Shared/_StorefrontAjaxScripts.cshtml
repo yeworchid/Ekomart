@@ -75,6 +75,7 @@
         "Product was not found.",
         "Product is out of stock.",
         "Cart item was not found.",
+        "Sold Out",
         "Invalid email or password.",
         "Enter email.",
         "Enter a valid email.",
@@ -97,6 +98,10 @@
         currentCulture,
         translations
     };
+    var authPayload = new
+    {
+        isAuthenticated
+    };
 }
 
 <style>
@@ -104,6 +109,7 @@
     .btn-border-only.cart .card-number-show,
     .coupon-input-area-1,
     .bottom-cupon-code-cart-area form,
+    .discount-area .countdown,
     .footersubscribe-form,
     .our-payment-method,
     .nav-h_top.language .language-hover:nth-child(n+2),
@@ -114,9 +120,10 @@
     .nav-area .parent-nav > li:nth-child(1) .submenu,
     .nav-area .parent-nav > li:nth-child(3) .rts-megamenu,
     .mobile-menu-main nav > ul > li:nth-child(2),
-    .mobile-menu-main nav > ul > li:nth-child(4),
+    .mobile-menu-main nav > ul > li:nth-child(3),
+    .mobile-menu-main nav > ul > li:nth-child(5),
     .mobile-menu-main nav > ul > li:nth-child(1) .submenu,
-    .mobile-menu-main nav > ul > li:nth-child(3) .submenu,
+    .mobile-menu-main nav > ul > li:nth-child(4) .submenu,
     .category-sub-menu .submenu,
     .right-btn-area,
     .price-input-area input.range,
@@ -133,6 +140,71 @@
 
     .product-details-popup-wrapper.in-shopdetails .details-product-area {
         width: 100%;
+    }
+
+    .mobile-menu-main nav > ul > li:nth-child(1)::after,
+    .mobile-menu-main nav > ul > li:nth-child(4)::after {
+        display: none !important;
+    }
+
+    .title-area-between .countdown {
+        display: none !important;
+    }
+
+    .nav-h_top.language {
+        display: inline-flex !important;
+        align-items: center;
+        width: auto !important;
+    }
+
+    .nav-h_top.language .language-hover {
+        display: inline-flex !important;
+        align-items: center;
+        width: auto !important;
+        min-width: 0 !important;
+        padding: 0 !important;
+        position: relative;
+    }
+
+    .nav-h_top.language .language-hover > a {
+        display: inline-flex !important;
+        align-items: center;
+        width: auto !important;
+        white-space: nowrap;
+    }
+
+    .nav-h_top.language .language-hover .category-sub-menu {
+        left: auto !important;
+        right: 0 !important;
+        top: calc(100% + 8px) !important;
+        width: 150px !important;
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        transform: translateY(8px) !important;
+        transition: opacity .18s ease, transform .18s ease, visibility .18s ease !important;
+    }
+
+    .nav-h_top.language .language-hover:hover .category-sub-menu {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        transform: translateY(8px) !important;
+    }
+
+    .nav-h_top.language .language-hover.is-open .category-sub-menu {
+        display: flex !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+        transform: translateY(0) !important;
+    }
+
+    .nav-h_top.language .language-hover::after,
+    .nav-h_top.language .language-hover:hover::after {
+        pointer-events: none !important;
     }
 
     .product-details-popup-wrapper.in-shopdetails .product-thumb-area {
@@ -152,6 +224,53 @@
         width: 100%;
         height: 100%;
         object-fit: contain;
+    }
+
+    .action-share-option:has(.product-details-popup-btn),
+    .ekomart-product-card .action-share-option {
+        display: none !important;
+    }
+
+    .ekomart-product-card .thumbnail-preview {
+        position: relative;
+    }
+
+    .ekomart-product-card .thumbnail-preview .ekomart-stock-badge {
+        top: 8px !important;
+        left: 14px !important;
+        z-index: 6 !important;
+        width: 50px;
+        height: 50px;
+        padding: 0 !important;
+    }
+
+    .ekomart-product-card .thumbnail-preview .ekomart-stock-badge i {
+        font-size: 50px;
+    }
+
+    .ekomart-product-card .thumbnail-preview .ekomart-stock-badge span {
+        top: 14px !important;
+        left: 13px !important;
+        width: 28px;
+        text-align: center !important;
+        font-size: 10px !important;
+        line-height: 1.05 !important;
+    }
+
+    .ekomart-product-card.is-sold-out .thumbnail-preview img {
+        opacity: .48;
+        filter: grayscale(1);
+    }
+
+    .ekomart-product-card.is-sold-out .thumbnail-preview .ekomart-stock-badge i {
+        color: #9CA3AF;
+    }
+
+    .ekomart-product-card.is-sold-out .rts-btn[disabled],
+    .ekomart-product-card.is-sold-out .rts-btn.disabled,
+    .ekomart-product-card.is-sold-out .quantity-edit.disabled {
+        opacity: .72;
+        cursor: not-allowed;
     }
 
     .product-details-popup-wrapper.in-shopdetails .contents,
@@ -189,6 +308,15 @@
     .single-shopping-card-one:not(.discount-offer):not(.tranding-product):not(.deals-of-day) .cart-counter-action {
         margin-top: auto;
         padding-top: 10px;
+    }
+
+    .single-shopping-card-one .cart-counter-action .quantity-edit.visually-hidden {
+        display: none !important;
+    }
+
+    .swiper-slide .ekomart-product-card {
+        width: 100%;
+        min-width: 0;
     }
 
     .quantity-edit input.input {
@@ -254,8 +382,14 @@
     }
 
     .quantity-edit.quantity-control .button:hover {
-        background: #629D23;
-        color: #fff;
+        background: #629D23 !important;
+        color: #fff !important;
+    }
+
+    .quantity-edit.quantity-control.disabled .button,
+    .quantity-edit.quantity-control .button:disabled {
+        cursor: not-allowed !important;
+        opacity: .55;
     }
 
     .checkout-field-error {
@@ -324,4 +458,5 @@
     <script defer src="/lib/signalr/signalr.min.js"></script>
 }
 <script type="application/json" id="storefront-localization">@Html.Raw(JsonSerializer.Serialize(localizationPayload))</script>
-<script defer src="/js/ekomart-ajax.js?v=localization-1"></script>
+<script type="application/json" id="storefront-auth">@Html.Raw(JsonSerializer.Serialize(authPayload))</script>
+<script defer src="/js/ekomart-ajax.js?v=guest-cart-realtime-1"></script>

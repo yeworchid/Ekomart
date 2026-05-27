@@ -100,6 +100,22 @@ public static class StoreViewHelpers
         return CategoryIcons[index];
     }
 
+    public static string CategoryIcon(string? categorySlug)
+    {
+        return categorySlug?.Trim().ToLowerInvariant() switch
+        {
+            "fresh-fruits" => "/assets/ekomart/images/icons/01.svg",
+            "vegetables" => "/assets/ekomart/images/icons/09.svg",
+            "dairy" => "/assets/ekomart/images/icons/06.svg",
+            "bakery" => "/assets/ekomart/images/icons/03.svg",
+            "pantry" => "/assets/ekomart/images/icons/04.svg",
+            "beverages" => "/assets/ekomart/images/icons/07.svg",
+            "snacks" => "/assets/ekomart/images/icons/02.svg",
+            "baby-food" => "/assets/ekomart/images/icons/05.svg",
+            _ => CategoryIcon(0)
+        };
+    }
+
     public static string Money(decimal amount)
     {
         return amount.ToString("C", CultureInfo.GetCultureInfo("en-US"));

@@ -96,7 +96,7 @@ public class CartController : Controller
             var cart = await _cartService.UpdateQuantityAsync(GetUserId(), dto, cancellationToken);
             if (IsAjaxRequest())
             {
-                return Json(CartResponse(cart, "Корзина обновлена."));
+                return Json(CartResponse(cart, _localizer["Cart updated."].Value));
             }
         }
         catch (InvalidOperationException exception)
@@ -132,8 +132,18 @@ public class CartController : Controller
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> Count(CancellationToken cancellationToken)
     {
+        if (User.Identity?.IsAuthenticated != true)
+        {
+            return Json(new
+            {
+                success = true,
+                totalQuantity = 0
+            });
+        }
+
         var totalQuantity = await _cartService.GetTotalQuantityAsync(GetUserId(), cancellationToken);
 
         return Json(new

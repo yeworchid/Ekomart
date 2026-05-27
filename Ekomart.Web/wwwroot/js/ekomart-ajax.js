@@ -13,7 +13,9 @@
     initCheckoutValidation();
     hydrateHomeProductCards();
     initStorefrontLocalization();
+    initAccountLinks();
     initPriceFilterLabels();
+    initStandaloneSearch();
     loadCartCount();
     startOrderHub();
   });
@@ -180,6 +182,11 @@
   }
 
   async function submitCartForm(form, submitter) {
+    if (!isUserAuthenticated()) {
+      showNotice(t('Login is required.'), 'warning');
+      return;
+    }
+
     setSubmitterState(submitter, true);
 
     try {
@@ -195,6 +202,11 @@
 
   async function submitTemplateCartAdd(button) {
     if (button.getAttribute('aria-disabled') === 'true') {
+      return;
+    }
+
+    if (!isUserAuthenticated()) {
+      showNotice(t('Login is required.'), 'warning');
       return;
     }
 
@@ -288,6 +300,11 @@
       return {};
     });
 
+    if (response.status === 401 && data.loginUrl) {
+      window.location.href = data.loginUrl;
+      throw new Error(data.message || t('Login is required.'));
+    }
+
     if (!response.ok || data.success === false) {
       throw new Error(data.message || t('Request failed.'));
     }
@@ -317,7 +334,7 @@
   }
 
   async function loadCartCount() {
-    if (!document.querySelector('.btn-border-only.cart')) {
+    if (!isUserAuthenticated() || !document.querySelector('.btn-border-only.cart')) {
       return;
     }
 
@@ -575,8 +592,12 @@
 
     const badge = card.querySelector('.thumbnail-preview .badge span');
     if (badge) {
-      badge.innerHTML = `${Number(product.stockQuantity) > 0 ? 'In' : 'Out'}<br>Stock`;
+      badge.innerHTML = Number(product.stockQuantity) > 0 ? 'In<br>Stock' : 'Sold<br>Out';
     }
+
+    const isAvailable = Number(product.stockQuantity) > 0;
+    card.classList.toggle('is-in-stock', isAvailable);
+    card.classList.toggle('is-sold-out', !isAvailable);
 
     const cartAction = ensureTemplateCartAction(card, product);
     const addButton = cartAction?.querySelector('[data-template-cart-add], .rts-btn');
@@ -588,8 +609,12 @@
       addButton.dataset.templateCartAdd = 'true';
       addButton.dataset.productId = product.id;
       addButton.dataset.stockQuantity = product.stockQuantity;
-      addButton.classList.toggle('disabled', Number(product.stockQuantity) <= 0);
-      addButton.setAttribute('aria-disabled', Number(product.stockQuantity) <= 0 ? 'true' : 'false');
+      addButton.classList.toggle('disabled', !isAvailable);
+      addButton.setAttribute('aria-disabled', isAvailable ? 'false' : 'true');
+      const buttonText = addButton.querySelector('.btn-text');
+      if (buttonText) {
+        buttonText.textContent = isAvailable ? t('Add To Cart') : t('Sold Out');
+      }
     }
 
     const quantityInput = cartAction?.querySelector('.quantity-edit .input') || card.querySelector('.quantity-edit .input');
@@ -599,6 +624,9 @@
       quantityInput.min = '1';
       quantityInput.max = String(Math.max(Number(product.stockQuantity) || 0, 1));
       quantityInput.value = clampQuantity(quantityInput.value, quantityInput);
+      quantityInput.disabled = !isAvailable;
+      quantityInput.closest('.quantity-edit')?.classList.toggle('disabled', !isAvailable);
+      quantityInput.closest('.quantity-edit')?.classList.remove('visually-hidden');
     }
   }
 
@@ -640,7 +668,7 @@
     const wrapper = document.createElement('div');
     const input = document.createElement('input');
 
-    wrapper.className = 'quantity-edit';
+    wrapper.className = 'quantity-edit quantity-control';
     input.type = 'text';
     input.name = 'quantity';
     input.className = 'input';
@@ -695,6 +723,9 @@
       if (toggle) {
         toggle.textContent = currentLabel;
         toggle.href = '#';
+        toggle.setAttribute('role', 'button');
+        toggle.setAttribute('aria-haspopup', 'true');
+        toggle.setAttribute('aria-expanded', 'false');
       }
 
       const submenu = languageItem.querySelector('.category-sub-menu');
@@ -704,6 +735,45 @@
           createLanguageMenuItem('ru', t('Russian'), currentCulture === 'ru')
         );
       }
+
+      if (!menu.dataset.languageSwitcherReady) {
+        menu.addEventListener('click', function (event) {
+          const target = getEventElement(event.target);
+          const clickedToggle = target?.closest('.language-hover > a');
+          if (!clickedToggle || !menu.contains(clickedToggle)) {
+            return;
+          }
+
+          event.preventDefault();
+          const currentItem = clickedToggle.closest('.language-hover');
+          const isOpen = currentItem.classList.toggle('is-open');
+          clickedToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        document.addEventListener('click', function (event) {
+          const target = getEventElement(event.target);
+          if (target && menu.contains(target)) {
+            return;
+          }
+
+          closeLanguageMenu(menu);
+        });
+
+        document.addEventListener('keydown', function (event) {
+          if (event.key === 'Escape') {
+            closeLanguageMenu(menu);
+          }
+        });
+
+        menu.dataset.languageSwitcherReady = 'true';
+      }
+    });
+  }
+
+  function closeLanguageMenu(menu) {
+    menu.querySelectorAll('.language-hover.is-open').forEach(function (item) {
+      item.classList.remove('is-open');
+      item.querySelector(':scope > a')?.setAttribute('aria-expanded', 'false');
     });
   }
 
@@ -815,6 +885,36 @@
     return localizationConfig;
   }
 
+  function getAuthConfig() {
+    const source = document.getElementById('storefront-auth');
+    if (!source) {
+      return { isAuthenticated: false };
+    }
+
+    try {
+      return JSON.parse(source.textContent || '{}');
+    } catch {
+      return { isAuthenticated: false };
+    }
+  }
+
+  function isUserAuthenticated() {
+    return getAuthConfig().isAuthenticated === true;
+  }
+
+  function initAccountLinks() {
+    const isAuthenticated = isUserAuthenticated();
+    const href = isAuthenticated ? '/Profile' : '/Account/Login';
+    const label = isAuthenticated ? t('Account') : t('Login');
+
+    document.querySelectorAll('a[href="/Profile"], a[href="/Account/Login"]').forEach(function (link) {
+      link.href = href;
+
+      const labelTarget = link.querySelector('span') || link;
+      labelTarget.textContent = label;
+    });
+  }
+
   function t(key) {
     const translations = getLocalizationConfig().translations || {};
     return translations[key] || key;
@@ -896,6 +996,46 @@
       }
 
       updateLabel();
+    });
+  }
+
+  function initStandaloneSearch() {
+    document.querySelectorAll('.search-input-area').forEach(function (area) {
+      if (area.dataset.searchReady) {
+        return;
+      }
+
+      const input = area.querySelector('.search-input');
+      const button = area.querySelector('.input-div button');
+      if (!input || !button) {
+        return;
+      }
+
+      const submitSearch = function () {
+        const search = String(input.value || '').trim();
+        if (!search) {
+          input.focus();
+          return;
+        }
+
+        const url = new URL('/Catalog', window.location.origin);
+        url.searchParams.set('Search', search);
+        window.location.href = url.toString();
+      };
+
+      button.addEventListener('click', function (event) {
+        event.preventDefault();
+        submitSearch();
+      });
+
+      input.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          submitSearch();
+        }
+      });
+
+      area.dataset.searchReady = 'true';
     });
   }
 
@@ -1073,7 +1213,7 @@
       .build();
 
     connection.on('OrderCreated', function (payload) {
-      refreshOrdersTable();
+      refreshOrdersTable(payload);
       showNotice(payload.message || formatLocalized('New order #{0}', payload.id), 'success');
     });
 
@@ -1091,11 +1231,76 @@
     });
   }
 
-  function refreshOrdersTable() {
+  function refreshOrdersTable(payload) {
     const ordersTable = window.ekomartOrdersTable;
-    if (ordersTable && ordersTable.ajax && typeof ordersTable.ajax.reload === 'function') {
-      ordersTable.ajax.reload(null, false);
+    const table = document.querySelector('.datatables-order');
+    const tbody = table?.querySelector('tbody');
+    const row = createOrderRow(payload);
+
+    if (!table || !tbody || !row) {
+      return;
     }
+
+    if (tbody.querySelector(`tr[data-order-id="${payload.id}"]`)) {
+      return;
+    }
+
+    if (ordersTable && typeof ordersTable.row === 'function') {
+      ordersTable.row.add(row).draw(false);
+
+      if (typeof ordersTable.order === 'function') {
+        ordersTable.order([2, 'desc']).draw(false);
+      }
+
+      if (typeof ordersTable.page === 'function') {
+        ordersTable.page('first').draw('page');
+      }
+      return;
+    }
+
+    tbody.prepend(row);
+  }
+
+  function createOrderRow(payload) {
+    if (!payload || !payload.id) {
+      return null;
+    }
+
+    const row = document.createElement('tr');
+    const detailsUrl = payload.detailsUrl || `/Admin/Orders/Details/${encodeURIComponent(payload.id)}`;
+    const customer = payload.customer || t('Customer');
+    const email = payload.email || '';
+    const initials = payload.initials || customer.slice(0, 2).toUpperCase();
+
+    row.setAttribute('data-order-id', String(payload.id));
+    row.innerHTML = `
+      <td></td>
+      <td><input type="checkbox" class="dt-checkboxes form-check-input" /></td>
+      <td data-order="${escapeHtml(payload.id)}"><a href="${escapeHtml(detailsUrl)}"><span>#${escapeHtml(payload.id)}</span></a></td>
+      <td><span class="text-nowrap">${escapeHtml(payload.createdAt || '')}</span></td>
+      <td>
+        <div class="d-flex justify-content-start align-items-center order-name text-nowrap">
+          <div class="avatar-wrapper">
+            <div class="avatar avatar-sm me-3">
+              <span class="avatar-initial rounded-circle bg-label-primary">${escapeHtml(initials)}</span>
+            </div>
+          </div>
+          <div class="d-flex flex-column">
+            <h6 class="m-0">${escapeHtml(customer)}</h6>
+            <small>${escapeHtml(email)}</small>
+          </div>
+        </div>
+      </td>
+      <td><span class="badge ${escapeHtml(payload.paymentBadge || 'bg-label-secondary')}">${escapeHtml(payload.paymentStatus || '')}</span></td>
+      <td><span class="badge ${escapeHtml(payload.statusBadge || 'bg-label-secondary')}">${escapeHtml(payload.status || '')}</span></td>
+      <td>${escapeHtml(payload.total || '')}</td>
+      <td>
+        <a href="${escapeHtml(detailsUrl)}" class="btn btn-text-secondary rounded-pill waves-effect btn-icon">
+          <i class="icon-base ti tabler-eye icon-22px"></i>
+        </a>
+      </td>`;
+
+    return row;
   }
 
   function isCatalogLink(link) {

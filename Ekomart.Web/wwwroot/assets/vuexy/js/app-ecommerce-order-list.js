@@ -1,456 +1,214 @@
 /**
- * app-ecommerce-order-list Script
+ * app-ecommerce-order-list
  */
 
 'use strict';
 
-// Datatable (js)
+document.addEventListener('DOMContentLoaded', function () {
+  const dtOrderTable = document.querySelector('.datatables-order');
 
-document.addEventListener('DOMContentLoaded', function (e) {
-  let borderColor, bodyBg, headingColor;
-
-  borderColor = config.colors.borderColor;
-  bodyBg = config.colors.bodyBg;
-  headingColor = config.colors.headingColor;
-
-  // Variable declaration for table
-
-  const dt_order_table = document.querySelector('.datatables-order'),
-    statusObj = {
-      1: { title: 'Paid', class: 'bg-label-info' },
-      2: { title: 'Completed', class: 'bg-label-success' },
-      3: { title: 'Processing', class: 'bg-label-primary' },
-      4: { title: 'Created', class: 'bg-label-secondary' },
-      5: { title: 'Cancelled', class: 'bg-label-danger' }
-    },
-    paymentObj = {
-      1: { title: 'Paid', class: 'text-success' },
-      2: { title: 'Pending', class: 'text-warning' },
-      3: { title: 'Failed', class: 'text-danger' },
-      4: { title: 'Refunded', class: 'text-secondary' }
-    };
-
-  // E-commerce Products datatable
-
-  if (dt_order_table) {
-    const dt_products = new DataTable(dt_order_table, {
-      ajax: '/Admin/Orders/Data',
-      columns: [
-        // columns according to JSON
-        { data: 'id' },
-        { data: 'id', orderable: false, render: DataTable.render.select() },
-        { data: 'order' },
-        { data: 'date' },
-        { data: 'customer' }, //email //avatar
-        { data: 'payment' },
-        { data: 'status' },
-        { data: 'method' }, //method_number
-        { data: 'id' }
-      ],
-      columnDefs: [
-        {
-          // For Responsive
-          className: 'control',
-          searchable: false,
-          orderable: false,
-          responsivePriority: 2,
-          targets: 0,
-          render: function (data, type, full, meta) {
-            return '';
-          }
-        },
-        {
-          // For Checkboxes
-          targets: 1,
-          orderable: false,
-          searchable: false,
-          responsivePriority: 3,
-          checkboxes: true,
-          render: function () {
-            return '<input type="checkbox" class="dt-checkboxes form-check-input">';
-          },
-          checkboxes: {
-            selectAllRender: '<input type="checkbox" class="form-check-input">'
-          }
-        },
-        {
-          // Order ID
-          targets: 2,
-          render: function (data, type, full, meta) {
-            const order_id = full['order'];
-            // Creates full output for row
-            const row_output = '<a href="/Admin/Orders/Details/' + full['id'] + '"><span>#' + order_id + '</span></a>';
-            return row_output;
-          }
-        },
-        {
-          targets: 3,
-          render: function (data, type, full, meta) {
-            if (type === 'sort' || type === 'type') {
-              return full['created_at'] || data;
-            }
-            const date = new Date(full.date);
-            const timeX = full['time'].substring(0, 5);
-            const formattedDate = date.toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric'
-            });
-            return `<span class="text-nowrap">${formattedDate}, ${timeX}</span>`;
-          }
-        },
-        {
-          targets: 4,
-          responsivePriority: 1,
-          render: function (data, type, full, meta) {
-            const name = full['customer'];
-            const email = full['email'];
-            const avatar = full['avatar'];
-            let output;
-
-            if (avatar) {
-              // For Avatar image
-              output = `<img src="${assetsPath}img/avatars/${avatar}" alt="Avatar" class="rounded-circle">`;
-            } else {
-              // For Avatar badge
-              const stateNum = Math.floor(Math.random() * 6);
-              const states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary'];
-              const state = states[stateNum];
-              const initials = (name.match(/\b\w/g) || []).slice(0, 2).join('').toUpperCase();
-
-              output = `<span class="avatar-initial rounded-circle bg-label-${state}">${initials}</span>`;
-            }
-
-            // Creates full output for row
-            const rowOutput = `
-              <div class="d-flex justify-content-start align-items-center order-name text-nowrap">
-                <div class="avatar-wrapper">
-                  <div class="avatar avatar-sm me-3">
-                    ${output}
-                  </div>
-                </div>
-                <div class="d-flex flex-column">
-                  <h6 class="m-0"><a href="/Pages/ProfileUser" class="text-heading">${name}</a></h6>
-                  <small>${email}</small>
-                </div>
-              </div>`;
-
-            return rowOutput;
-          }
-        },
-        {
-          targets: 5,
-          render: function (data, type, full, meta) {
-            const payment = full['payment'];
-            const paymentStatus = paymentObj[payment];
-            if (paymentStatus) {
-              return `
-                <h6 class="mb-0 align-items-center d-flex w-px-100 ${paymentStatus.class}">
-                  <i class="icon-base ti tabler-circle-filled icon-12px me-1"></i>${paymentStatus.title}
-                </h6>`;
-            }
-            return data;
-          }
-        },
-        {
-          targets: -3,
-          render: function (data, type, full, meta) {
-            const status = full['status'];
-            const statusInfo = statusObj[status];
-            if (statusInfo) {
-              return `
-                <span class="badge px-2 ${statusInfo.class} text-capitalized">
-                  ${statusInfo.title}
-                </span>`;
-            }
-            return data;
-          }
-        },
-        {
-          targets: -2,
-          render: function (data, type, full, meta) {
-            const total = full['total'] || full['method_number'];
-
-            return `<span class="text-nowrap">${total}</span>`;
-          }
-        },
-        {
-          targets: -1,
-          title: 'Actions',
-          searchable: false,
-          orderable: false,
-          render: function (data, type, full, meta) {
-            return `
-              <div class="d-flex justify-content-sm-start align-items-sm-center">
-                <button class="btn btn-text-secondary rounded-pill waves-effect btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                  <i class="icon-base ti tabler-dots-vertical"></i>
-                </button>
-                <div class="dropdown-menu dropdown-menu-end m-0">
-                  <a href="/Admin/Orders/Details/${full['id']}" class="dropdown-item">View</a>
-                </div>
-              </div>`;
-          }
-        }
-      ],
-      select: {
-        style: 'multi',
-        selector: 'td:nth-child(2)'
-      },
-      order: [3, 'desc'],
-      layout: {
-        topStart: {
-          search: {
-            placeholder: 'Search Order',
-            text: '_INPUT_'
-          }
-        },
-        topEnd: {
-          rowClass: 'row mx-3 my-0 justify-content-between',
-          features: [
-            {
-              pageLength: {
-                menu: [7, 10, 25, 50, 100],
-                text: '_MENU_'
-              }
-            },
-            {
-              buttons: [
-                {
-                  extend: 'collection',
-                  className: 'btn btn-label-primary dropdown-toggle',
-                  text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ti tabler-upload icon-xs"></i> <span class="d-none d-sm-inline-block">Export</span></span>',
-                  buttons: [
-                    {
-                      extend: 'print',
-                      text: `<span class="d-flex align-items-center"><i class="icon-base ti tabler-printer me-1"></i>Print</span>`,
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
-                            const el = new DOMParser().parseFromString(inner, 'text/html').body.childNodes;
-                            let result = '';
-                            el.forEach(item => {
-                              if (item.classList && item.classList.contains('user-name')) {
-                                result += item.lastChild.firstChild.textContent;
-                              } else {
-                                result += item.textContent || item.innerText || '';
-                              }
-                            });
-                            return result;
-                          }
-                        }
-                      },
-                      customize: function (win) {
-                        win.document.body.style.color = headingColor;
-                        win.document.body.style.borderColor = borderColor;
-                        win.document.body.style.backgroundColor = bodyBg;
-                        const table = win.document.body.querySelector('table');
-                        table.classList.add('compact');
-                        table.style.color = 'inherit';
-                        table.style.borderColor = 'inherit';
-                        table.style.backgroundColor = 'inherit';
-                      }
-                    },
-                    {
-                      extend: 'csv',
-                      text: `<span class="d-flex align-items-center"><i class="icon-base ti tabler-file me-1"></i>Csv</span>`,
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
-                            const el = new DOMParser().parseFromString(inner, 'text/html').body.childNodes;
-                            let result = '';
-                            el.forEach(item => {
-                              if (item.classList && item.classList.contains('user-name')) {
-                                result += item.lastChild.firstChild.textContent;
-                              } else {
-                                result += item.textContent || item.innerText || '';
-                              }
-                            });
-                            return result;
-                          }
-                        }
-                      }
-                    },
-                    {
-                      extend: 'excel',
-                      text: `<span class="d-flex align-items-center"><i class="icon-base ti tabler-upload me-1"></i>Excel</span>`,
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
-                            const el = new DOMParser().parseFromString(inner, 'text/html').body.childNodes;
-                            let result = '';
-                            el.forEach(item => {
-                              if (item.classList && item.classList.contains('user-name')) {
-                                result += item.lastChild.firstChild.textContent;
-                              } else {
-                                result += item.textContent || item.innerText || '';
-                              }
-                            });
-                            return result;
-                          }
-                        }
-                      }
-                    },
-                    {
-                      extend: 'pdf',
-                      text: `<span class="d-flex align-items-center"><i class="icon-base ti tabler-file-text me-1"></i>Pdf</span>`,
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
-                            const el = new DOMParser().parseFromString(inner, 'text/html').body.childNodes;
-                            let result = '';
-                            el.forEach(item => {
-                              if (item.classList && item.classList.contains('user-name')) {
-                                result += item.lastChild.firstChild.textContent;
-                              } else {
-                                result += item.textContent || item.innerText || '';
-                              }
-                            });
-                            return result;
-                          }
-                        }
-                      }
-                    },
-                    {
-                      extend: 'copy',
-                      text: `<i class="icon-base ti tabler-copy me-1"></i>Copy`,
-                      className: 'dropdown-item',
-                      exportOptions: {
-                        columns: [3, 4, 5, 6, 7],
-                        format: {
-                          body: function (inner, coldex, rowdex) {
-                            if (inner.length <= 0) return inner;
-                            const el = new DOMParser().parseFromString(inner, 'text/html').body.childNodes;
-                            let result = '';
-                            el.forEach(item => {
-                              if (item.classList && item.classList.contains('user-name')) {
-                                result += item.lastChild.firstChild.textContent;
-                              } else {
-                                result += item.textContent || item.innerText || '';
-                              }
-                            });
-                            return result;
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        bottomStart: {
-          rowClass: 'row mx-3 justify-content-between',
-          features: ['info']
-        },
-        bottomEnd: 'paging'
-      },
-      language: {
-        paginate: {
-          next: '<i class="icon-base ti tabler-chevron-right scaleX-n1-rtl icon-18px"></i>',
-          previous: '<i class="icon-base ti tabler-chevron-left scaleX-n1-rtl icon-18px"></i>',
-          first: '<i class="icon-base ti tabler-chevrons-left scaleX-n1-rtl icon-18px"></i>',
-          last: '<i class="icon-base ti tabler-chevrons-right scaleX-n1-rtl icon-18px"></i>'
-        }
-      },
-      // For responsive popup
-      responsive: {
-        details: {
-          display: DataTable.Responsive.display.modal({
-            header: function (row) {
-              const data = row.data();
-              return 'Details of ' + data['customer'];
-            }
-          }),
-          type: 'column',
-          renderer: function (api, rowIdx, columns) {
-            const data = columns
-              .map(function (col) {
-                return col.title !== '' // Do not show row in modal popup if title is blank (for check box)
-                  ? `<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
-                      <td>${col.title}:</td>
-                      <td>${col.data}</td>
-                    </tr>`
-                  : '';
-              })
-              .join('');
-
-            if (data) {
-              const div = document.createElement('div');
-              div.classList.add('table-responsive');
-              const table = document.createElement('table');
-              div.appendChild(table);
-              table.classList.add('table');
-              const tbody = document.createElement('tbody');
-              tbody.innerHTML = data;
-              table.appendChild(tbody);
-              return div;
-            }
-            return false;
-          }
-        }
-      }
-    });
-
-    window.ekomartOrdersTable = dt_products;
-
-    //? The 'delete-record' class is necessary for the functionality of the following code.
-    document.addEventListener('click', function (e) {
-      if (e.target.classList.contains('delete-record')) {
-        dt_products.row(e.target.closest('tr')).remove().draw();
-        const modalEl = document.querySelector('.dtr-bs-modal');
-        if (modalEl && modalEl.classList.contains('show')) {
-          const modal = bootstrap.Modal.getInstance(modalEl);
-          modal?.hide();
-        }
-      }
-    });
+  if (!dtOrderTable) {
+    return;
   }
 
-  // Filter form control to default size
-  // ? setTimeout used for order-list table initialization
-  setTimeout(() => {
-    const elementsToModify = [
-      { selector: '.dt-buttons .btn', classToRemove: 'btn-secondary', classToAdd: 'btn-label-secondary' },
-      { selector: '.dt-search .form-control', classToRemove: 'form-control-sm', classToAdd: 'ms-0' },
-      { selector: '.dt-length .form-select', classToRemove: 'form-select-sm' },
-      { selector: '.dt-length', classToAdd: 'mt-md-6 mt-0' },
-      { selector: '.dt-layout-table', classToRemove: 'row mt-2' },
-      { selector: '.dt-layout-end', classToAdd: 'px-3 mt-0' },
+  const dtOrders = new DataTable(dtOrderTable, {
+    columnDefs: [
       {
-        selector: '.dt-layout-end .dt-buttons',
-        classToAdd: 'gap-2 px-3 mt-0 mb-md-0 mb-6'
+        className: 'control',
+        searchable: false,
+        orderable: false,
+        responsivePriority: 2,
+        targets: 0
       },
       {
-        selector: '.dt-layout-end .dt-buttons .btn-group',
-        classToAdd: 'mx-auto'
+        targets: 1,
+        orderable: false,
+        searchable: false,
+        responsivePriority: 3,
+        checkboxes: {
+          selectAllRender: '<input type="checkbox" class="form-check-input">'
+        }
       },
-      { selector: '.dt-layout-start', classToAdd: 'px-3 mt-0' },
-      { selector: '.dt-layout-full', classToRemove: 'col-md col-12', classToAdd: 'table-responsive' }
-    ];
+      {
+        targets: 2,
+        responsivePriority: 2
+      },
+      {
+        targets: 4,
+        responsivePriority: 1
+      },
+      {
+        targets: -1,
+        searchable: false,
+        orderable: false
+      }
+    ],
+    select: {
+      style: 'multi',
+      selector: 'td:nth-child(2)'
+    },
+    order: [3, 'desc'],
+    layout: {
+      topStart: {
+        search: {
+          placeholder: 'Search Order',
+          text: '_INPUT_'
+        }
+      },
+      topEnd: {
+        rowClass: 'row mx-3 my-0 justify-content-between',
+        features: [
+          {
+            pageLength: {
+              menu: [7, 10, 25, 50, 100],
+              text: '_MENU_'
+            }
+          },
+          {
+            buttons: [
+              {
+                extend: 'collection',
+                className: 'btn btn-label-primary dropdown-toggle',
+                text: '<span class="d-flex align-items-center gap-1"><i class="icon-base ti tabler-upload icon-xs"></i> <span class="d-none d-sm-inline-block">Export</span></span>',
+                buttons: [
+                  exportButton('print', 'Print', 'tabler-printer'),
+                  exportButton('csv', 'Csv', 'tabler-file'),
+                  exportButton('excel', 'Excel', 'tabler-upload'),
+                  exportButton('pdf', 'Pdf', 'tabler-file-text'),
+                  exportButton('copy', 'Copy', 'tabler-copy')
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      bottomStart: {
+        rowClass: 'row mx-3 justify-content-between',
+        features: ['info']
+      },
+      bottomEnd: 'paging'
+    },
+    language: {
+      paginate: {
+        next: '<i class="icon-base ti tabler-chevron-right scaleX-n1-rtl icon-18px"></i>',
+        previous: '<i class="icon-base ti tabler-chevron-left scaleX-n1-rtl icon-18px"></i>',
+        first: '<i class="icon-base ti tabler-chevrons-left scaleX-n1-rtl icon-18px"></i>',
+        last: '<i class="icon-base ti tabler-chevrons-right scaleX-n1-rtl icon-18px"></i>'
+      }
+    },
+    responsive: {
+      details: {
+        display: DataTable.Responsive.display.modal({
+          header: function (row) {
+            return row.node().querySelector('.order-name h6')?.textContent.trim() || 'Order details';
+          }
+        }),
+        type: 'column',
+        renderer: responsiveRenderer
+      }
+    }
+  });
 
-    // Delete record
-    elementsToModify.forEach(({ selector, classToRemove, classToAdd }) => {
-      document.querySelectorAll(selector).forEach(element => {
-        if (classToRemove) {
-          classToRemove.split(' ').forEach(className => element.classList.remove(className));
-        }
-        if (classToAdd) {
-          classToAdd.split(' ').forEach(className => element.classList.add(className));
-        }
-      });
-    });
-  }, 100);
+  window.ekomartOrdersTable = dtOrders;
+
+  document.addEventListener('click', function (event) {
+    if (!event.target.classList.contains('delete-record')) {
+      return;
+    }
+
+    dtOrders.row(event.target.closest('tr')).remove().draw();
+
+    const modalEl = document.querySelector('.dtr-bs-modal');
+    if (modalEl && modalEl.classList.contains('show')) {
+      bootstrap.Modal.getInstance(modalEl)?.hide();
+    }
+  });
+
+  applyDatatableClasses();
+  window.setTimeout(applyDatatableClasses, 100);
 });
+
+function exportButton(extend, title, icon) {
+  return {
+    extend,
+    text: `<span class="d-flex align-items-center"><i class="icon-base ti ${icon} me-1"></i>${title}</span>`,
+    className: 'dropdown-item',
+    exportOptions: {
+      columns: [3, 4, 5, 6, 7],
+      format: {
+        body: function (inner) {
+          return textFromHtml(inner);
+        }
+      }
+    },
+    customize: function (win) {
+      if (extend !== 'print') {
+        return;
+      }
+
+      const table = win.document.body.querySelector('table');
+      win.document.body.style.color = config.colors.headingColor;
+      win.document.body.style.borderColor = config.colors.borderColor;
+      win.document.body.style.backgroundColor = config.colors.bodyBg;
+      table?.classList.add('compact');
+    }
+  };
+}
+
+function responsiveRenderer(api, rowIdx, columns) {
+  const data = columns
+    .map(function (col) {
+      return col.title !== ''
+        ? `<tr data-dt-row="${col.rowIndex}" data-dt-column="${col.columnIndex}">
+            <td>${col.title}:</td>
+            <td>${col.data}</td>
+          </tr>`
+        : '';
+    })
+    .join('');
+
+  if (!data) {
+    return false;
+  }
+
+  const div = document.createElement('div');
+  const table = document.createElement('table');
+  const tbody = document.createElement('tbody');
+
+  div.classList.add('table-responsive');
+  table.classList.add('table');
+  tbody.innerHTML = data;
+  table.appendChild(tbody);
+  div.appendChild(table);
+
+  return div;
+}
+
+function textFromHtml(value) {
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = String(value || '');
+
+  return (wrapper.textContent || wrapper.innerText || '').replace(/\s+/g, ' ').trim();
+}
+
+function applyDatatableClasses() {
+  const elementsToModify = [
+    { selector: '.dt-buttons .btn', classToRemove: 'btn-secondary', classToAdd: 'btn-label-secondary' },
+    { selector: '.dt-search .form-control', classToRemove: 'form-control-sm', classToAdd: 'ms-0' },
+    { selector: '.dt-length .form-select', classToRemove: 'form-select-sm' },
+    { selector: '.dt-length', classToAdd: 'mt-md-6 mt-0' },
+    { selector: '.dt-layout-table', classToRemove: 'row mt-2' },
+    { selector: '.dt-layout-end', classToAdd: 'px-3 mt-0' },
+    { selector: '.dt-layout-end .dt-buttons', classToAdd: 'gap-2 px-3 mt-0 mb-md-0 mb-6' },
+    { selector: '.dt-layout-end .dt-buttons .btn-group', classToAdd: 'mx-auto' },
+    { selector: '.dt-layout-start', classToAdd: 'px-3 mt-0' },
+    { selector: '.dt-layout-full', classToRemove: 'col-md col-12', classToAdd: 'table-responsive' }
+  ];
+
+  elementsToModify.forEach(({ selector, classToRemove, classToAdd }) => {
+    document.querySelectorAll(selector).forEach(element => {
+      classToRemove?.split(' ').forEach(className => element.classList.remove(className));
+      classToAdd?.split(' ').forEach(className => element.classList.add(className));
+    });
+  });
+}

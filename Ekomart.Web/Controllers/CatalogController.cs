@@ -47,7 +47,7 @@ public class CatalogController : Controller
         {
             category.Name,
             category.Slug,
-            Icon = StoreViewHelpers.CategoryIcon(category.Id),
+            Icon = StoreViewHelpers.CategoryIcon(category.Slug),
             Href = Url.Action(nameof(Index), "Catalog", new { categorySlug = category.Slug }) ?? "/Catalog"
         }));
     }

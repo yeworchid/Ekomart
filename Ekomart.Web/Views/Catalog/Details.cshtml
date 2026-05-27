@@ -4,6 +4,9 @@
     Layout = null;
     var product = Model.Product;
     var productImage = StoreViewHelpers.ProductImage(product.ImageUrl, product.Id);
+    var productDescription = string.IsNullOrWhiteSpace(product.Description)
+        ? "Fresh grocery product from the Ekomart catalog."
+        : product.Description;
     var returnUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}";
 }
 <!DOCTYPE html>
@@ -923,32 +926,58 @@
                                             </div>
                                             <h2 class="product-title">@product.Name</h2>
                                             <p class="mt--20 mb--20">
-                                                @(string.IsNullOrWhiteSpace(product.Description) ? "Fresh grocery product from the Ekomart catalog." : product.Description)
+                                                @productDescription
                                             </p>
                                             <span class="product-price mb--15 d-block" style="color: #DC2626; font-weight: 600;">@StoreViewHelpers.Money(product.Price)</span>
-                                            <form asp-controller="Cart" asp-action="Add" method="post" class="product-bottom-action" data-ajax-cart>
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="productId" value="@product.Id">
-                                                <input type="hidden" name="returnUrl" value="@returnUrl">
-                                                <div class="cart-edits">
-                                                    <div class="quantity-edit action-item">
-                                                        <button type="button" class="button"><i class="fal fa-minus minus"></i></button>
-                                                        <input type="number" name="quantity" class="input" value="1" min="1" max="@Math.Max(product.StockQuantity, 1)" />
-                                                        <button type="button" class="button plus">+<i class="fal fa-plus plus"></i></button>
+                                            @if (product.StockQuantity > 0)
+                                            {
+                                                <form asp-controller="Cart" asp-action="Add" method="post" class="product-bottom-action" data-ajax-cart>
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="productId" value="@product.Id">
+                                                    <input type="hidden" name="returnUrl" value="@returnUrl">
+                                                    <div class="cart-edits">
+                                                        <div class="quantity-edit action-item quantity-control">
+                                                            <button type="button" class="button minus" aria-label="Decrease quantity">-</button>
+                                                            <input type="text" name="quantity" class="input" value="1" min="1" max="@product.StockQuantity" inputmode="numeric" autocomplete="off" />
+                                                            <button type="button" class="button plus" aria-label="Increase quantity">+</button>
+                                                        </div>
                                                     </div>
+                                                    <button type="submit" class="rts-btn btn-primary radious-sm with-icon">
+                                                        <div class="btn-text">
+                                                            Add To Cart
+                                                        </div>
+                                                        <div class="arrow-icon">
+                                                            <i class="fa-regular fa-cart-shopping"></i>
+                                                        </div>
+                                                        <div class="arrow-icon">
+                                                            <i class="fa-regular fa-cart-shopping"></i>
+                                                        </div>
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <div class="product-bottom-action sold-out-action">
+                                                    <div class="cart-edits">
+                                                        <div class="quantity-edit action-item quantity-control disabled" aria-hidden="true">
+                                                            <button type="button" class="button minus" disabled>-</button>
+                                                            <input type="text" class="input" value="0" disabled />
+                                                            <button type="button" class="button plus" disabled>+</button>
+                                                        </div>
+                                                    </div>
+                                                    <button type="button" class="rts-btn btn-primary radious-sm with-icon" disabled>
+                                                        <div class="btn-text">
+                                                            Sold Out
+                                                        </div>
+                                                        <div class="arrow-icon">
+                                                            <i class="fa-regular fa-circle-xmark"></i>
+                                                        </div>
+                                                        <div class="arrow-icon">
+                                                            <i class="fa-regular fa-circle-xmark"></i>
+                                                        </div>
+                                                    </button>
                                                 </div>
-                                                <button type="submit" class="rts-btn btn-primary radious-sm with-icon" @(product.StockQuantity <= 0 ? "disabled" : null)>
-                                                    <div class="btn-text">
-                                                        Add To Cart
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                    <div class="arrow-icon">
-                                                        <i class="fa-regular fa-cart-shopping"></i>
-                                                    </div>
-                                                </button>
-                                            </form>
+                                            }
                                             <div class="product-uniques">
                                                 <span class="sku product-unipue mb--10"><span style="font-weight: 400; margin-right: 10px;">SKU: </span> EK-@product.Id.ToString("0000")</span>
                                                 <span class="catagorys product-unipue mb--10"><span style="font-weight: 400; margin-right: 10px;">Category: </span> @product.CategoryName</span>
@@ -975,7 +1004,7 @@
                                 <div class="tab-pane fade   show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
                                     <div class="single-tab-content-shop-details">
                                         <p class="disc">
-                                            @(string.IsNullOrWhiteSpace(product.Description) ? "The product description is not filled in yet." : product.Description)
+                                            @productDescription
                                         </p>
                                         <div class="details-row-2">
                                             <div class="left-area">
@@ -984,11 +1013,11 @@
                                             <div class="right">
                                                 <h4 class="title">@product.Name</h4>
                                                 <p class="mb--25">
-                                                    Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. ibero sit amet quam egestas semperAenean ultricies mi vitae est Mauris placerat eleifend.
+                                                    @productDescription
                                                 </p>
                                                 <ul class="bottom-ul">
-                                                    <li>Elementum sociis rhoncus aptent auctor urna justo</li>
-                                                    <li>Habitasse venenatis gravida nisl, sollicitudin posuere</li>
+                                                    <li>Category: @product.CategoryName</li>
+                                                    <li>Available stock: @product.StockQuantity</li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -997,7 +1026,7 @@
                                 <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
                                     <div class="single-tab-content-shop-details">
                                         <p class="disc">
-                                            Uninhibited carnally hired played in whimpered dear gorilla koala depending and much yikes off far quetzal goodness and from for grimaced goodness unaccountably and meadowlark near unblushingly crucial scallop tightly neurotic hungrily some and dear furiously this apart.
+                                            @productDescription
                                         </p>
                                         <div class="table-responsive table-shop-details-pd">
                                             <table class="table">
@@ -1256,50 +1285,13 @@
                                 <div class="swiper-wrapper">
                                     @foreach (var relatedProduct in Model.RelatedProducts)
                                     {
-                                        var relatedImage = StoreViewHelpers.ProductImage(relatedProduct.ImageUrl, relatedProduct.Id);
                                         <div class="swiper-slide">
-                                            <div class="single-shopping-card-one">
-                                                <div class="image-and-action-area-wrapper">
-                                                    <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@relatedProduct.Slug" class="thumbnail-preview">
-                                                        <div class="badge">
-                                                            <span>@(relatedProduct.StockQuantity > 0 ? "In" : "Out")<br>Stock</span>
-                                                            <i class="fa-solid fa-bookmark"></i>
-                                                        </div>
-                                                        <img src="@relatedImage" alt="@relatedProduct.Name">
-                                                    </a>
-                                                    <div class="action-share-option">
-                                                        <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@relatedProduct.Slug" class="single-action openuptip" data-flow="up" title="View Details">
-                                                            <i class="fa-regular fa-eye"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                                <div class="body-content">
-                                                    <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@relatedProduct.Slug">
-                                                        <h4 class="title">@relatedProduct.Name</h4>
-                                                    </a>
-                                                    <span class="availability">@relatedProduct.CategoryName</span>
-                                                    <div class="price-area">
-                                                        <span class="current">@StoreViewHelpers.Money(relatedProduct.Price)</span>
-                                                    </div>
-                                                    <form asp-controller="Cart" asp-action="Add" method="post" class="cart-counter-action" data-ajax-cart>
-                                                        @Html.AntiForgeryToken()
-                                                        <input type="hidden" name="productId" value="@relatedProduct.Id">
-                                                        <input type="hidden" name="returnUrl" value="@returnUrl">
-                                                        <div class="quantity-edit">
-                                                            <input type="number" name="quantity" class="input" value="1" min="1" max="@Math.Max(relatedProduct.StockQuantity, 1)">
-                                                            <div class="button-wrapper-action">
-                                                                <button type="button" class="button"><i class="fa-regular fa-chevron-down"></i></button>
-                                                                <button type="button" class="button plus">+<i class="fa-regular fa-chevron-up"></i></button>
-                                                            </div>
-                                                        </div>
-                                                        <button type="submit" class="rts-btn btn-primary radious-sm with-icon" @(relatedProduct.StockQuantity <= 0 ? "disabled" : null)>
-                                                            <div class="btn-text">Add</div>
-                                                            <div class="arrow-icon"><i class="fa-regular fa-cart-shopping"></i></div>
-                                                            <div class="arrow-icon"><i class="fa-regular fa-cart-shopping"></i></div>
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </div>
+                                            @await Html.PartialAsync("_ProductCard", new ProductCardViewModel
+                                            {
+                                                Product = relatedProduct,
+                                                ReturnUrl = returnUrl,
+                                                AddButtonText = "Add"
+                                            })
                                         </div>
                                     }
                                 </div>

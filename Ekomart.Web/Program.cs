@@ -32,6 +32,37 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Account/AccessDenied";
     options.LoginPath = "/Account/Login";
     options.LogoutPath = "/Account/Logout";
+    options.Events.OnRedirectToLogin = context =>
+    {
+        if (IsAjaxRequest(context.Request))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return context.Response.WriteAsJsonAsync(new
+            {
+                success = false,
+                message = "Login is required.",
+                loginUrl = context.RedirectUri
+            });
+        }
+
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    };
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        if (IsAjaxRequest(context.Request))
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            return context.Response.WriteAsJsonAsync(new
+            {
+                success = false,
+                message = "Access denied."
+            });
+        }
+
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    };
 });
 
 builder.Services.AddAuthorization(options =>
@@ -97,3 +128,11 @@ app.MapControllerRoute(
 app.MapHub<OrderHub>("/hubs/orders");
 
 app.Run();
+
+static bool IsAjaxRequest(HttpRequest request)
+{
+    return string.Equals(
+        request.Headers["X-Requested-With"].ToString(),
+        "XMLHttpRequest",
+        StringComparison.OrdinalIgnoreCase);
+}

@@ -55,18 +55,29 @@ public class CartService : ICartService
 
         if (cartItem is null)
         {
+            if (quantity > product.StockQuantity)
+            {
+                throw new InvalidOperationException(StockLimitMessage(product.Name, product.StockQuantity));
+            }
+
             cartItem = new CartItem
             {
                 UserId = userId,
                 ProductId = productId,
-                Quantity = Math.Min(quantity, product.StockQuantity)
+                Quantity = quantity
             };
 
             _dbContext.CartItems.Add(cartItem);
         }
         else
         {
-            cartItem.Quantity = Math.Min(cartItem.Quantity + quantity, product.StockQuantity);
+            var requestedQuantity = cartItem.Quantity + quantity;
+            if (requestedQuantity > product.StockQuantity)
+            {
+                throw new InvalidOperationException(StockLimitMessage(product.Name, product.StockQuantity));
+            }
+
+            cartItem.Quantity = requestedQuantity;
             cartItem.UpdatedAtUtc = DateTime.UtcNow;
         }
 
@@ -96,9 +107,13 @@ public class CartService : ICartService
         {
             _dbContext.CartItems.Remove(cartItem);
         }
+        else if (dto.Quantity > stockQuantity)
+        {
+            throw new InvalidOperationException(StockLimitMessage(cartItem.Product?.Name ?? "Product", stockQuantity));
+        }
         else
         {
-            cartItem.Quantity = Math.Min(dto.Quantity, stockQuantity);
+            cartItem.Quantity = dto.Quantity;
             cartItem.UpdatedAtUtc = DateTime.UtcNow;
         }
 
@@ -168,5 +183,12 @@ public class CartService : ICartService
             ItemsTotal = items.Sum(item => item.LineTotal),
             TotalQuantity = items.Sum(item => item.Quantity)
         };
+    }
+
+    private static string StockLimitMessage(string productName, int stockQuantity)
+    {
+        return stockQuantity == 1
+            ? $"Only 1 item of {productName} is left in stock."
+            : $"Only {stockQuantity} items of {productName} are left in stock.";
     }
 }

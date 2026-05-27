@@ -13,6 +13,15 @@ public class ErrorsController : Controller
         return View("NotFound");
     }
 
+    [Route("/Errors/401")]
+    public IActionResult UnauthorizedPage()
+    {
+        Response.StatusCode = StatusCodes.Status401Unauthorized;
+        ViewData["ErrorTitle"] = "Login Is Required";
+        ViewData["ErrorMessage"] = "Please sign in to continue or return to homepage.";
+        return View("NotFound");
+    }
+
     [Route("/Errors/404")]
     public IActionResult NotFoundPage()
     {
@@ -36,6 +45,7 @@ public class ErrorsController : Controller
     {
         return code switch
         {
+            StatusCodes.Status401Unauthorized => UnauthorizedPage(),
             StatusCodes.Status403Forbidden => Forbidden(),
             StatusCodes.Status404NotFound => NotFoundPage(),
             StatusCodes.Status500InternalServerError => ServerError(),
