@@ -2,6 +2,9 @@
 @using Ekomart.Web.Models.Store
 @{
     Layout = null;
+    var currentCategory = Model.Categories.FirstOrDefault(category =>
+        string.Equals(category.Slug, Model.Filter.CategorySlug, StringComparison.OrdinalIgnoreCase));
+    var catalogBreadcrumb = currentCategory?.Name ?? "Catalog";
 }
 <!DOCTYPE html>
 <html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
@@ -875,7 +878,7 @@
                     <div class="navigator-breadcrumb-wrapper">
                         <a href="/">Home</a>
                         <i class="fa-regular fa-chevron-right"></i>
-                        <a class="current" href="/">Shop Grid Sidebar</a>
+                        <a class="current" href="/Catalog">@catalogBreadcrumb</a>
                     </div>
                 </div>
             </div>

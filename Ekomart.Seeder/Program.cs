@@ -9,9 +9,11 @@ var webProjectPath = Path.GetFullPath(
     Path.Combine(AppContext.BaseDirectory, "../../../../Ekomart.Web"));
 
 var configuration = new ConfigurationBuilder()
-    .SetBasePath(webProjectPath)
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+    .AddJsonFile(Path.Combine(webProjectPath, "appsettings.json"), optional: true, reloadOnChange: false)
+    .AddJsonFile(Path.Combine(webProjectPath, "appsettings.Development.json"), optional: true, reloadOnChange: false)
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
     .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: false)
+    .AddEnvironmentVariables()
     .Build();
 
 var services = new ServiceCollection();

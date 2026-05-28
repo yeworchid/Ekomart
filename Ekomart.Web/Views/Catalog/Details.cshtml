@@ -8,6 +8,10 @@
         ? "Fresh grocery product from the Ekomart catalog."
         : product.Description;
     var returnUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}";
+    var category = Model.Categories.FirstOrDefault(category => category.Id == product.CategoryId);
+    var categoryUrl = category is null
+        ? "/Catalog"
+        : Url.Action("Index", "Catalog", new { categorySlug = category.Slug }) ?? "/Catalog";
 }
 <!DOCTYPE html>
 <html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
@@ -880,9 +884,9 @@
                     <div class="navigator-breadcrumb-wrapper">
                         <a href="/">Home</a>
                         <i class="fa-regular fa-chevron-right"></i>
-                        <a class="#" href="/">Beverage</a>
+                        <a href="@categoryUrl">@product.CategoryName</a>
                         <i class="fa-regular fa-chevron-right"></i>
-                        <a class="current" href="/">2L Mum Water</a>
+                        <a class="current" href="@Url.Action("Details", "Catalog", new { slug = product.Slug })">@product.Name</a>
                     </div>
                 </div>
             </div>
@@ -899,7 +903,7 @@
         <div class="container">
             <div class="shopdetails-style-1-wrapper">
                 <div class="row g-5">
-                    <div class="col-xl-8 col-lg-8 col-md-12">
+                    <div class="col-xl-12 col-lg-12 col-md-12">
                         <div class="product-details-popup-wrapper in-shopdetails">
                             <div class="rts-product-details-section rts-product-details-section2 product-details-popup-section">
                                 <div class="product-details-popup">
@@ -1199,42 +1203,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-4 col-md-12 offset-xl-1  rts-sticky-column-item">
-                        <div class="theiaStickySidebar">
-                            <div class="shop-sight-sticky-sidevbar  mb--20">
-                                <h6 class="title">Available offers</h6>
-                                <div class="single-offer-area">
-                                    <div class="icon">
-                                        <img src="/assets/ekomart/images/shop/01.svg" alt="icon">
-                                    </div>
-                                    <div class="details">
-                                        <p>Get %5 instant discount for the 1st Flipkart Order using Ekomart UPI T&C</p>
-                                    </div>
-                                </div>
-                                <div class="single-offer-area">
-                                    <div class="icon">
-                                        <img src="/assets/ekomart/images/shop/02.svg" alt="icon">
-                                    </div>
-                                    <div class="details">
-                                        <p>Flat $250 off on Citi-branded Credit Card EMI Transactions on orders of $30 and above T&C</p>
-                                    </div>
-                                </div>
-                                <div class="single-offer-area">
-                                    <div class="icon">
-                                        <img src="/assets/ekomart/images/shop/03.svg" alt="icon">
-                                    </div>
-                                    <div class="details">
-                                        <p>Free Worldwide Shipping on all
-                                            orders over $100</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="our-payment-method">
-                                <h5 class="title">Guaranteed Safe Checkout</h5>
-                                <img src="/assets/ekomart/images/shop/03.png" alt="">
                             </div>
                         </div>
                     </div>

@@ -928,7 +928,9 @@
   }
 
   async function initCategoryDropdowns() {
-    const menus = document.querySelectorAll('.category-search-wrapper .category-btn > .category-sub-menu');
+    const menus = document.querySelectorAll(
+      '.category-search-wrapper .category-btn > .category-sub-menu, .category-btn.menu-category > .category-sub-menu'
+    );
     if (menus.length === 0) {
       return;
     }

@@ -319,6 +319,16 @@
         min-width: 0;
     }
 
+    @@media (max-width: 575px) {
+        .single-cart-area-list.head {
+            display: none !important;
+        }
+
+        .progress-wrap {
+            display: none !important;
+        }
+    }
+
     .quantity-edit input.input {
         width: 30px !important;
         min-width: 30px !important;
@@ -459,4 +469,4 @@
 }
 <script type="application/json" id="storefront-localization">@Html.Raw(JsonSerializer.Serialize(localizationPayload))</script>
 <script type="application/json" id="storefront-auth">@Html.Raw(JsonSerializer.Serialize(authPayload))</script>
-<script defer src="/js/ekomart-ajax.js?v=guest-cart-realtime-1"></script>
+<script defer src="/js/ekomart-ajax.js?v=mobile-polish-1"></script>
