@@ -310,6 +310,62 @@
         padding-top: 10px;
     }
 
+    .single-shopping-card-one .thumbnail-preview {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .single-shopping-card-one .thumbnail-preview img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain !important;
+    }
+
+    .single-shopping-card-one.discount-offer .thumbnail-preview {
+        width: 190px !important;
+        min-width: 190px !important;
+        height: 186px !important;
+        flex: 0 0 190px;
+    }
+
+    .single-shopping-card-one.discount-offer .thumbnail-preview img {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .single-shopping-card-one.tranding-product .thumbnail-preview {
+        width: 130px !important;
+        min-width: 130px !important;
+        height: 130px !important;
+        flex: 0 0 130px;
+    }
+
+    .single-shopping-card-one.tranding-product .thumbnail-preview img {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .single-shopping-card-one.deals-of-day .thumbnail-preview {
+        height: 220px !important;
+    }
+
+    .single-shopping-card-one.deals-of-day .thumbnail-preview img {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .single-category-one img {
+        width: 86px !important;
+        height: 76px !important;
+        min-height: 76px !important;
+        max-width: 86px !important;
+        max-height: 76px !important;
+        object-fit: contain !important;
+    }
+
     .single-shopping-card-one .cart-counter-action .quantity-edit.visually-hidden {
         display: none !important;
     }
@@ -448,6 +504,17 @@
 
     @@media (max-width: 575px) {
         .single-shopping-card-one:not(.discount-offer):not(.tranding-product):not(.deals-of-day) .image-and-action-area-wrapper .thumbnail-preview {
+            height: 170px !important;
+        }
+
+        .single-shopping-card-one.discount-offer .thumbnail-preview,
+        .single-shopping-card-one.tranding-product .thumbnail-preview {
+            width: 100% !important;
+            min-width: 100% !important;
+            flex-basis: auto;
+        }
+
+        .single-shopping-card-one.discount-offer .thumbnail-preview {
             height: 170px !important;
         }
     }

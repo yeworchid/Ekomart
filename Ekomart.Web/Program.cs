@@ -23,6 +23,7 @@ builder.Services
             factory.Create(typeof(SharedResource));
     });
 builder.Services.AddSignalR();
+builder.Services.AddResponseCompression();
 
 builder.Services.AddInfrastructure(
     builder.Configuration);
@@ -101,6 +102,7 @@ app.UseExceptionHandler("/Errors/500");
 if (!app.Environment.IsDevelopment())
 {
     app.UseHsts();
+    app.UseResponseCompression();
 }
 
 app.UseHttpsRedirection();

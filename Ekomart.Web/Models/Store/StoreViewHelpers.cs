@@ -94,6 +94,22 @@ public static class StoreViewHelpers
         return CategoryImages[index];
     }
 
+    public static string CategoryImage(string? categorySlug)
+    {
+        return categorySlug?.Trim().ToLowerInvariant() switch
+        {
+            "fresh-fruits" => "/assets/ekomart/images/category/02.png",
+            "vegetables" => "/assets/ekomart/images/category/01.png",
+            "dairy" => "/assets/ekomart/images/best-seller/03.png",
+            "bakery" => "/assets/ekomart/images/category/04.png",
+            "pantry" => "/assets/ekomart/images/category/07.png",
+            "beverages" => "/assets/ekomart/images/category/08.png",
+            "snacks" => "/assets/ekomart/images/category/10.png",
+            "baby-food" => "/assets/ekomart/images/best-seller/05.png",
+            _ => CategoryImage(0)
+        };
+    }
+
     public static string CategoryIcon(int stableKey)
     {
         var index = Math.Abs(stableKey) % CategoryIcons.Length;

@@ -107,6 +107,11 @@
     }
 
     const link = target.closest('a');
+    if (link?.getAttribute('href') === '#') {
+      event.preventDefault();
+      return;
+    }
+
     if (!link || !isCatalogLink(link)) {
       return;
     }

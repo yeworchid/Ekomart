@@ -13,6 +13,18 @@
         image = StoreViewHelpers.ProductImage(product.ImageUrl, product.Id),
         stockQuantity = product.StockQuantity
     }));
+    var firstDiscountProduct = Model.FeaturedProducts.ElementAtOrDefault(0);
+    var secondDiscountProduct = Model.FeaturedProducts.ElementAtOrDefault(1) ?? firstDiscountProduct;
+    var firstDiscountUrl = firstDiscountProduct is null
+        ? Url.Action("Index", "Catalog") ?? "/Catalog"
+        : Url.Action("Details", "Catalog", new { slug = firstDiscountProduct.Slug }) ?? "/Catalog";
+    var secondDiscountUrl = secondDiscountProduct is null
+        ? Url.Action("Index", "Catalog") ?? "/Catalog"
+        : Url.Action("Details", "Catalog", new { slug = secondDiscountProduct.Slug }) ?? "/Catalog";
+    var firstDiscountName = firstDiscountProduct?.Name ?? "Fresh grocery deal";
+    var secondDiscountName = secondDiscountProduct?.Name ?? "Fresh grocery deal";
+    var firstDiscountPrice = firstDiscountProduct is null ? "$15.00" : StoreViewHelpers.Money(firstDiscountProduct.Price);
+    var secondDiscountPrice = secondDiscountProduct is null ? "$15.00" : StoreViewHelpers.Money(secondDiscountProduct.Price);
 }
 <!DOCTYPE html>
 <html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
@@ -886,7 +898,7 @@
                                     {
                                         <div class="swiper-slide">
                                             <a asp-controller="Catalog" asp-action="Index" asp-route-categorySlug="@category.Slug" class="single-category-one">
-                                                <img src="@StoreViewHelpers.CategoryImage(category.Id)" alt="@category.Name">
+                                                <img src="@StoreViewHelpers.CategoryImage(category.Slug)" alt="@category.Name">
                                                 <p>@category.Name</p>
                                             </a>
                                         </div>
@@ -1488,26 +1500,24 @@
                     <div class="product-with-discount">
                         <div class="row g-5">
                             <div class="col-xl-4 col-lg-12">
-                                <a href="/Catalog/Details" class="single-discount-with-bg">
+                                <a href="@firstDiscountUrl" class="single-discount-with-bg">
                                     <div class="inner-content">
-                                        <h4 class="title">Alpro Organic Flavored <br>
-                                            Fresh Juice</h4>
+                                        <h4 class="title">@firstDiscountName</h4>
                                         <div class="price-area">
                                             <span>Only</span>
                                             <h4 class="title">
-                                                $15.00
+                                                @firstDiscountPrice
                                             </h4>
                                         </div>
                                     </div>
                                 </a>
-                                <a href="/Catalog/Details" class="single-discount-with-bg bg-2">
+                                <a href="@secondDiscountUrl" class="single-discount-with-bg bg-2">
                                     <div class="inner-content">
-                                        <h4 class="title">Alpro Organic Flavored <br>
-                                            Fresh Juice</h4>
+                                        <h4 class="title">@secondDiscountName</h4>
                                         <div class="price-area">
                                             <span>Only</span>
                                             <h4 class="title">
-                                                $15.00
+                                                @secondDiscountPrice
                                             </h4>
                                         </div>
                                     </div>
@@ -1710,20 +1720,6 @@
                         <h2 class="title-left">
                             Weekly Best Selling Groceries
                         </h2>
-                        <ul class="nav nav-tabs best-selling-grocery" id="myTab" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Frozen Foods</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Diet Foods</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Healthy Foods</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="vitamine-tab" data-bs-toggle="tab" data-bs-target="#vitamine" type="button" role="tab" aria-controls="vitamine" aria-selected="false">Vitamin Items</button>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>
